@@ -1,0 +1,10 @@
+MyMenu MENU
+{
+POPUP "&Menu"
+        {
+        MENUITEM "&Joke", 101
+        MENUITEM "&Quote", 102
+        MENUITEM SEPARATOR
+        MENUITEM "E&xit", 199
+        }
+}

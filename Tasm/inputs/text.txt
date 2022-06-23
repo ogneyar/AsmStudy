@@ -1,0 +1,11 @@
+# ascii
+https://www.industrialnets.ru/files/misc/ascii.pdf
+
+# floats
+https://cs.fit.edu/~mmahoney/cse3101/float.html
+
+# files
+https://aselmereng.livejournal.com/4646.html
+
+# functions
+https://assembler-code.com/funkcii-v-assemblere-sposoby-vyzova/

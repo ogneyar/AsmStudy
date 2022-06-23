@@ -1,0 +1,5 @@
+NULL EQU 0
+MB_OK EQU 0x00000000
+
+EXTERN MessageBoxA
+EXTERN ExitProcess
