@@ -1,0 +1,2978 @@
+<html>
+
+<head>
+<title>Atmel AVR Assembler</title>
+</head>
+
+<body bgcolor="#C0C0C0">
+
+<h1>Справка по Ассемблеру для Atmel AVR</h1>
+
+<p>Содержание: </p>
+<ul>
+  <li><a href="#Assembler source">Исходные коды</a></li>
+  <li><a href="#Instruction">Инструкции процессоров AVR</a> 
+    <ul>
+      <li><a href="#Arithmetic and Logic Instructions">Арифметические и логические 
+        инструкции</a></li>
+      <li><a href="#Branch Instructions">Инструкции ветвления</a></li>
+      <li><a href="#Data Transfer Instructions">Инструкции передачи данных</a></li>
+      <li><a href="#Bit and Bit-test Instructions">Инструкции работы с битами</a></li>
+    </ul>
+  </li>
+  <li><a href="#Assembler directives">Директивы ассемблера</a></li>
+  <li><a href="#Expressions">Выражения</a> 
+    <ul>
+      <li><a href="#Operands">Операнды</a></li>
+      <li><a href="#Operators">Операции</a></li>
+      <li><a href="#Functions">Функции</a></li>
+    </ul>
+  </li>
+  <li><a href="#General usage">Использование программы</a></li>
+</ul>
+
+<p><a name="Assembler source"></a>Исходные коды</p>
+
+<p>Компилятор работает с исходными
+файлами, содержащими инструкции,
+метки и директивы. Инструкции и
+директивы, как правило, имеют один
+или несколько операндов. </p>
+
+<p>Строка кода не должна быть
+длиннее 120 символов. </p>
+
+<p>Любая строка может начинаться с
+метки, которая является набором
+символов заканчивающимся
+двоеточием. Метки используются для
+указания места, в которое
+передаётся управление при
+переходах, а также для задания имён
+переменных. </p>
+
+<p>Входная строка может иметь одну
+из четырёх форм: </p>
+
+<blockquote>
+    <p><b><tt>[метка:] директива [операнды]
+    [Комментарий]</tt></b> <br>
+    <b><tt>[метка:] инструкция [операнды]
+    [Комментарий]</tt></b> <br>
+    <b><tt>Комментарий</tt></b> <br>
+    <b><tt>Пустая строка</tt></b></p>
+</blockquote>
+
+<p>Комментарий имеет следующую
+форму: </p>
+
+<blockquote>
+    <p><b><tt>; [Текст]</tt></b></p>
+</blockquote>
+
+<p>Позиции в квадратных скобках
+необязательны. Текст после точки с
+запятой (;) и до конца строки
+игнорируется компилятором. Метки,
+инструкции и директивы более
+детально описываются ниже. </p>
+
+<h3>Примеры:</h3>
+
+<blockquote>
+    <p><tt>label:════ .EQU var1=100 ;
+    Устанавливает var1 равным 100 (Это
+    директива)</tt> <br>
+    <tt>══════════ .EQU var2=200 ;
+    Устанавливает var2 равным 200</tt> </p>
+    <p><tt>test:═════ rjmp test════ ;
+    Бесконечный цикл (Это инструкция)</tt>
+    <br>
+    <tt>════════════════════════ ;
+    Стро</tt>ка с одним только
+    комментарием</p>
+    <p><tt>════════════════════════ ;
+    Ещё одна строка с комментарием</tt></p>
+</blockquote>
+
+<p>Компилятор не требует чтобы
+метки, директивы, комментарии или
+инструкции находились в
+определённой колонке строки. </p>
+
+<h2>═<a name="Instruction"></a>Инструкции
+процессоров AVR</h2>
+
+<p>Ниже приведен набор команд
+процессоров AVR, более детальное
+описание их можно найти в AVR Data Book. <br>
+═ </p>
+
+<h3><a name="Arithmetic and Logic Instructions"></a>Арифметические
+и логические инструкции</h3>
+
+<table border="1" width="100%">
+    <tr>
+        <td><font size="2" face="Arial,Helvetica"><b>Мнемоника</b></font></td>
+        <td><font size="2" face="Arial,Helvetica"><b>Операнды</b></font></td>
+        <td><font size="2" face="Arial,Helvetica"><b>Описание</b></font></td>
+        <td><font size="2" face="Arial,Helvetica"><b>Операция</b></font></td>
+        <td><font size="2" face="Arial,Helvetica"><b>Флаги</b></font></td>
+        <td><font size="2" face="Arial,Helvetica"><b>Циклы</b></font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">ADD═</font></td>
+        <td><a href="#Rd"><font size="2" face="Arial,Helvetica">Rd</font></a><font
+        size="2" face="Arial,Helvetica">,</font><a href="#Rr"><font
+        size="2" face="Arial,Helvetica">Rr═</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Суммирование
+        без переноса</font></td>
+        <td><font size="2" face="Arial,Helvetica">Rd = Rd + Rr═</font></td>
+        <td><font size="2" face="Arial,Helvetica">Z,C,N,V,H,S═</font></td>
+        <td><font size="2" face="Arial,Helvetica">1</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">ADC</font></td>
+        <td><a href="#Rd"><font size="2" face="Arial,Helvetica">Rd</font></a><font
+        size="2" face="Arial,Helvetica">,</font><a href="#Rr"><font
+        size="2" face="Arial,Helvetica">Rr</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Суммирование
+        с переносом</font></td>
+        <td><font size="2" face="Arial,Helvetica">Rd = Rd + Rr +
+        C</font></td>
+        <td><font size="2" face="Arial,Helvetica">Z,C,N,V,H,S</font></td>
+        <td><font size="2" face="Arial,Helvetica">1</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">SUB</font></td>
+        <td><a href="#Rd"><font size="2" face="Arial,Helvetica">Rd</font></a><font
+        size="2" face="Arial,Helvetica">,</font><a href="#Rr"><font
+        size="2" face="Arial,Helvetica">Rr</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Вычитание
+        без переноса</font></td>
+        <td><font size="2" face="Arial,Helvetica">Rd = Rd - Rr</font></td>
+        <td><font size="2" face="Arial,Helvetica">Z,C,N,V,H,S</font></td>
+        <td><font size="2" face="Arial,Helvetica">1</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">SUBI</font></td>
+        <td><a href="#Rd"><font size="2" face="Arial,Helvetica">Rd</font></a><font
+        size="2" face="Arial,Helvetica">,</font><a href="#K8"><font
+        size="2" face="Arial,Helvetica">K8</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Вычитание
+        константы</font></td>
+        <td><font size="2" face="Arial,Helvetica">Rd = Rd - K8</font></td>
+        <td><font size="2" face="Arial,Helvetica">Z,C,N,V,H,S</font></td>
+        <td><font size="2" face="Arial,Helvetica">1</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">SBC</font></td>
+        <td><a href="#Rd"><font size="2" face="Arial,Helvetica">Rd</font></a><font
+        size="2" face="Arial,Helvetica">,</font><a href="#Rr"><font
+        size="2" face="Arial,Helvetica">Rr</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Вычитание
+        с переносом</font></td>
+        <td><font size="2" face="Arial,Helvetica">Rd = Rd - Rr -
+        C</font></td>
+        <td><font size="2" face="Arial,Helvetica">Z,C,N,V,H,S</font></td>
+        <td><font size="2" face="Arial,Helvetica">1</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">SBCI</font></td>
+        <td><a href="#Rd"><font size="2" face="Arial,Helvetica">Rd</font></a><font
+        size="2" face="Arial,Helvetica">,</font><a href="#K8"><font
+        size="2" face="Arial,Helvetica">K8</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Вычитание
+        константы с переносом</font></td>
+        <td><font size="2" face="Arial,Helvetica">Rd = Rd - K8 -
+        C</font></td>
+        <td><font size="2" face="Arial,Helvetica">Z,C,N,V,H,S</font></td>
+        <td><font size="2" face="Arial,Helvetica">1</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">AND</font></td>
+        <td><a href="#Rd"><font size="2" face="Arial,Helvetica">Rd</font></a><font
+        size="2" face="Arial,Helvetica">,</font><a href="#Rr"><font
+        size="2" face="Arial,Helvetica">Rr</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Логическое
+        И</font></td>
+        <td><font size="2" face="Arial,Helvetica">Rd = Rd ╥ Rr</font></td>
+        <td><font size="2" face="Arial,Helvetica">Z,N,V,S═</font></td>
+        <td><font size="2" face="Arial,Helvetica">1</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">ANDI</font></td>
+        <td><a href="#Rd"><font size="2" face="Arial,Helvetica">Rd</font></a><font
+        size="2" face="Arial,Helvetica">,</font><a href="#K8"><font
+        size="2" face="Arial,Helvetica">K8</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Логическое
+        И с константой</font></td>
+        <td><font size="2" face="Arial,Helvetica">Rd = Rd ╥ K8</font></td>
+        <td><font size="2" face="Arial,Helvetica">Z,N,V,S</font></td>
+        <td><font size="2" face="Arial,Helvetica">1</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">OR</font></td>
+        <td><a href="#Rd"><font size="2" face="Arial,Helvetica">Rd</font></a><font
+        size="2" face="Arial,Helvetica">,</font><a href="#Rr"><font
+        size="2" face="Arial,Helvetica">Rr</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Логическое
+        ИЛИ</font></td>
+        <td><font size="2" face="Arial,Helvetica">Rd = Rd V Rr</font></td>
+        <td><font size="2" face="Arial,Helvetica">Z,N,V,S</font></td>
+        <td><font size="2" face="Arial,Helvetica">1</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">ORI</font></td>
+        <td><a href="#Rd"><font size="2" face="Arial,Helvetica">Rd</font></a><font
+        size="2" face="Arial,Helvetica">,</font><a href="#K8"><font
+        size="2" face="Arial,Helvetica">K8</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Логическое
+        ИЛИ с константой</font></td>
+        <td><font size="2" face="Arial,Helvetica">Rd = Rd V K8</font></td>
+        <td><font size="2" face="Arial,Helvetica">Z,N,V,S</font></td>
+        <td><font size="2" face="Arial,Helvetica">1</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">EOR</font></td>
+        <td><a href="#Rd"><font size="2" face="Arial,Helvetica">Rd</font></a><font
+        size="2" face="Arial,Helvetica">,</font><a href="#Rr"><font
+        size="2" face="Arial,Helvetica">Rr</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Логическое
+        исключающее ИЛИ</font></td>
+        <td><font size="2" face="Arial,Helvetica">Rd = Rd EOR Rr</font></td>
+        <td><font size="2" face="Arial,Helvetica">Z,N,V,S</font></td>
+        <td><font size="2" face="Arial,Helvetica">1</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">COM</font></td>
+        <td><a href="#Rd"><font size="2" face="Arial,Helvetica">Rd</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Побитная
+        Инверсия</font></td>
+        <td><font size="2" face="Arial,Helvetica">Rd = $FF - Rd</font></td>
+        <td><font size="2" face="Arial,Helvetica">Z,C,N,V,S</font></td>
+        <td><font size="2" face="Arial,Helvetica">1</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">NEG</font></td>
+        <td><a href="#Rd"><font size="2" face="Arial,Helvetica">Rd</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Изменение
+        знака (Доп. код)</font></td>
+        <td><font size="2" face="Arial,Helvetica">Rd = $00 - Rd</font></td>
+        <td><font size="2" face="Arial,Helvetica">Z,C,N,V,H,S</font></td>
+        <td><font size="2" face="Arial,Helvetica">1</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">SBR</font></td>
+        <td><a href="#Rd"><font size="2" face="Arial,Helvetica">Rd</font></a><font
+        size="2" face="Arial,Helvetica">,</font><a href="#K8"><font
+        size="2" face="Arial,Helvetica">K8</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Установить
+        бит (биты) в регистре</font></td>
+        <td><font size="2" face="Arial,Helvetica">Rd = Rd V K8</font></td>
+        <td><font size="2" face="Arial,Helvetica">Z,C,N,V,S</font></td>
+        <td><font size="2" face="Arial,Helvetica">1</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">CBR</font></td>
+        <td><a href="#Rd"><font size="2" face="Arial,Helvetica">Rd</font></a><font
+        size="2" face="Arial,Helvetica">,</font><a href="#K8"><font
+        size="2" face="Arial,Helvetica">K8</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Сбросить
+        бит (биты) в регистре</font></td>
+        <td><font size="2" face="Arial,Helvetica">Rd = Rd ╥ ($FF
+        - K8)</font></td>
+        <td><font size="2" face="Arial,Helvetica">Z,C,N,V,S</font></td>
+        <td><font size="2" face="Arial,Helvetica">1</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">INC</font></td>
+        <td><a href="#Rd"><font size="2" face="Arial,Helvetica">Rd</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Инкрементировать
+        значение регистра</font></td>
+        <td><font size="2" face="Arial,Helvetica">Rd = Rd + 1</font></td>
+        <td><font size="2" face="Arial,Helvetica">Z,N,V,S</font></td>
+        <td><font size="2" face="Arial,Helvetica">1</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">DEC</font></td>
+        <td><a href="#Rd"><font size="2" face="Arial,Helvetica">Rd</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Декрементировать
+        значение регистра</font></td>
+        <td><font size="2" face="Arial,Helvetica">Rd = Rd -1</font></td>
+        <td><font size="2" face="Arial,Helvetica">Z,N,V,S</font></td>
+        <td><font size="2" face="Arial,Helvetica">1</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">TST</font></td>
+        <td><a href="#Rd"><font size="2" face="Arial,Helvetica">Rd</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Проверка
+        на ноль либо отрицательность</font></td>
+        <td><font size="2" face="Arial,Helvetica">Rd = Rd ╥ Rd</font></td>
+        <td><font size="2" face="Arial,Helvetica">Z,C,N,V,S</font></td>
+        <td><font size="2" face="Arial,Helvetica">1</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">CLR</font></td>
+        <td><a href="#Rd"><font size="2" face="Arial,Helvetica">Rd</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Очистить
+        регистр</font></td>
+        <td><font size="2" face="Arial,Helvetica">Rd = 0</font></td>
+        <td><font size="2" face="Arial,Helvetica">Z,C,N,V,S</font></td>
+        <td><font size="2" face="Arial,Helvetica">1</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">SER</font></td>
+        <td><a href="#Rd"><font size="2" face="Arial,Helvetica">Rd</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Установить
+        регистр</font></td>
+        <td><font size="2" face="Arial,Helvetica">Rd = $FF</font></td>
+        <td><font size="2" face="Arial,Helvetica">None</font></td>
+        <td><font size="2" face="Arial,Helvetica">1</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">ADIW</font></td>
+        <td><a href="#Rdl"><font size="2" face="Arial,Helvetica">Rdl</font></a><font
+        size="2" face="Arial,Helvetica">,</font><a href="#K6"><font
+        size="2" face="Arial,Helvetica">K6</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Сложить
+        константу и слово</font></td>
+        <td><font size="2" face="Arial,Helvetica">Rdh:Rdl =
+        Rdh:Rdl + K6═</font></td>
+        <td><font size="2" face="Arial,Helvetica">Z,C,N,V,S</font></td>
+        <td><font size="2" face="Arial,Helvetica">2</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">SBIW</font></td>
+        <td><a href="#Rdl"><font size="2" face="Arial,Helvetica">Rdl</font></a><font
+        size="2" face="Arial,Helvetica">,</font><a href="#K6"><font
+        size="2" face="Arial,Helvetica">K6</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Вычесть
+        константу из слова</font></td>
+        <td><font size="2" face="Arial,Helvetica">Rdh:Rdl =
+        Rdh:Rdl - K 6</font></td>
+        <td><font size="2" face="Arial,Helvetica">Z,C,N,V,S</font></td>
+        <td><font size="2" face="Arial,Helvetica">2</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">MUL</font></td>
+        <td><a href="#Rd"><font size="2" face="Arial,Helvetica">Rd</font></a><font
+        size="2" face="Arial,Helvetica">,</font><a href="#Rr"><font
+        size="2" face="Arial,Helvetica">Rr</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Умножение
+        чисел без знака</font></td>
+        <td><font size="2" face="Arial,Helvetica">R1:R0 = Rd * Rr</font></td>
+        <td><font size="2" face="Arial,Helvetica">Z,C</font></td>
+        <td><font size="2" face="Arial,Helvetica">2</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">MULS</font></td>
+        <td><a href="#Rd"><font size="2" face="Arial,Helvetica">Rd</font></a><font
+        size="2" face="Arial,Helvetica">,</font><a href="#Rr"><font
+        size="2" face="Arial,Helvetica">Rr</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Умножение
+        чисел со знаком</font></td>
+        <td><font size="2" face="Arial,Helvetica">R1:R0 = Rd * Rr</font></td>
+        <td><font size="2" face="Arial,Helvetica">Z,C</font></td>
+        <td><font size="2" face="Arial,Helvetica">2</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">MULSU</font></td>
+        <td><a href="#Rd"><font size="2" face="Arial,Helvetica">Rd</font></a><font
+        size="2" face="Arial,Helvetica">,</font><a href="#Rr"><font
+        size="2" face="Arial,Helvetica">Rr</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Умножение
+        числа со знаком с числом без
+        знака</font></td>
+        <td><font size="2" face="Arial,Helvetica">R1:R0 = Rd * Rr</font></td>
+        <td><font size="2" face="Arial,Helvetica">Z,C</font></td>
+        <td><font size="2" face="Arial,Helvetica">2</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">FMUL</font></td>
+        <td><a href="#Rd"><font size="2" face="Arial,Helvetica">Rd</font></a><font
+        size="2" face="Arial,Helvetica">,</font><a href="#Rr"><font
+        size="2" face="Arial,Helvetica">Rr</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Умножение
+        дробных чисел без знака</font></td>
+        <td><font size="2" face="Arial,Helvetica">R1:R0 = (Rd *
+        Rr) &lt;&lt; 1</font></td>
+        <td><font size="2" face="Arial,Helvetica">Z,C</font></td>
+        <td><font size="2" face="Arial,Helvetica">2</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">FMULS</font></td>
+        <td><a href="#Rd"><font size="2" face="Arial,Helvetica">Rd</font></a><font
+        size="2" face="Arial,Helvetica">,</font><a href="#Rr"><font
+        size="2" face="Arial,Helvetica">Rr</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Умножение
+        дробных чисел со знаком</font></td>
+        <td><font size="2" face="Arial,Helvetica">R1:R0 = (Rd
+        *Rr) &lt;&lt; 1</font></td>
+        <td><font size="2" face="Arial,Helvetica">Z,C</font></td>
+        <td><font size="2" face="Arial,Helvetica">2</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">FMULSU</font></td>
+        <td><a href="#Rd"><font size="2" face="Arial,Helvetica">Rd</font></a><font
+        size="2" face="Arial,Helvetica">,</font><a href="#Rr"><font
+        size="2" face="Arial,Helvetica">Rr</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Умножение
+        дробного числа со знаком с
+        числом без знака</font></td>
+        <td><font size="2" face="Arial,Helvetica">R1:R0 = (Rd *
+        Rr) &lt;&lt; 1</font></td>
+        <td><font size="2" face="Arial,Helvetica">Z,C</font></td>
+        <td><font size="2" face="Arial,Helvetica">2</font></td>
+    </tr>
+</table>
+
+<p>═ </p>
+
+<h3><a name="Branch Instructions"></a>Инструкции
+ветвления</h3>
+
+<table border="1" width="100%">
+    <tr>
+        <td><font size="2" face="Arial,Helvetica"><b>Мнемоника</b></font></td>
+        <td><font size="2" face="Arial,Helvetica"><b>Операнды</b></font></td>
+        <td><font size="2" face="Arial,Helvetica"><b>Описание</b></font></td>
+        <td><font size="2" face="Arial,Helvetica"><b>Операция</b></font></td>
+        <td><font size="2" face="Arial,Helvetica"><b>Флаги</b></font></td>
+        <td><font size="2" face="Arial,Helvetica"><b>Циклы</b></font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">RJMP</font></td>
+        <td><a href="#k"><font size="2" face="Arial,Helvetica">k</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Относительный
+        переход</font></td>
+        <td><font size="2" face="Arial,Helvetica">PC = PC + k +1</font></td>
+        <td><font size="2" face="Arial,Helvetica">None</font></td>
+        <td><font size="2" face="Arial,Helvetica">2</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">IJMP</font></td>
+        <td><font size="2" face="Arial,Helvetica">Нет</font></td>
+        <td><font size="2" face="Arial,Helvetica">Косвенный
+        переход на (</font><a href="#X,Y,Z"><font
+        size="2" face="Arial,Helvetica">Z</font></a><font
+        size="2" face="Arial,Helvetica">)</font></td>
+        <td><font size="2" face="Arial,Helvetica">PC = Z</font></td>
+        <td><font size="2" face="Arial,Helvetica">None</font></td>
+        <td><font size="2" face="Arial,Helvetica">2</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">EIJMP</font></td>
+        <td><font size="2" face="Arial,Helvetica">Нет</font></td>
+        <td><font size="2" face="Arial,Helvetica">Расширенный
+        косвенный переход на (</font><a
+        href="#X,Y,Z"><font size="2" face="Arial,Helvetica">Z</font></a><font
+        size="2" face="Arial,Helvetica">)</font></td>
+        <td><font size="2" face="Arial,Helvetica">STACK = PC+1,
+        PC(15:0) = Z, PC(21:16) = EIND</font></td>
+        <td><font size="2" face="Arial,Helvetica">None</font></td>
+        <td><font size="2" face="Arial,Helvetica">2</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">JMP</font></td>
+        <td><a href="#k"><font size="2" face="Arial,Helvetica">k</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Переход</font></td>
+        <td><font size="2" face="Arial,Helvetica">PC = k</font></td>
+        <td><font size="2" face="Arial,Helvetica">None</font></td>
+        <td><font size="2" face="Arial,Helvetica">3</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">RCALL</font></td>
+        <td><a href="#k"><font size="2" face="Arial,Helvetica">k</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Относительный
+        вызов подпрограммы</font></td>
+        <td><font size="2" face="Arial,Helvetica">STACK = PC+1,
+        PC = PC + k + 1</font></td>
+        <td><font size="2" face="Arial,Helvetica">None</font></td>
+        <td><font size="2" face="Arial,Helvetica">3/4*</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">ICALL</font></td>
+        <td><font size="2" face="Arial,Helvetica">Нет</font></td>
+        <td><font size="2" face="Arial,Helvetica">Косвенный
+        вызов (</font><a href="#X,Y,Z"><font size="2"
+        face="Arial,Helvetica">Z</font></a><font size="2"
+        face="Arial,Helvetica">)</font></td>
+        <td><font size="2" face="Arial,Helvetica">STACK = PC+1,
+        PC = Z═</font></td>
+        <td><font size="2" face="Arial,Helvetica">None</font></td>
+        <td><font size="2" face="Arial,Helvetica">3/4*</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">EICALL</font></td>
+        <td><font size="2" face="Arial,Helvetica">Нет</font></td>
+        <td><font size="2" face="Arial,Helvetica">Расширенный
+        косвенный вызов (</font><a href="#X,Y,Z"><font
+        size="2" face="Arial,Helvetica">Z</font></a><font
+        size="2" face="Arial,Helvetica">)</font></td>
+        <td><font size="2" face="Arial,Helvetica">STACK = PC+1,
+        PC(15:0) = Z, PC(21:16) =EIND</font></td>
+        <td><font size="2" face="Arial,Helvetica">None</font></td>
+        <td><font size="2" face="Arial,Helvetica">4*</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">CALL</font></td>
+        <td><a href="#k"><font size="2" face="Arial,Helvetica">k</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Вызов
+        подпрограммы</font></td>
+        <td><font size="2" face="Arial,Helvetica">STACK = PC+2,
+        PC = k</font></td>
+        <td><font size="2" face="Arial,Helvetica">None</font></td>
+        <td><font size="2" face="Arial,Helvetica">4/5*</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">RET</font></td>
+        <td><font size="2" face="Arial,Helvetica">Нет</font></td>
+        <td><font size="2" face="Arial,Helvetica">Возврат
+        из подпрограммы</font></td>
+        <td><font size="2" face="Arial,Helvetica">PC = STACK</font></td>
+        <td><font size="2" face="Arial,Helvetica">None</font></td>
+        <td><font size="2" face="Arial,Helvetica">4/5*</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">RETI</font></td>
+        <td><font size="2" face="Arial,Helvetica">Нет</font></td>
+        <td><font size="2" face="Arial,Helvetica">Возврат
+        из прерывания</font></td>
+        <td><font size="2" face="Arial,Helvetica">PC = STACK</font></td>
+        <td><font size="2" face="Arial,Helvetica">I</font></td>
+        <td><font size="2" face="Arial,Helvetica">4/5*</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">CPSE</font></td>
+        <td><a href="#Rd"><font size="2" face="Arial,Helvetica">Rd</font></a><font
+        size="2" face="Arial,Helvetica">,</font><a href="#Rr"><font
+        size="2" face="Arial,Helvetica">Rr</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Сравнить,
+        пропустить если равны═</font></td>
+        <td><font size="2" face="Arial,Helvetica">if (Rd ==Rr) PC
+        = PC 2 or 3</font></td>
+        <td><font size="2" face="Arial,Helvetica">None</font></td>
+        <td><font size="2" face="Arial,Helvetica">1/2/3</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">CP</font></td>
+        <td><a href="#Rd"><font size="2" face="Arial,Helvetica">Rd</font></a><font
+        size="2" face="Arial,Helvetica">,</font><a href="#Rr"><font
+        size="2" face="Arial,Helvetica">Rr</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Сравнить</font></td>
+        <td><font size="2" face="Arial,Helvetica">Rd -Rr</font></td>
+        <td><font size="2" face="Arial,Helvetica">Z,C,N,V,H,S</font></td>
+        <td><font size="2" face="Arial,Helvetica">1</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">CPC</font></td>
+        <td><a href="#Rd"><font size="2" face="Arial,Helvetica">Rd</font></a><font
+        size="2" face="Arial,Helvetica">,</font><a href="#Rr"><font
+        size="2" face="Arial,Helvetica">Rr</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Сравнить
+        с переносом</font></td>
+        <td><font size="2" face="Arial,Helvetica">Rd - Rr - C</font></td>
+        <td><font size="2" face="Arial,Helvetica">Z,C,N,V,H,S</font></td>
+        <td><font size="2" face="Arial,Helvetica">1</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">CPI</font></td>
+        <td><a href="#Rd"><font size="2" face="Arial,Helvetica">Rd</font></a><font
+        size="2" face="Arial,Helvetica">,</font><a href="#K8"><font
+        size="2" face="Arial,Helvetica">K8</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Сравнить
+        с константой</font></td>
+        <td><font size="2" face="Arial,Helvetica">Rd - K</font></td>
+        <td><font size="2" face="Arial,Helvetica">Z,C,N,V,H,S</font></td>
+        <td><font size="2" face="Arial,Helvetica">1</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">SBRC</font></td>
+        <td><a href="#Rr"><font size="2" face="Arial,Helvetica">Rr</font></a><font
+        size="2" face="Arial,Helvetica">,</font><a href="#b"><font
+        size="2" face="Arial,Helvetica">b</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Пропустить
+        если бит в регистре очищен</font></td>
+        <td><font size="2" face="Arial,Helvetica">if(Rr(b)==0) PC
+        = PC + 2 or 3</font></td>
+        <td><font size="2" face="Arial,Helvetica">None</font></td>
+        <td><font size="2" face="Arial,Helvetica">1/2/3</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">SBRS</font></td>
+        <td><a href="#Rr"><font size="2" face="Arial,Helvetica">Rr</font></a><font
+        size="2" face="Arial,Helvetica">,</font><a href="#b"><font
+        size="2" face="Arial,Helvetica">b</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Пропустить
+        если бит в регистре установлен</font></td>
+        <td><font size="2" face="Arial,Helvetica">if(Rr(b)==1) PC
+        = PC + 2 or 3</font></td>
+        <td><font size="2" face="Arial,Helvetica">None</font></td>
+        <td><font size="2" face="Arial,Helvetica">1/2/3</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">SBIC</font></td>
+        <td><a href="#P"><font size="2" face="Arial,Helvetica">P</font></a><font
+        size="2" face="Arial,Helvetica">,</font><a href="#b"><font
+        size="2" face="Arial,Helvetica">b</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Пропустить
+        если бит в порту очищен</font></td>
+        <td><font size="2" face="Arial,Helvetica">if(I/O(P,b)==0)
+        PC = PC + 2 or 3</font></td>
+        <td><font size="2" face="Arial,Helvetica">None</font></td>
+        <td><font size="2" face="Arial,Helvetica">1/2/3</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">SBIS</font></td>
+        <td><a href="#P"><font size="2" face="Arial,Helvetica">P</font></a><font
+        size="2" face="Arial,Helvetica">,</font><a href="#b"><font
+        size="2" face="Arial,Helvetica">b</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Пропустить
+        если бит в порту установлен</font></td>
+        <td><font size="2" face="Arial,Helvetica">if(I/O(P,b)==1)
+        PC = PC + 2 or 3</font></td>
+        <td><font size="2" face="Arial,Helvetica">None</font></td>
+        <td><font size="2" face="Arial,Helvetica">1/2/3</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">BRBC</font></td>
+        <td><a href="#s"><font size="2" face="Arial,Helvetica">s</font></a><font
+        size="2" face="Arial,Helvetica">,</font><a href="#k"><font
+        size="2" face="Arial,Helvetica">k</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Перейти
+        если флаг в SREG очищен</font></td>
+        <td><font size="2" face="Arial,Helvetica">if(SREG(s)==0)
+        PC = PC + k + 1</font></td>
+        <td><font size="2" face="Arial,Helvetica">None</font></td>
+        <td><font size="2" face="Arial,Helvetica">1/2</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">BRBS</font></td>
+        <td><a href="#s"><font size="2" face="Arial,Helvetica">s</font></a><font
+        size="2" face="Arial,Helvetica">,</font><a href="#k"><font
+        size="2" face="Arial,Helvetica">k</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Перейти
+        если флаг в SREG установлен</font></td>
+        <td><font size="2" face="Arial,Helvetica">if(SREG(s)==1)
+        PC = PC + k + 1</font></td>
+        <td><font size="2" face="Arial,Helvetica">None</font></td>
+        <td><font size="2" face="Arial,Helvetica">1/2</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">BREQ</font></td>
+        <td><a href="#k"><font size="2" face="Arial,Helvetica">k</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Перейти
+        если равно</font></td>
+        <td><font size="2" face="Arial,Helvetica">if(Z==1) PC =
+        PC + k + 1</font></td>
+        <td><font size="2" face="Arial,Helvetica">None</font></td>
+        <td><font size="2" face="Arial,Helvetica">1/2</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">BRNE</font></td>
+        <td><a href="#k"><font size="2" face="Arial,Helvetica">k</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Перейти
+        если не равно</font></td>
+        <td><font size="2" face="Arial,Helvetica">if(Z==0) PC =
+        PC + k + 1</font></td>
+        <td><font size="2" face="Arial,Helvetica">None</font></td>
+        <td><font size="2" face="Arial,Helvetica">1/2</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">BRCS</font></td>
+        <td><a href="#k"><font size="2" face="Arial,Helvetica">k</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Перейти
+        если перенос установлен</font></td>
+        <td><font size="2" face="Arial,Helvetica">if(C==1) PC =
+        PC + k + 1</font></td>
+        <td><font size="2" face="Arial,Helvetica">None</font></td>
+        <td><font size="2" face="Arial,Helvetica">1/2</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">BRCC</font></td>
+        <td><a href="#k"><font size="2" face="Arial,Helvetica">k</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Перейти
+        если перенос очищен</font></td>
+        <td><font size="2" face="Arial,Helvetica">if(C==0) PC =
+        PC + k + 1</font></td>
+        <td><font size="2" face="Arial,Helvetica">None</font></td>
+        <td><font size="2" face="Arial,Helvetica">1/2</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">BRSH</font></td>
+        <td><a href="#k"><font size="2" face="Arial,Helvetica">k</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Перейти
+        если равно или больше</font></td>
+        <td><font size="2" face="Arial,Helvetica">if(C==0) PC =
+        PC + k + 1</font></td>
+        <td><font size="2" face="Arial,Helvetica">None</font></td>
+        <td><font size="2" face="Arial,Helvetica">1/2</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">BRLO</font></td>
+        <td><a href="#k"><font size="2" face="Arial,Helvetica">k</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Перейти
+        если меньше</font></td>
+        <td><font size="2" face="Arial,Helvetica">if(C==1) PC =
+        PC + k + 1</font></td>
+        <td><font size="2" face="Arial,Helvetica">None</font></td>
+        <td><font size="2" face="Arial,Helvetica">1/2</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">BRMI</font></td>
+        <td><a href="#k"><font size="2" face="Arial,Helvetica">k</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Перейти
+        если минус</font></td>
+        <td><font size="2" face="Arial,Helvetica">if(N==1) PC =
+        PC + k + 1</font></td>
+        <td><font size="2" face="Arial,Helvetica">None</font></td>
+        <td><font size="2" face="Arial,Helvetica">1/2</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">BRPL</font></td>
+        <td><a href="#k"><font size="2" face="Arial,Helvetica">k</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Перейти
+        если плюс</font></td>
+        <td><font size="2" face="Arial,Helvetica">if(N==0) PC =
+        PC + k + 1</font></td>
+        <td><font size="2" face="Arial,Helvetica">None</font></td>
+        <td><font size="2" face="Arial,Helvetica">1/2</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">BRGE</font></td>
+        <td><a href="#k"><font size="2" face="Arial,Helvetica">k</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Перейти
+        если больше или равно (со
+        знаком)</font></td>
+        <td><font size="2" face="Arial,Helvetica">if(S==0) PC =
+        PC + k + 1</font></td>
+        <td><font size="2" face="Arial,Helvetica">None</font></td>
+        <td><font size="2" face="Arial,Helvetica">1/2</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">BRLT</font></td>
+        <td><a href="#k"><font size="2" face="Arial,Helvetica">k</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Перейти
+        если меньше (со знаком)</font></td>
+        <td><font size="2" face="Arial,Helvetica">if(S==1) PC =
+        PC + k + 1</font></td>
+        <td><font size="2" face="Arial,Helvetica">None</font></td>
+        <td><font size="2" face="Arial,Helvetica">1/2</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">BRHS</font></td>
+        <td><a href="#k"><font size="2" face="Arial,Helvetica">k</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Перейти
+        если флаг внутреннего переноса
+        установлен</font></td>
+        <td><font size="2" face="Arial,Helvetica">if(H==1) PC =
+        PC + k + 1</font></td>
+        <td><font size="2" face="Arial,Helvetica">None</font></td>
+        <td><font size="2" face="Arial,Helvetica">1/2</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">BRHC</font></td>
+        <td><a href="#k"><font size="2" face="Arial,Helvetica">k</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Перейти
+        если флаг внутреннего переноса
+        очищен</font></td>
+        <td><font size="2" face="Arial,Helvetica">if(H==0) PC =
+        PC + k + 1</font></td>
+        <td><font size="2" face="Arial,Helvetica">None</font></td>
+        <td><font size="2" face="Arial,Helvetica">1/2</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">BRTS</font></td>
+        <td><a href="#k"><font size="2" face="Arial,Helvetica">k</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Перейти
+        если флаг T установлен</font></td>
+        <td><font size="2" face="Arial,Helvetica">if(T==1) PC =
+        PC + k + 1</font></td>
+        <td><font size="2" face="Arial,Helvetica">None</font></td>
+        <td><font size="2" face="Arial,Helvetica">1/2</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">BRTC</font></td>
+        <td><a href="#k"><font size="2" face="Arial,Helvetica">k</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Перейти
+        если флаг T очищен</font></td>
+        <td><font size="2" face="Arial,Helvetica">if(T==0) PC =
+        PC + k + 1</font></td>
+        <td><font size="2" face="Arial,Helvetica">None</font></td>
+        <td><font size="2" face="Arial,Helvetica">1/2</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">BRVS</font></td>
+        <td><a href="#k"><font size="2" face="Arial,Helvetica">k</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Перейти
+        если флаг переполнения
+        установлен</font></td>
+        <td><font size="2" face="Arial,Helvetica">if(V==1) PC =
+        PC + k + 1</font></td>
+        <td><font size="2" face="Arial,Helvetica">None</font></td>
+        <td><font size="2" face="Arial,Helvetica">1/2</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">BRVC</font></td>
+        <td><a href="#k"><font size="2" face="Arial,Helvetica">k</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Перейти
+        если флаг переполнения очищен</font></td>
+        <td><font size="2" face="Arial,Helvetica">if(V==0) PC =
+        PC + k + 1</font></td>
+        <td><font size="2" face="Arial,Helvetica">None</font></td>
+        <td><font size="2" face="Arial,Helvetica">1/2</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">BRIE</font></td>
+        <td><a href="#k"><font size="2" face="Arial,Helvetica">k</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Перейти
+        если прерывания разрешены</font></td>
+        <td><font size="2" face="Arial,Helvetica">if(I==1) PC =
+        PC + k + 1</font></td>
+        <td><font size="2" face="Arial,Helvetica">None</font></td>
+        <td><font size="2" face="Arial,Helvetica">1/2</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">BRID</font></td>
+        <td><a href="#k"><font size="2" face="Arial,Helvetica">k</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Перейти
+        если прерывания запрещены</font></td>
+        <td><font size="2" face="Arial,Helvetica">if(I==0) PC =
+        PC + k + 1</font></td>
+        <td><font size="2" face="Arial,Helvetica">None</font></td>
+        <td><font size="2" face="Arial,Helvetica">1/2</font></td>
+    </tr>
+</table>
+
+<p>* Для операций доступа к данным
+количество циклов указано при
+условии доступа к внутренней
+памяти данных, и не корректно при
+работе с внешним ОЗУ. Для
+инструкций CALL, ICALL, EICALL, RCALL, RET и RETI,
+необходимо добавить три цикла плюс
+по два цикла для каждого ожидания в
+контроллерах с PC меньшим 16 бит (128KB
+памяти программ). Для устройств с
+памятью программ свыше 128KB ,
+добавьте пять циклов плюс по три
+цикла на каждое ожидание. </p>
+
+<h3><a name="Data Transfer Instructions"></a>Инструкции
+передачи данных</h3>
+
+<table border="1" width="100%">
+    <tr>
+        <td><font size="2" face="Arial,Helvetica"><b>Мнемоника</b></font></td>
+        <td><font size="2" face="Arial,Helvetica"><b>Операнды</b></font></td>
+        <td><font size="2" face="Arial,Helvetica"><b>Описание</b></font></td>
+        <td><font size="2" face="Arial,Helvetica"><b>Операция</b></font></td>
+        <td><font size="2" face="Arial,Helvetica"><b>Флаги</b></font></td>
+        <td><font size="2" face="Arial,Helvetica"><b>Циклы</b></font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">MOV</font></td>
+        <td><a href="#Rd"><font size="2" face="Arial,Helvetica">Rd</font></a><font
+        size="2" face="Arial,Helvetica">,</font><a href="#Rr"><font
+        size="2" face="Arial,Helvetica">Rr</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Скопировать
+        регистр</font></td>
+        <td><font size="2" face="Arial,Helvetica">Rd = Rr</font></td>
+        <td><font size="2" face="Arial,Helvetica">None</font></td>
+        <td><font size="2" face="Arial,Helvetica">1</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">MOVW</font></td>
+        <td><a href="#Rd"><font size="2" face="Arial,Helvetica">Rd</font></a><font
+        size="2" face="Arial,Helvetica">,</font><a href="#Rr"><font
+        size="2" face="Arial,Helvetica">Rr</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Скопировать
+        пару регистров</font></td>
+        <td><font size="2" face="Arial,Helvetica">Rd+1:Rd =
+        Rr+1:Rr, r,d even</font></td>
+        <td><font size="2" face="Arial,Helvetica">None</font></td>
+        <td><font size="2" face="Arial,Helvetica">1</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">LDI</font></td>
+        <td><a href="#Rd"><font size="2" face="Arial,Helvetica">Rd</font></a><font
+        size="2" face="Arial,Helvetica">,</font><a href="#K8"><font
+        size="2" face="Arial,Helvetica">K8</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Загрузить
+        константу</font></td>
+        <td><font size="2" face="Arial,Helvetica">Rd = K</font></td>
+        <td><font size="2" face="Arial,Helvetica">None</font></td>
+        <td><font size="2" face="Arial,Helvetica">1</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">LDS</font></td>
+        <td><a href="#Rd"><font size="2" face="Arial,Helvetica">Rd</font></a><font
+        size="2" face="Arial,Helvetica">,</font><a href="#k"><font
+        size="2" face="Arial,Helvetica">k</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Прямая
+        загрузка</font></td>
+        <td><font size="2" face="Arial,Helvetica">Rd = (k)</font></td>
+        <td><font size="2" face="Arial,Helvetica">None</font></td>
+        <td><font size="2" face="Arial,Helvetica">2*</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">LD</font></td>
+        <td><a href="#Rd"><font size="2" face="Arial,Helvetica">Rd</font></a><font
+        size="2" face="Arial,Helvetica">,</font><a href="#X,Y,Z"><font
+        size="2" face="Arial,Helvetica">X</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Косвенная
+        загрузка</font></td>
+        <td><font size="2" face="Arial,Helvetica">Rd = (X)</font></td>
+        <td><font size="2" face="Arial,Helvetica">None</font></td>
+        <td><font size="2" face="Arial,Helvetica">2*</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">LD</font></td>
+        <td><a href="#Rd"><font size="2" face="Arial,Helvetica">Rd</font></a><font
+        size="2" face="Arial,Helvetica">,</font><a href="#X,Y,Z"><font
+        size="2" face="Arial,Helvetica">X+</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Косвенная
+        загрузка с пост-инкрементом</font></td>
+        <td><font size="2" face="Arial,Helvetica">Rd = (X), X=X+1</font></td>
+        <td><font size="2" face="Arial,Helvetica">None</font></td>
+        <td><font size="2" face="Arial,Helvetica">2*</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">LD</font></td>
+        <td><a href="#Rd"><font size="2" face="Arial,Helvetica">Rd</font></a><font
+        size="2" face="Arial,Helvetica">,</font><a href="#X,Y,Z"><font
+        size="2" face="Arial,Helvetica">-X</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Косвенная
+        загрузка с пре-декрементом</font></td>
+        <td><font size="2" face="Arial,Helvetica">X=X-1, Rd = (X)</font></td>
+        <td><font size="2" face="Arial,Helvetica">None</font></td>
+        <td><font size="2" face="Arial,Helvetica">2*</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">LD</font></td>
+        <td><a href="#Rd"><font size="2" face="Arial,Helvetica">Rd</font></a><font
+        size="2" face="Arial,Helvetica">,</font><a href="#X,Y,Z"><font
+        size="2" face="Arial,Helvetica">Y</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Косвенная
+        загрузка</font></td>
+        <td><font size="2" face="Arial,Helvetica">Rd = (Y)</font></td>
+        <td><font size="2" face="Arial,Helvetica">None</font></td>
+        <td><font size="2" face="Arial,Helvetica">2*</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">LD</font></td>
+        <td><a href="#Rd"><font size="2" face="Arial,Helvetica">Rd</font></a><font
+        size="2" face="Arial,Helvetica">,</font><a href="#X,Y,Z"><font
+        size="2" face="Arial,Helvetica">Y+</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Косвенная
+        загрузка с пост-инкрементом</font></td>
+        <td><font size="2" face="Arial,Helvetica">Rd = (Y), Y=Y+1</font></td>
+        <td><font size="2" face="Arial,Helvetica">None</font></td>
+        <td><font size="2" face="Arial,Helvetica">2*</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">LD</font></td>
+        <td><a href="#Rd"><font size="2" face="Arial,Helvetica">Rd</font></a><font
+        size="2" face="Arial,Helvetica">,</font><a href="#X,Y,Z"><font
+        size="2" face="Arial,Helvetica">-Y</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Косвенная
+        загрузка с пре-декрементом</font></td>
+        <td><font size="2" face="Arial,Helvetica">Y=Y-1, Rd = (Y)</font></td>
+        <td><font size="2" face="Arial,Helvetica">None</font></td>
+        <td><font size="2" face="Arial,Helvetica">2*</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">LDD</font></td>
+        <td><a href="#Rd"><font size="2" face="Arial,Helvetica">Rd</font></a><font
+        size="2" face="Arial,Helvetica">,</font><a href="#X,Y,Z"><font
+        size="2" face="Arial,Helvetica">Y</font></a><font
+        size="2" face="Arial,Helvetica">+</font><a href="#q"><font
+        size="2" face="Arial,Helvetica">q</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Косвенная
+        загрузка с замещением</font></td>
+        <td><font size="2" face="Arial,Helvetica">Rd = (Y+q)</font></td>
+        <td><font size="2" face="Arial,Helvetica">None</font></td>
+        <td><font size="2" face="Arial,Helvetica">2*</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">LD</font></td>
+        <td><a href="#Rd"><font size="2" face="Arial,Helvetica">Rd</font></a><font
+        size="2" face="Arial,Helvetica">,</font><a href="#X,Y,Z"><font
+        size="2" face="Arial,Helvetica">Z</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Косвенная
+        загрузка</font></td>
+        <td><font size="2" face="Arial,Helvetica">Rd = (Z)</font></td>
+        <td><font size="2" face="Arial,Helvetica">None</font></td>
+        <td><font size="2" face="Arial,Helvetica">2*</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">LD</font></td>
+        <td><a href="#Rd"><font size="2" face="Arial,Helvetica">Rd</font></a><font
+        size="2" face="Arial,Helvetica">,</font><a href="#X,Y,Z"><font
+        size="2" face="Arial,Helvetica">Z+</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Косвенная
+        загрузка с пост-инкрементом</font></td>
+        <td><font size="2" face="Arial,Helvetica">Rd = (Z), Z=Z+1</font></td>
+        <td><font size="2" face="Arial,Helvetica">None</font></td>
+        <td><font size="2" face="Arial,Helvetica">2*</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">LD</font></td>
+        <td><a href="#Rd"><font size="2" face="Arial,Helvetica">Rd</font></a><font
+        size="2" face="Arial,Helvetica">,</font><a href="#X,Y,Z"><font
+        size="2" face="Arial,Helvetica">-Z</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Косвенная
+        загрузка с пре-декрементом</font></td>
+        <td><font size="2" face="Arial,Helvetica">Z=Z-1, Rd = (Z)</font></td>
+        <td><font size="2" face="Arial,Helvetica">None</font></td>
+        <td><font size="2" face="Arial,Helvetica">2*</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">LDD</font></td>
+        <td><a href="#Rd"><font size="2" face="Arial,Helvetica">Rd</font></a><font
+        size="2" face="Arial,Helvetica">,</font><a href="#X,Y,Z"><font
+        size="2" face="Arial,Helvetica">Z</font></a><font
+        size="2" face="Arial,Helvetica">+</font><a href="#q"><font
+        size="2" face="Arial,Helvetica">q</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Косвенная
+        загрузка с замещением</font></td>
+        <td><font size="2" face="Arial,Helvetica">Rd = (Z+q)</font></td>
+        <td><font size="2" face="Arial,Helvetica">None</font></td>
+        <td><font size="2" face="Arial,Helvetica">2*</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">STS</font></td>
+        <td><font size="2" face="Arial,Helvetica">k,</font><a
+        href="#Rr"><font size="2" face="Arial,Helvetica">Rr</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Прямое
+        сохранение</font></td>
+        <td><font size="2" face="Arial,Helvetica">(k) = Rr</font></td>
+        <td><font size="2" face="Arial,Helvetica">None</font></td>
+        <td><font size="2" face="Arial,Helvetica">2*</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">ST</font></td>
+        <td><a href="#X,Y,Z"><font size="2"
+        face="Arial,Helvetica">X</font></a><font size="2"
+        face="Arial,Helvetica">,</font><a href="#Rr"><font
+        size="2" face="Arial,Helvetica">Rr</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Косвенное
+        сохранение</font></td>
+        <td><font size="2" face="Arial,Helvetica">(X) = Rr</font></td>
+        <td><font size="2" face="Arial,Helvetica">None</font></td>
+        <td><font size="2" face="Arial,Helvetica">2*</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">ST</font></td>
+        <td><a href="#X,Y,Z"><font size="2"
+        face="Arial,Helvetica">X+</font></a><font size="2"
+        face="Arial,Helvetica">,</font><a href="#Rr"><font
+        size="2" face="Arial,Helvetica">Rr</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Косвенное
+        сохранение с пост-инкрементом</font></td>
+        <td><font size="2" face="Arial,Helvetica">(X) = Rr, X=X+1</font></td>
+        <td><font size="2" face="Arial,Helvetica">None</font></td>
+        <td><font size="2" face="Arial,Helvetica">2*</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">ST</font></td>
+        <td><a href="#X,Y,Z"><font size="2"
+        face="Arial,Helvetica">-X</font></a><font size="2"
+        face="Arial,Helvetica">,</font><a href="#Rr"><font
+        size="2" face="Arial,Helvetica">Rr</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Косвенное
+        сохранение с пре-декрементом</font></td>
+        <td><font size="2" face="Arial,Helvetica">X=X-1, (X)=Rr</font></td>
+        <td><font size="2" face="Arial,Helvetica">None</font></td>
+        <td><font size="2" face="Arial,Helvetica">2*</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">ST</font></td>
+        <td><a href="#X,Y,Z"><font size="2"
+        face="Arial,Helvetica">Y</font></a><font size="2"
+        face="Arial,Helvetica">,</font><a href="#Rr"><font
+        size="2" face="Arial,Helvetica">Rr</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Косвенное
+        сохранение</font></td>
+        <td><font size="2" face="Arial,Helvetica">(Y) = Rr</font></td>
+        <td><font size="2" face="Arial,Helvetica">None</font></td>
+        <td><font size="2" face="Arial,Helvetica">2*</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">ST</font></td>
+        <td><a href="#X,Y,Z"><font size="2"
+        face="Arial,Helvetica">Y+</font></a><font size="2"
+        face="Arial,Helvetica">,</font><a href="#Rr"><font
+        size="2" face="Arial,Helvetica">Rr</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Косвенное
+        сохранение с пост-инкрементом</font></td>
+        <td><font size="2" face="Arial,Helvetica">(Y) = Rr, Y=Y+1</font></td>
+        <td><font size="2" face="Arial,Helvetica">None</font></td>
+        <td><font size="2" face="Arial,Helvetica">2</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">ST</font></td>
+        <td><a href="#X,Y,Z"><font size="2"
+        face="Arial,Helvetica">-Y</font></a><font size="2"
+        face="Arial,Helvetica">,</font><a href="#Rr"><font
+        size="2" face="Arial,Helvetica">Rr</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Косвенное
+        сохранение с пре-декрементом</font></td>
+        <td><font size="2" face="Arial,Helvetica">Y=Y-1, (Y) = Rr</font></td>
+        <td><font size="2" face="Arial,Helvetica">None</font></td>
+        <td><font size="2" face="Arial,Helvetica">2</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">ST</font></td>
+        <td><a href="#X,Y,Z"><font size="2"
+        face="Arial,Helvetica">Y</font></a><font size="2"
+        face="Arial,Helvetica">+</font><a href="#q"><font
+        size="2" face="Arial,Helvetica">q</font></a><font
+        size="2" face="Arial,Helvetica">,</font><a href="#Rr"><font
+        size="2" face="Arial,Helvetica">Rr</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Косвенное
+        сохранение с замещением</font></td>
+        <td><font size="2" face="Arial,Helvetica">(Y+q) = Rr</font></td>
+        <td><font size="2" face="Arial,Helvetica">None</font></td>
+        <td><font size="2" face="Arial,Helvetica">2</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">ST</font></td>
+        <td><a href="#X,Y,Z"><font size="2"
+        face="Arial,Helvetica">Z</font></a><font size="2"
+        face="Arial,Helvetica">,</font><a href="#Rr"><font
+        size="2" face="Arial,Helvetica">Rr</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Косвенное
+        сохранение</font></td>
+        <td><font size="2" face="Arial,Helvetica">(Z) = Rr</font></td>
+        <td><font size="2" face="Arial,Helvetica">None</font></td>
+        <td><font size="2" face="Arial,Helvetica">2</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">ST</font></td>
+        <td><a href="#X,Y,Z"><font size="2"
+        face="Arial,Helvetica">Z+</font></a><font size="2"
+        face="Arial,Helvetica">,</font><a href="#Rr"><font
+        size="2" face="Arial,Helvetica">Rr</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Косвенное
+        сохранение с пост-инкрементом</font></td>
+        <td><font size="2" face="Arial,Helvetica">(Z) = Rr, Z=Z+1</font></td>
+        <td><font size="2" face="Arial,Helvetica">None</font></td>
+        <td><font size="2" face="Arial,Helvetica">2</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">ST</font></td>
+        <td><a href="#X,Y,Z"><font size="2"
+        face="Arial,Helvetica">-Z</font></a><font size="2"
+        face="Arial,Helvetica">,</font><a href="#Rr"><font
+        size="2" face="Arial,Helvetica">Rr</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Косвенное
+        сохранение с пре-декрементом</font></td>
+        <td><font size="2" face="Arial,Helvetica">Z=Z-1, (Z) = Rr</font></td>
+        <td><font size="2" face="Arial,Helvetica">None</font></td>
+        <td><font size="2" face="Arial,Helvetica">2</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">ST</font></td>
+        <td><a href="#X,Y,Z"><font size="2"
+        face="Arial,Helvetica">Z</font></a><font size="2"
+        face="Arial,Helvetica">+</font><a href="#q"><font
+        size="2" face="Arial,Helvetica">q</font></a><font
+        size="2" face="Arial,Helvetica">,</font><a href="#Rr"><font
+        size="2" face="Arial,Helvetica">Rr</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Косвенное
+        сохранение с замещением</font></td>
+        <td><font size="2" face="Arial,Helvetica">(Z+q) = Rr</font></td>
+        <td><font size="2" face="Arial,Helvetica">None</font></td>
+        <td><font size="2" face="Arial,Helvetica">2</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">LPM</font></td>
+        <td><font size="2" face="Arial,Helvetica">Нет</font></td>
+        <td><font size="2" face="Arial,Helvetica">Загрузка
+        из программной памяти</font></td>
+        <td><font size="2" face="Arial,Helvetica">R0 = (</font><a
+        href="#X,Y,Z"><font size="2" face="Arial,Helvetica">Z</font></a><font
+        size="2" face="Arial,Helvetica">)</font></td>
+        <td><font size="2" face="Arial,Helvetica">None</font></td>
+        <td><font size="2" face="Arial,Helvetica">3</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">LPM</font></td>
+        <td><a href="#Rd"><font size="2" face="Arial,Helvetica">Rd</font></a><font
+        size="2" face="Arial,Helvetica">,</font><a href="#X,Y,Z"><font
+        size="2" face="Arial,Helvetica">Z</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Загрузка
+        из программной памяти</font></td>
+        <td><font size="2" face="Arial,Helvetica">Rd = (</font><a
+        href="#X,Y,Z"><font size="2" face="Arial,Helvetica">Z</font></a><font
+        size="2" face="Arial,Helvetica">)</font></td>
+        <td><font size="2" face="Arial,Helvetica">None</font></td>
+        <td><font size="2" face="Arial,Helvetica">3</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">LPM</font></td>
+        <td><a href="#Rd"><font size="2" face="Arial,Helvetica">Rd</font></a><font
+        size="2" face="Arial,Helvetica">,</font><a href="#X,Y,Z"><font
+        size="2" face="Arial,Helvetica">Z+</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Загрузка
+        из программной памяти с
+        пост-инкрементом</font></td>
+        <td><font size="2" face="Arial,Helvetica">Rd = (</font><a
+        href="#X,Y,Z"><font size="2" face="Arial,Helvetica">Z</font></a><font
+        size="2" face="Arial,Helvetica">), Z=Z+1</font></td>
+        <td><font size="2" face="Arial,Helvetica">None</font></td>
+        <td><font size="2" face="Arial,Helvetica">3</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">ELPM</font></td>
+        <td><font size="2" face="Arial,Helvetica">Нет</font></td>
+        <td><font size="2" face="Arial,Helvetica">Расширенная
+        загрузка из программной памяти</font></td>
+        <td><font size="2" face="Arial,Helvetica">R0 = (RAMPZ:</font><a
+        href="#X,Y,Z"><font size="2" face="Arial,Helvetica">Z</font></a><font
+        size="2" face="Arial,Helvetica">)</font></td>
+        <td><font size="2" face="Arial,Helvetica">None</font></td>
+        <td><font size="2" face="Arial,Helvetica">3</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">ELPM</font></td>
+        <td><a href="#Rd"><font size="2" face="Arial,Helvetica">Rd</font></a><font
+        size="2" face="Arial,Helvetica">,</font><a href="#X,Y,Z"><font
+        size="2" face="Arial,Helvetica">Z</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Расширенная
+        загрузка из программной памяти</font></td>
+        <td><font size="2" face="Arial,Helvetica">Rd = (RAMPZ:</font><a
+        href="#X,Y,Z"><font size="2" face="Arial,Helvetica">Z</font></a><font
+        size="2" face="Arial,Helvetica">)</font></td>
+        <td><font size="2" face="Arial,Helvetica">None</font></td>
+        <td><font size="2" face="Arial,Helvetica">3</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">ELPM</font></td>
+        <td><a href="#Rd"><font size="2" face="Arial,Helvetica">Rd</font></a><font
+        size="2" face="Arial,Helvetica">,</font><a href="#X,Y,Z"><font
+        size="2" face="Arial,Helvetica">Z+</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Расширенная
+        загрузка из программной памяти
+        с пост-инкрементом</font></td>
+        <td><font size="2" face="Arial,Helvetica">Rd = (RAMPZ:</font><a
+        href="#X,Y,Z"><font size="2" face="Arial,Helvetica">Z</font></a><font
+        size="2" face="Arial,Helvetica">), Z = Z+1</font></td>
+        <td><font size="2" face="Arial,Helvetica">None</font></td>
+        <td><font size="2" face="Arial,Helvetica">3</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">SPM</font></td>
+        <td><font size="2" face="Arial,Helvetica">Нет</font></td>
+        <td><font size="2" face="Arial,Helvetica">Сохранение
+        в программной памяти</font></td>
+        <td><font size="2" face="Arial,Helvetica">(</font><a
+        href="#X,Y,Z"><font size="2" face="Arial,Helvetica">Z</font></a><font
+        size="2" face="Arial,Helvetica">) = R1:R0</font></td>
+        <td><font size="2" face="Arial,Helvetica">None</font></td>
+        <td><font size="2" face="Arial,Helvetica">-</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">ESPM</font></td>
+        <td><font size="2" face="Arial,Helvetica">Нет</font></td>
+        <td><font size="2" face="Arial,Helvetica">Расширенное
+        сохранение в программной
+        памяти</font></td>
+        <td><font size="2" face="Arial,Helvetica">(RAMPZ:</font><a
+        href="#X,Y,Z"><font size="2" face="Arial,Helvetica">Z</font></a><font
+        size="2" face="Arial,Helvetica">) = R1:R0</font></td>
+        <td><font size="2" face="Arial,Helvetica">None</font></td>
+        <td><font size="2" face="Arial,Helvetica">-</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">IN</font></td>
+        <td><a href="#Rd"><font size="2" face="Arial,Helvetica">Rd</font></a><font
+        size="2" face="Arial,Helvetica">,</font><a href="#P"><font
+        size="2" face="Arial,Helvetica">P</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Чтение
+        порта</font></td>
+        <td><font size="2" face="Arial,Helvetica">Rd = P</font></td>
+        <td><font size="2" face="Arial,Helvetica">None</font></td>
+        <td><font size="2" face="Arial,Helvetica">1</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">OUT</font></td>
+        <td><a href="#P"><font size="2" face="Arial,Helvetica">P</font></a><font
+        size="2" face="Arial,Helvetica">,</font><a href="#Rr"><font
+        size="2" face="Arial,Helvetica">Rr</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Запись в
+        порт</font></td>
+        <td><font size="2" face="Arial,Helvetica">P = Rr</font></td>
+        <td><font size="2" face="Arial,Helvetica">None</font></td>
+        <td><font size="2" face="Arial,Helvetica">1</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">PUSH</font></td>
+        <td><a href="#Rr"><font size="2" face="Arial,Helvetica">Rr</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Занесение
+        регистра в стек</font></td>
+        <td><font size="2" face="Arial,Helvetica">STACK = Rr</font></td>
+        <td><font size="2" face="Arial,Helvetica">None</font></td>
+        <td><font size="2" face="Arial,Helvetica">2</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">POP</font></td>
+        <td><a href="#Rd"><font size="2" face="Arial,Helvetica">Rd</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Извлечение
+        регистра из стека</font></td>
+        <td><font size="2" face="Arial,Helvetica">Rd = STACK</font></td>
+        <td><font size="2" face="Arial,Helvetica">None</font></td>
+        <td><font size="2" face="Arial,Helvetica">2</font></td>
+    </tr>
+</table>
+
+<p>* Для операций доступа к данным
+количество циклов указано при
+условии доступа к внутренней
+памяти данных, и не корректно при
+работе с внешним ОЗУ. Для
+инструкций LD, ST, LDD, STD, LDS, STS, PUSH и POP,
+необходимо добавить один цикл плюс
+по одному циклу для каждого
+ожидания. </p>
+
+<h3><a name="Bit and Bit-test Instructions"></a>Инструкции
+работы с битами</h3>
+
+<table border="1" width="100%">
+    <tr>
+        <td><font size="2" face="Arial,Helvetica"><b>Мнемоника</b></font></td>
+        <td><font size="2" face="Arial,Helvetica"><b>Операнды</b></font></td>
+        <td><font size="2" face="Arial,Helvetica"><b>Описание</b></font></td>
+        <td><font size="2" face="Arial,Helvetica"><b>Операция</b></font></td>
+        <td><font size="2" face="Arial,Helvetica"><b>Флаги</b></font></td>
+        <td><font size="2" face="Arial,Helvetica"><b>Циклы</b></font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">LSL</font></td>
+        <td><a href="#Rd"><font size="2" face="Arial,Helvetica">Rd</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Логический
+        сдвиг влево</font></td>
+        <td><font size="2" face="Arial,Helvetica">Rd(n+1)=Rd(n),
+        Rd(0)=0, C=Rd(7)</font></td>
+        <td><font size="2" face="Arial,Helvetica">Z,C,N,V,H,S</font></td>
+        <td><font size="2" face="Arial,Helvetica">1</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">LSR</font></td>
+        <td><a href="#Rd"><font size="2" face="Arial,Helvetica">Rd</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Логический
+        сдвиг вправо</font></td>
+        <td><font size="2" face="Arial,Helvetica">Rd(n)=Rd(n+1),
+        Rd(7)=0, C=Rd(0)</font></td>
+        <td><font size="2" face="Arial,Helvetica">Z,C,N,V,S</font></td>
+        <td><font size="2" face="Arial,Helvetica">1</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">ROL</font></td>
+        <td><a href="#Rd"><font size="2" face="Arial,Helvetica">Rd</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Циклический
+        сдвиг влево через C</font></td>
+        <td><font size="2" face="Arial,Helvetica">Rd(0)=C,
+        Rd(n+1)=Rd(n), C=Rd(7)</font></td>
+        <td><font size="2" face="Arial,Helvetica">Z,C,N,V,H,S</font></td>
+        <td><font size="2" face="Arial,Helvetica">1</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">ROR</font></td>
+        <td><a href="#Rd"><font size="2" face="Arial,Helvetica">Rd</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Циклический
+        сдвиг вправо через C</font></td>
+        <td><font size="2" face="Arial,Helvetica">Rd(7)=C,
+        Rd(n)=Rd(n+1), C=Rd(0)</font></td>
+        <td><font size="2" face="Arial,Helvetica">Z,C,N,V,S</font></td>
+        <td><font size="2" face="Arial,Helvetica">1</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">ASR</font></td>
+        <td><a href="#Rd"><font size="2" face="Arial,Helvetica">Rd</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Арифметический
+        сдвиг вправо</font></td>
+        <td><font size="2" face="Arial,Helvetica">Rd(n)=Rd(n+1),
+        n=0,...,6</font></td>
+        <td><font size="2" face="Arial,Helvetica">Z,C,N,V,S</font></td>
+        <td><font size="2" face="Arial,Helvetica">1</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">SWAP</font></td>
+        <td><a href="#Rd"><font size="2" face="Arial,Helvetica">Rd</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Перестановка
+        тетрад</font></td>
+        <td><font size="2" face="Arial,Helvetica">Rd(3..0) =
+        Rd(7..4), Rd(7..4) = Rd(3..0)</font></td>
+        <td><font size="2" face="Arial,Helvetica">None</font></td>
+        <td><font size="2" face="Arial,Helvetica">1</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">BSET═</font></td>
+        <td><a href="#s"><font size="2" face="Arial,Helvetica">s</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Установка
+        флага</font></td>
+        <td><font size="2" face="Arial,Helvetica">SREG(s) = 1</font></td>
+        <td><font size="2" face="Arial,Helvetica">SREG(s)</font></td>
+        <td><font size="2" face="Arial,Helvetica">1</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">BCLR</font></td>
+        <td><a href="#s"><font size="2" face="Arial,Helvetica">s</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Очистка
+        флага</font></td>
+        <td><font size="2" face="Arial,Helvetica">SREG(s) = 0</font></td>
+        <td><font size="2" face="Arial,Helvetica">SREG(s)</font></td>
+        <td><font size="2" face="Arial,Helvetica">1</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">SBI</font></td>
+        <td><a href="#P"><font size="2" face="Arial,Helvetica">P</font></a><font
+        size="2" face="Arial,Helvetica">,</font><a href="#b"><font
+        size="2" face="Arial,Helvetica">b</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Установить
+        бит в порту</font></td>
+        <td><font size="2" face="Arial,Helvetica">I/O(P,b) = 1</font></td>
+        <td><font size="2" face="Arial,Helvetica">None</font></td>
+        <td><font size="2" face="Arial,Helvetica">2</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">CBI</font></td>
+        <td><a href="#P"><font size="2" face="Arial,Helvetica">P</font></a><font
+        size="2" face="Arial,Helvetica">,</font><a href="#b"><font
+        size="2" face="Arial,Helvetica">b</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Очистить
+        бит в порту</font></td>
+        <td><font size="2" face="Arial,Helvetica">I/O(P,b) = 0</font></td>
+        <td><font size="2" face="Arial,Helvetica">None</font></td>
+        <td><font size="2" face="Arial,Helvetica">2</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">BST</font></td>
+        <td><a href="#Rr"><font size="2" face="Arial,Helvetica">Rr</font></a><font
+        size="2" face="Arial,Helvetica">,</font><a href="#b"><font
+        size="2" face="Arial,Helvetica">b</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Сохранить
+        бит из регистра в T</font></td>
+        <td><font size="2" face="Arial,Helvetica">T = Rr(b)</font></td>
+        <td><font size="2" face="Arial,Helvetica">T</font></td>
+        <td><font size="2" face="Arial,Helvetica">1</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">BLD</font></td>
+        <td><a href="#Rd"><font size="2" face="Arial,Helvetica">Rd</font></a><font
+        size="2" face="Arial,Helvetica">,</font><a href="#b"><font
+        size="2" face="Arial,Helvetica">b</font></a></td>
+        <td><font size="2" face="Arial,Helvetica">Загрузить
+        бит из T в регистр</font></td>
+        <td><font size="2" face="Arial,Helvetica">Rd(b) = T</font></td>
+        <td><font size="2" face="Arial,Helvetica">None</font></td>
+        <td><font size="2" face="Arial,Helvetica">1</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">SEC</font></td>
+        <td><font size="2" face="Arial,Helvetica">Нет</font></td>
+        <td><font size="2" face="Arial,Helvetica">Установить
+        флаг переноса</font></td>
+        <td><font size="2" face="Arial,Helvetica">C =1</font></td>
+        <td><font size="2" face="Arial,Helvetica">C</font></td>
+        <td><font size="2" face="Arial,Helvetica">1</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">CLC</font></td>
+        <td><font size="2" face="Arial,Helvetica">Нет</font></td>
+        <td><font size="2" face="Arial,Helvetica">Очистить
+        флаг переноса</font></td>
+        <td><font size="2" face="Arial,Helvetica">C = 0</font></td>
+        <td><font size="2" face="Arial,Helvetica">C</font></td>
+        <td><font size="2" face="Arial,Helvetica">1</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">SEN</font></td>
+        <td><font size="2" face="Arial,Helvetica">Нет</font></td>
+        <td><font size="2" face="Arial,Helvetica">Установить
+        флаг отрицательного числа</font></td>
+        <td><font size="2" face="Arial,Helvetica">N = 1</font></td>
+        <td><font size="2" face="Arial,Helvetica">N</font></td>
+        <td><font size="2" face="Arial,Helvetica">1</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">CLN</font></td>
+        <td><font size="2" face="Arial,Helvetica">Нет</font></td>
+        <td><font size="2" face="Arial,Helvetica">Очистить
+        флаг отрицательного числа</font></td>
+        <td><font size="2" face="Arial,Helvetica">N = 0</font></td>
+        <td><font size="2" face="Arial,Helvetica">N</font></td>
+        <td><font size="2" face="Arial,Helvetica">1</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">SEZ</font></td>
+        <td><font size="2" face="Arial,Helvetica">Нет</font></td>
+        <td><font size="2" face="Arial,Helvetica">Установить
+        флаг нуля</font></td>
+        <td><font size="2" face="Arial,Helvetica">Z = 1</font></td>
+        <td><font size="2" face="Arial,Helvetica">Z</font></td>
+        <td><font size="2" face="Arial,Helvetica">1</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">CLZ</font></td>
+        <td><font size="2" face="Arial,Helvetica">Нет</font></td>
+        <td><font size="2" face="Arial,Helvetica">Очистить
+        флаг нуля</font></td>
+        <td><font size="2" face="Arial,Helvetica">Z = 0</font></td>
+        <td><font size="2" face="Arial,Helvetica">Z</font></td>
+        <td><font size="2" face="Arial,Helvetica">1</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">SEI</font></td>
+        <td><font size="2" face="Arial,Helvetica">Нет</font></td>
+        <td><font size="2" face="Arial,Helvetica">Установить
+        флаг прерываний</font></td>
+        <td><font size="2" face="Arial,Helvetica">I = 1</font></td>
+        <td><font size="2" face="Arial,Helvetica">I</font></td>
+        <td><font size="2" face="Arial,Helvetica">1</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">CLI</font></td>
+        <td><font size="2" face="Arial,Helvetica">Нет</font></td>
+        <td><font size="2" face="Arial,Helvetica">Очистить
+        флаг прерываний</font></td>
+        <td><font size="2" face="Arial,Helvetica">I = 0</font></td>
+        <td><font size="2" face="Arial,Helvetica">I</font></td>
+        <td><font size="2" face="Arial,Helvetica">1</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">SES</font></td>
+        <td><font size="2" face="Arial,Helvetica">Нет</font></td>
+        <td><font size="2" face="Arial,Helvetica">Установить
+        флаг числа со знаком</font></td>
+        <td><font size="2" face="Arial,Helvetica">S = 1</font></td>
+        <td><font size="2" face="Arial,Helvetica">S</font></td>
+        <td><font size="2" face="Arial,Helvetica">1</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">CLN</font></td>
+        <td><font size="2" face="Arial,Helvetica">Нет</font></td>
+        <td><font size="2" face="Arial,Helvetica">Очистить
+        флаг числа со знаком</font></td>
+        <td><font size="2" face="Arial,Helvetica">S = 0</font></td>
+        <td><font size="2" face="Arial,Helvetica">S</font></td>
+        <td><font size="2" face="Arial,Helvetica">1</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">SEV</font></td>
+        <td><font size="2" face="Arial,Helvetica">Нет</font></td>
+        <td><font size="2" face="Arial,Helvetica">Установить
+        флаг переполнения</font></td>
+        <td><font size="2" face="Arial,Helvetica">V = 1</font></td>
+        <td><font size="2" face="Arial,Helvetica">V</font></td>
+        <td><font size="2" face="Arial,Helvetica">1</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">CLV</font></td>
+        <td><font size="2" face="Arial,Helvetica">Нет</font></td>
+        <td><font size="2" face="Arial,Helvetica">Очистить
+        флаг переполнения</font></td>
+        <td><font size="2" face="Arial,Helvetica">V = 0</font></td>
+        <td><font size="2" face="Arial,Helvetica">V</font></td>
+        <td><font size="2" face="Arial,Helvetica">1</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">SET</font></td>
+        <td><font size="2" face="Arial,Helvetica">Нет</font></td>
+        <td><font size="2" face="Arial,Helvetica">Установить
+        флаг T</font></td>
+        <td><font size="2" face="Arial,Helvetica">T = 1</font></td>
+        <td><font size="2" face="Arial,Helvetica">T</font></td>
+        <td><font size="2" face="Arial,Helvetica">1</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">CLT</font></td>
+        <td><font size="2" face="Arial,Helvetica">Нет</font></td>
+        <td><font size="2" face="Arial,Helvetica">Очистить
+        флаг T</font></td>
+        <td><font size="2" face="Arial,Helvetica">T = 0</font></td>
+        <td><font size="2" face="Arial,Helvetica">T</font></td>
+        <td><font size="2" face="Arial,Helvetica">1</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">SEH</font></td>
+        <td><font size="2" face="Arial,Helvetica">Нет</font></td>
+        <td><font size="2" face="Arial,Helvetica">Установить
+        флаг внутреннего переноса </font></td>
+        <td><font size="2" face="Arial,Helvetica">H = 1</font></td>
+        <td><font size="2" face="Arial,Helvetica">H</font></td>
+        <td><font size="2" face="Arial,Helvetica">1</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">CLH</font></td>
+        <td><font size="2" face="Arial,Helvetica">Нет</font></td>
+        <td><font size="2" face="Arial,Helvetica">Очистить
+        флаг внутреннего переноса </font></td>
+        <td><font size="2" face="Arial,Helvetica">H = 0</font></td>
+        <td><font size="2" face="Arial,Helvetica">H</font></td>
+        <td><font size="2" face="Arial,Helvetica">1</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">NOP</font></td>
+        <td><font size="2" face="Arial,Helvetica">Нет</font></td>
+        <td><font size="2" face="Arial,Helvetica">Нет
+        операции</font></td>
+        <td><font size="2" face="Arial,Helvetica">Нет</font></td>
+        <td><font size="2" face="Arial,Helvetica">None</font></td>
+        <td><font size="2" face="Arial,Helvetica">1</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">SLEEP</font></td>
+        <td><font size="2" face="Arial,Helvetica">Нет</font></td>
+        <td><font size="2" face="Arial,Helvetica">Спать
+        (уменьшить энергопотребление)</font></td>
+        <td><font size="2" face="Arial,Helvetica">Смотрите
+        описание инструкции</font></td>
+        <td><font size="2" face="Arial,Helvetica">None</font></td>
+        <td><font size="2" face="Arial,Helvetica">1</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial,Helvetica">WDR</font></td>
+        <td><font size="2" face="Arial,Helvetica">Нет</font></td>
+        <td><font size="2" face="Arial,Helvetica">Сброс
+        сторожевого таймера</font></td>
+        <td><font size="2" face="Arial,Helvetica">Смотрите
+        описание инструкции</font></td>
+        <td><font size="2" face="Arial,Helvetica">None</font></td>
+        <td><font size="2" face="Arial,Helvetica">1</font></td>
+    </tr>
+</table>
+
+<p>═ <br>
+Ассемблер не различает регистр
+символов. </p>
+
+<p>Операнды могут быть таких видов: </p>
+
+<blockquote>
+    <p><a name="Rd"></a>Rd: Результирующий (и
+    исходный) регистр в регистровом
+    файле <br>
+    <a name="Rr"></a>Rr: Исходный регистр в
+    регистровом файле <br>
+    <a name="b"></a>b: Константа (3 бита),
+    может быть константное выражение
+    <br>
+    <a name="s"></a>s: Константа (3 бита),
+    может быть константное выражение
+    <br>
+    <a name="P"></a>P: Константа (5-6 бит),
+    может быть константное выражение
+    <br>
+    <a name="K6"></a>K6; Константа (6 бит),
+    может быть константное выражение
+    <br>
+    <a name="K8"></a>K8: Константа (8 бит),
+    может быть константное выражение
+    <br>
+    <a name="k"></a>k: Константа (размер
+    зависит от инструкции), может
+    быть константное выражение <br>
+    <a name="q"></a>q: Константа (6 бит), может
+    быть константное выражение <br>
+    <a name="Rdl"></a>Rdl:═ R24, R26, R28, R30. Для
+    инструкций ADIW и SBIW <br>
+    <a name="X,Y,Z"></a>X,Y,Z: Регистры
+    косвенной адресации (X=R27:R26, Y=R29:R28,
+    Z=R31:R30)</p>
+</blockquote>
+
+<h2><a name="Assembler directives"></a>Директивы
+ассемблера</h2>
+
+<p>Компилятор поддерживает ряд
+директив. Директивы не
+транслируются непосредственно в
+код. Вместо этого они используются
+для указания положения в
+программной памяти, определения
+макросов, инициализации памяти и
+т.д. Список директив приведён в
+следующей таблице. <br>
+═ </p>
+
+<table border="1" width="41%">
+    <tr>
+        <td><font size="2" face="Arial,Helvetica"><b>Директива</b></font></td>
+        <td><font size="2" face="Arial,Helvetica"><b>Описание</b></font></td>
+    </tr>
+    <tr>
+        <td><a href="#BYTE - Reserve bytes to a variable"><font
+        size="2" face="Arial,Helvetica">BYTE</font></a></td>
+        <td><a href="#BYTE - Reserve bytes to a variable"><font
+        size="2" face="Arial,Helvetica">Зарезервировать
+        байты в ОЗУ</font></a></td>
+    </tr>
+    <tr>
+        <td><a href="#CSEG - Code segment"><font size="2"
+        face="Arial,Helvetica">CSEG</font></a></td>
+        <td><a href="#CSEG - Code segment"><font size="2"
+        face="Arial,Helvetica">Программный
+        сегмент</font></a></td>
+    </tr>
+    <tr>
+        <td><a
+        href="#DB - Define constant byte(s) in program memory and"><font
+        size="2" face="Arial,Helvetica">DB</font></a></td>
+        <td><a
+        href="#DB - Define constant byte(s) in program memory and"><font
+        size="2" face="Arial,Helvetica">Определить
+        байты во флэш или EEPROM</font></a></td>
+    </tr>
+    <tr>
+        <td><a href="#DEF - Set a symbolic name on a register"><font
+        size="2" face="Arial,Helvetica">DEF</font></a></td>
+        <td><a href="#DEF - Set a symbolic name on a register"><font
+        size="2" face="Arial,Helvetica">Назначить
+        регистру символическое имя</font></a></td>
+    </tr>
+    <tr>
+        <td><a
+        href="#DEVICE - Define which device to assemble for"><font
+        size="2" face="Arial,Helvetica">DEVICE</font></a></td>
+        <td><a
+        href="#DEVICE - Define which device to assemble for"><font
+        size="2" face="Arial,Helvetica">Определить
+        устройство для которого
+        компилируется программа</font></a></td>
+    </tr>
+    <tr>
+        <td><a href="#DSEG - Data Segment"><font size="2"
+        face="Arial,Helvetica">DSEG</font></a></td>
+        <td><a href="#DSEG - Data Segment"><font size="2"
+        face="Arial,Helvetica">Сегмент данных</font></a></td>
+    </tr>
+    <tr>
+        <td><a
+        href="#DW - Define constant word(s) in program memory and EEPROM"><font
+        size="2" face="Arial,Helvetica">DW</font></a></td>
+        <td><a
+        href="#DW - Define constant word(s) in program memory and EEPROM"><font
+        size="2" face="Arial,Helvetica">Определить
+        слова во флэш или EEPROM</font></a></td>
+    </tr>
+    <tr>
+        <td><a href="#ENDMACRO - End macro"><font size="2"
+        face="Arial,Helvetica">ENDM, ENDMACRO</font></a></td>
+        <td><a href="#ENDMACRO - End macro"><font size="2"
+        face="Arial,Helvetica">Конец макроса</font></a></td>
+    </tr>
+    <tr>
+        <td><a href="#EQU - Set a symbol equal to an expression"><font
+        size="2" face="Arial,Helvetica">EQU</font></a></td>
+        <td><a href="#EQU - Set a symbol equal to an expression"><font
+        size="2" face="Arial,Helvetica">Установить
+        постоянное выражение</font></a></td>
+    </tr>
+    <tr>
+        <td><a href="#ESEG - EEPROM Segment"><font size="2"
+        face="Arial,Helvetica">ESEG</font></a></td>
+        <td><a href="#ESEG - EEPROM Segment"><font size="2"
+        face="Arial,Helvetica">Сегмент EEPROM</font></a></td>
+    </tr>
+    <tr>
+        <td><a href="#EXIT - Exit this file"><font size="2"
+        face="Arial,Helvetica">EXIT</font></a></td>
+        <td><a href="#EXIT - Exit this file"><font size="2"
+        face="Arial,Helvetica">Выйти из файла</font></a></td>
+    </tr>
+    <tr>
+        <td><a href="#INCLUDE - Include another file"><font
+        size="2" face="Arial,Helvetica">INCLUDE</font></a></td>
+        <td><a href="#INCLUDE - Include another file"><font
+        size="2" face="Arial,Helvetica">Вложить
+        другой файл</font></a></td>
+    </tr>
+    <tr>
+        <td><a href="#LIST - Turn the listfile generation on"><font
+        size="2" face="Arial,Helvetica">LIST</font></a></td>
+        <td><a href="#LIST - Turn the listfile generation on"><font
+        size="2" face="Arial,Helvetica">Включить
+        генерацию листинга</font></a></td>
+    </tr>
+    <tr>
+        <td><a href="#LISTMAC - Turn macro expansion on"><font
+        size="2" face="Arial,Helvetica">LISTMAC</font></a></td>
+        <td><a href="#LISTMAC - Turn macro expansion on"><font
+        size="2" face="Arial,Helvetica">Включить
+        разворачивание макросов в
+        листинге</font></a></td>
+    </tr>
+    <tr>
+        <td><a href="#MACRO - Begin macro">MACRO</a></td>
+        <td><a href="#MACRO - Begin macro">Начало
+        макроса</a></td>
+    </tr>
+    <tr>
+        <td><a href="#NOLIST - Turn listfile generation off"><font
+        size="2" face="Arial,Helvetica">NOLIST</font></a></td>
+        <td><a href="#NOLIST - Turn listfile generation off"><font
+        size="2" face="Arial,Helvetica">Выключить
+        генерацию листинга</font></a></td>
+    </tr>
+    <tr>
+        <td><a href="#ORG - Set program origin"><font size="2"
+        face="Arial,Helvetica">ORG</font></a></td>
+        <td><a href="#ORG - Set program origin"><font size="2"
+        face="Arial,Helvetica">Установить
+        положение в сегменте</font></a></td>
+    </tr>
+    <tr>
+        <td><a href="#SET - Set a symbol equal to an expression"><font
+        size="2" face="Arial,Helvetica">SET</font></a></td>
+        <td><a href="#SET - Set a symbol equal to an expression"><font
+        size="2" face="Arial,Helvetica">Установить
+        переменный символический
+        эквивалент выражения</font></a></td>
+    </tr>
+</table>
+
+<p>Все директивы предваряются
+точкой. </p>
+
+<h3><a name="BYTE - Reserve bytes to a variable"></a>BYTE -
+Зарезервировать байты в ОЗУ</h3>
+
+<p>Директива BYTE резервирует байты в
+ОЗУ. Если вы хотите иметь
+возможность ссылаться на
+выделенную область памяти, то
+директива BYTE должна быть
+предварена меткой. Директива
+принимает один обязательный
+параметр, который указывает
+количество выделяемых байт. Эта
+директива может использоваться
+только в сегменте данных(смотреть
+директивы <a href="#CSEG - Code segment">CSEG</a> и <a
+href="#DSEG - Data Segment">DSEG</a>). Выделенные
+байты не инициализируются. </p>
+
+<p><b>Синтаксис:</b> <br>
+<tt>МЕТКА: .BYTE выражение</tt> </p>
+
+<p><b>Пример:</b> <br>
+<tt>.DSEG</tt> <br>
+<tt>var1:═══ .BYTE 1═══════════ ;
+резервирует 1 байт для var1</tt> <br>
+<tt>table:══ .BYTE tab_size════ ; резервирует
+tab_size байт</tt> </p>
+
+<p><tt>.CSEG</tt> <br>
+<tt>════════ ldi r30,low(var1)═ ; Загружает
+младший байт регистра Z</tt> <br>
+<tt>════════ ldi r31,high(var1) ; Загружает
+старший байт регистра Z</tt> <br>
+<tt>════════ ld r1,Z═══════════ ;
+Загружает VAR1 в регистр 1</tt> </p>
+
+<h3><a name="CSEG - Code segment"></a>CSEG -
+Программный сегмент</h3>
+
+<p>Директива CSEG определяет начало
+программного сегмента. Исходный
+файл может состоять из нескольких
+программных сегментов, которые
+объединяются в один программный
+сегмент при компиляции.
+Программный сегмент является
+сегментом по умолчанию.
+Программные сегменты имеют свои
+собственные счётчики положения
+которые считают не побайтно, а по
+словно. Директива <a
+href="#ORG - Set program origin">ORG</a> может быть
+использована для размещения кода и
+констант в необходимом месте
+сегмента. Директива CSEG не имеет
+параметров. </p>
+
+<p><b>Синтаксис:</b> <br>
+<tt>.CSEG</tt> </p>
+
+<p><b>Пример:</b> <br>
+<tt>.DSEG══════════════════════ ;
+Начало сегмента данных</tt> <br>
+<tt>vartab: .BYTE 4════════════ ;
+Резервирует 4 байта в ОЗУ</tt> </p>
+
+<p><tt>.CSEG══════════════════════ ;
+Начало кодового сегмента</tt><br>
+<tt>const:═ .DW 2══════════════ ;
+Разместить константу 0x0002 в памяти
+программ</tt> <br>
+<tt>═══════ mov r1,r0══════════ ;
+Выполнить действия</tt></p>
+
+<h3><a name="DB - Define constant byte(s) in program memory and"></a>DB
+- Определить байты во флэш или EEPROM</h3>
+
+<p>Директива DB резервирует
+необходимое количество байт в
+памяти программ или в EEPROM. Если вы
+хотите иметь возможность ссылаться
+на выделенную область памяти, то
+директива DB должна быть предварена
+меткой. Директива DB должна иметь
+хотя бы один параметр. Данная
+директива может быть размещена
+только в сегменте программ (<a
+href="#CSEG - Code segment">CSEG</a>) или в сегменте
+EEPROM (<a href="#ESEG - EEPROM Segment">ESEG</a>). </p>
+
+<p>Параметры передаваемые директиве
+- это последовательность выражений
+разделённых запятыми. Каждое
+выражение должно быть или числом в
+диапазоне (-128..255), или в результате
+вычисления должно давать результат
+в этом же диапазоне, в противном
+случае число усекается до байта,
+причём БЕЗ выдачи предупреждений.</p>
+
+<p>Если директива получает более
+одного параметра и текущим
+является программный сегмент, то
+параметры упаковываются в слова
+(первый параметр - младший байт), и
+если число параметров нечётно, то
+последнее выражение будет усечено
+до байта и записано как слово со
+старшим байтом равным нулю, даже
+если далее идет ещё одна директива
+DB. </p>
+
+<p><b>Синтаксис:</b> <br>
+<tt>МЕТКА:═ .DB список_выражений</tt> </p>
+
+<p><b>Пример:</b> <br>
+<tt>.CSEG</tt> <br>
+<tt>consts: .DB 0, 255, 0b01010101, -128, 0xaa</tt></p>
+
+<p><tt>.ESEG</tt> <br>
+<tt>const2: .DB 1,2,3</tt> </p>
+
+<h3><a name="DEF - Set a symbolic name on a register"></a>DEF -
+Назначить регистру символическое
+имя</h3>
+
+<p>Директива DEF позволяет ссылаться
+на регистр через некоторое
+символическое имя. Назначенное имя
+может использоваться во всей
+нижеследующей части программы для
+обращений к данному регистру.
+Регистр может иметь несколько
+различных имен. Символическое имя
+может быть переназначено позднее в
+программе. </p>
+
+<p><b>Синтаксис:</b> <br>
+<tt>.DEF Символическое_имя = Регистр</tt> </p>
+
+<p><b>Пример:</b> <br>
+<tt>.DEF temp=R16</tt> <br>
+<tt>.DEF ior=R0</tt> </p>
+
+<p><tt>.CSEG</tt> <br>
+<tt>═ldi temp,0xf0═ ; Загрузить 0xf0 в регистр
+temp (R16)</tt><br>
+<tt>═in ior,0x3f═ ; Прочитать SREG в регистр
+ior (R0)</tt> <br>
+<tt>═eor temp,ior═ ; Регистры temp и ior
+складываются по исключающему или </tt></p>
+
+<h3><a name="DEVICE - Define which device to assemble for"></a>DEVICE
+- Определить устройство для
+которого компилируется программа</h3>
+
+<p>Директива DEVICE позволяет указать
+для какого устройства
+компилируется программа. При
+использовании данной директивы
+компилятор выдаст предупреждение,
+если будет найдена инструкция,
+которую не поддерживает данный
+микроконтроллер. Также будет
+выдано предупреждение, если
+программный сегмент, либо сегмент
+EEPROM превысят размер допускаемый
+устройством. Если же директива не
+используется то все инструкции
+считаются допустимыми, и
+отсутствуют ограничения на размер
+сегментов. </p>
+
+<p><b>Синтаксис:</b> <br>
+<tt>.DEVICE AT90S1200 |AT90S2313 | AT90S2323 | AT90S2333 |
+AT90S2343 | AT90S4414 | AT90S4433 | AT90S4434 | AT90S8515 |
+AT90S8534 | AT90S8535 | ATtiny11 | ATtiny12 | ATtiny22 |
+ATmega603 | ATmega103</tt> </p>
+
+<p><b>Пример:</b> <br>
+<tt>.DEVICE AT90S1200═ ; Используется AT90S1200</tt>
+</p>
+
+<p><tt>.CSEG</tt> <br>
+<tt>═══════ push r30══ ; Эта инструкция
+вызовет предупреждение</tt> <br>
+<tt>══════════════════ ; поскольку
+AT90S1200 её не имеет</tt><br>
+</p>
+
+<h3><a name="DSEG - Data Segment"></a>DSEG - Сегмент
+данных</h3>
+
+<p>Директива DSEG определяет начало
+сегмента данных. Исходный файл
+может состоять из нескольких
+сегментов данных, которые
+объединяются в один сегмент при
+компиляции. Сегмент данных обычно
+состоит только из директив <a
+href="#BYTE - Reserve bytes to a variable">BYTE</a> и
+меток. Сегменты данных имеют свои
+собственные побайтные счётчики
+положения. Директива <a
+href="#ORG - Set program origin">ORG</a> может быть
+использована для размещения
+переменных в необходимом месте ОЗУ.
+Директива не имеет параметров. </p>
+
+<p><b>Синтаксис:</b> <br>
+<tt>.DSEG═</tt> </p>
+
+<p><b>Пример:</b> <br>
+<tt>.DSEG═══════════════════════ ;
+Начало сегмента данных</tt> <br>
+<tt>var1:═ .BYTE 1══════════════ ;
+зарезервировать 1 байт для var1</tt> <br>
+<tt>table:═ .BYTE tab_size══════ ;
+зарезервировать tab_size байт.</tt> </p>
+
+<p><tt>.CSEG</tt> <br>
+<tt>═══════ ldi r30,low(var1)═══ ; Загрузить
+младший байт регистра Z</tt> <br>
+<tt>═══════ ldi r31,high(var1)══ ; Загрузить
+старший байт регистра Z</tt><br>
+<tt>═══════ ld r1,Z═════════════ ;
+Загрузить var1 в регистр r1</tt> </p>
+
+<h3><a
+name="DW - Define constant word(s) in program memory and EEPROM"></a>DW
+- Определить слова во флэш или EEPROM</h3>
+
+<p>&nbsp;</p>
+
+<p>Директива DW резервирует
+необходимое количество слов в
+памяти программ или в EEPROM. Если вы
+хотите иметь возможность ссылаться
+на выделенную область памяти, то
+директива DW должна быть предварена
+меткой. Директива DW должна иметь
+хотя бы один параметр. Данная
+директива может быть размещена
+только в сегменте программ (<a
+href="#CSEG - Code segment">CSEG</a>) или в сегменте
+EEPROM (<a href="#ESEG - EEPROM Segment">ESEG</a>). </p>
+
+<p>Параметры передаваемые директиве
+- это последовательность выражений
+разделённых запятыми. Каждое
+выражение должно быть или числом в
+диапазоне (-32768..65535), или в
+результате вычисления должно
+давать результат в этом же
+диапазоне, в противном случае число
+усекается до слова, причем БЕЗ
+выдачи предупреждений.</p>
+
+<p><b>Синтаксис:</b> <br>
+<tt>МЕТКА: .DW expressionlist</tt> </p>
+
+<p><b>Пример:</b> <br>
+<tt>.CSEG</tt> <br>
+<tt>varlist:═ .DW 0, 0xffff, 0b1001110001010101, -32768, 65535</tt>
+</p>
+
+<p><tt>.ESEG</tt> <br>
+<tt>eevarlst: .DW 0,0xffff,10</tt> </p>
+
+<h3><a name="ENDMACRO - End macro"></a>ENDMACRO - Конец
+макроса</h3>
+
+<p>Директива определяет конец
+макроопределения, и не принимает
+никаких параметров. Для информации
+по определению макросов смотрите
+директиву <a href="#MACRO - Begin macro">MACRO</a>. </p>
+
+<p><b>Синтаксис:</b> <br>
+<tt>.ENDMACRO═</tt> </p>
+
+<p><b>Пример:</b> <br>
+<tt>.MACRO SUBI16══════════════ ; Начало
+определения макроса</tt><br>
+<tt>═══════ subi r16,low(@0)═══ ; Вычесть
+младший байт первого параметра</tt> <br>
+<tt>═══════ sbci r17,high(@0)══ ; Вычесть
+старший байт первого параметра</tt> <br>
+<tt>.ENDMACRO</tt> </p>
+
+<h3><a name="EQU - Set a symbol equal to an expression"></a>EQU -
+Установить постоянное выражение</h3>
+
+<p>Директива EQU присваивает метке
+значение. Эта метка может позднее
+использоваться в выражениях. Метка
+которой присвоено значение данной
+директивой не может быть
+переназначена и её значение не
+может быть изменено. </p>
+
+<p><b>Синтаксис:</b> <br>
+<tt>.EQU метка = выражение</tt> </p>
+
+<p><b>Пример:</b> <br>
+<tt>.EQU io_offset = 0x23</tt> <br>
+<tt>.EQU porta════ = io_offset + 2</tt> </p>
+
+<p><tt>.CSEG════════════════ ; Начало
+сегмента данных</tt><br>
+<tt>═══════ clr r2═══════ ; Очистить
+регистр r2</tt> <br>
+<tt>═══════ out porta,r2═ ; Записать в порт
+A</tt> </p>
+
+<h3><a name="ESEG - EEPROM Segment"></a>ESEG - Сегмент
+EEPROM</h3>
+
+<p>Директива ESEG определяет начало
+сегмента EEPROM. Исходный файл может
+состоять из нескольких сегментов
+EEPROM, которые объединяются в один
+сегмент при компиляции. Сегмент EEPROM
+обычно состоит только из директив <a
+href="#DB - Define constant byte(s) in program memory and">DB</a>,
+<a
+href="#DW - Define constant word(s) in program memory and EEPROM">DW</a>
+и меток. Сегменты EEPROM имеют свои
+собственные побайтные счётчики
+положения. Директива <a
+href="#ORG - Set program origin">ORG</a> может быть
+использована для размещения
+переменных в необходимом месте EEPROM.
+Директива не имеет параметров.</p>
+
+<p><b>Синтаксис:</b> <br>
+<tt>.ESEG═══</tt> </p>
+
+<p><b>Пример:</b> <br>
+<tt>.DSEG═══════════════════ ; Начало
+сегмента данных</tt><br>
+<tt>var1:══ .BYTE 1═════════ ;
+зарезервировать 1 байт для var1</tt> <br>
+<tt>table:═ .BYTE tab_size══ ; зарезервировать
+tab_size байт.</tt> </p>
+
+<p><tt>.ESEG</tt> <br>
+<tt>eevar1: .DW 0xffff═══════ ;
+проинициализировать 1 слово в EEPROM</tt>
+</p>
+
+<h3><a name="EXIT - Exit this file"></a>EXIT - Выйти из
+файла</h3>
+
+<p>Встретив директиву EXIT компилятор
+прекращает компиляцию данного
+файла. Если директива использована
+во вложенном файле (см. директиву <a
+href="#INCLUDE - Include another file">INCLUDE</a>), то
+компиляция продолжается со строки
+следующей после директивы INCLUDE.
+Если же файл не является вложенным,
+то компиляция прекращается. </p>
+
+<p><b>Синтаксис:</b> <br>
+.EXIT </p>
+
+<p><b>Пример:</b> <br>
+<tt>.EXIT═ ; Выйти из данного файла</tt></p>
+
+<h3><a name="INCLUDE - Include another file"></a>INCLUDE -
+Вложить другой файл</h3>
+
+<p>Встретив директиву INCLUDE
+компилятор открывает указанный в
+ней файл, компилирует его пока файл
+не закончится или не встретится
+директива <a href="#EXIT - Exit this file">EXIT</a>,
+после этого продолжает компиляцию
+начального файла со строки
+следующей за директивой INCLUDE.
+Вложенный файл может также
+содержать директивы INCLUDE. </p>
+
+<p><b>Синтаксис:</b> <br>
+<tt>.INCLUDE &quot;имя_файла&quot;</tt> </p>
+
+<p><b>Пример:</b> <br>
+<tt>; файл iodefs.asm:</tt> <br>
+<tt>.EQU sreg══ = 0x3f════ ; Регистр статуса</tt>
+<br>
+<tt>.EQU sphigh = 0x3e════ ; Старший байт
+указателя стека</tt> <br>
+<tt>.EQU splow═ = 0x3d════ ; Младший байт
+указателя стека</tt> </p>
+
+<p><tt>; файл incdemo.asm</tt> <br>
+<tt>.INCLUDE iodefs.asm═══ ; Вложить
+определения портов</tt> <br>
+<tt>═══════ in r0,sreg════ ; Прочитать
+регистр статуса</tt> </p>
+
+<h3><a name="LIST - Turn the listfile generation on"></a>LIST -
+Включить генерацию листинга</h3>
+
+<p>Директива LIST указывает
+компилятору на необходимость
+создания листинга. Листинг
+представляет из себя комбинацию
+ассемблерного кода, адресов и кодов
+операций. По умолчанию генерация
+листинга включена, однако данная
+директива используется совместно с
+директивой <a
+href="#NOLIST - Turn listfile generation off">NOLIST</a> для
+получения листингов отдельных
+частей исходных файлов. </p>
+
+<p><b>Синтаксис:</b> <br>
+.LIST </p>
+
+<p><b>Пример:</b> <br>
+<tt>.NOLIST═══════════════ ; Отключить
+генерацию листинга</tt><br>
+<tt>.INCLUDE &quot;macro.inc&quot;══ ; Вложенные
+файлы не будут</tt> <br>
+<tt>.INCLUDE &quot;const.def&quot;══ ; отображены в
+листинге</tt> <br>
+<tt>.LIST═════════════════ ; Включить
+генерацию листинга</tt> </p>
+
+<h3><a name="LISTMAC - Turn macro expansion on"></a>LISTMAC -
+Включить разворачивание макросов в
+листинге</h3>
+
+<p>После директивы LISTMAC компилятор
+будет показывать в листинге
+содержимое макроса. По умолчанию в
+листинге показывается только вызов
+макроса и передаваемые параметры. </p>
+
+<p><b>Синтаксис:</b> <br>
+<tt>.LISTMAC</tt> </p>
+
+<p><b>Пример:</b> <br>
+<tt>.MACRO MACX════════ ; Определение
+макроса</tt><br>
+<tt>═══════ add═ r0,@0═ ; Тело макроса</tt><br>
+<tt>═══════ eor═ r1,@1═</tt><br>
+<tt>.ENDMACRO══════════ ; Конец
+макроопределения</tt></p>
+
+<p><tt>.LISTMAC═══════════ ; </tt>Включить
+разворачивание макросов <br>
+<tt>═══════ MACX r2,r1═ ; Вызов макроса (в
+листинге будет показано тело</tt>
+макроса)</p>
+
+<h3><a name="MACRO - Begin macro"></a>MACRO - Начало
+макроса</h3>
+
+<p>С директивы MACRO начинается
+определение макроса. В качестве
+параметра директиве передаётся имя
+макроса. При встрече имени макроса
+позднее в тексте программы,
+компилятор заменяет это имя на тело
+макроса. Макрос может иметь до 10
+параметров, к которым в его теле
+обращаются через @0-@9. При вызове
+параметры перечисляются через
+запятые. Определение макроса
+заканчивается директивой <a
+href="#ENDMACRO - End macro">ENDMACRO</a>. </p>
+
+<p>По умолчанию в листинг включается
+только вызов макроса, для
+разворачивания макроса необходимо
+использовать директиву <a
+href="#LISTMAC - Turn macro expansion on">LISTMAC</a>.
+Макрос в листинге показывается
+знаком +. <br>
+═ <br>
+<b>Синтаксис:</b> <br>
+<tt>.MACRO макроимя</tt> </p>
+
+<p><b>Пример:</b> <br>
+<tt>.MACRO SUBI16══════════════════ ;
+Начало макроопределения</tt><br>
+<tt>═══════ subi @1,low(@0)════════ ;
+Вычесть младший байт параметра 0 из
+параметра 1</tt><br>
+<tt>═══════ sbci @2,high(@0)═══════ ;
+Вычесть старший байт параметра 0 из
+параметра 2</tt><br>
+<tt>.ENDMACRO══════════════════════ ;
+Конец макроопределения</tt></p>
+
+<p><tt>.CSEG══════════════════════════
+; Начало программного сегмента</tt><br>
+<tt>═══════ SUBI16 0x1234,r16,r17══ ; Вычесть
+0x1234 из r17:r16</tt> </p>
+
+<h3><a name="NOLIST - Turn listfile generation off"></a>NOLIST -
+Выключить генерацию листинга</h3>
+
+<p>Директива NOLIST указывает
+компилятору на необходимость
+прекращения генерации листинга.
+Листинг представляет из себя
+комбинацию ассемблерного кода,
+адресов и кодов операций. По
+умолчанию генерация листинга
+включена, однако может быть
+отключена данной директивой. Кроме
+того данная директива может быть
+использована совместно с
+директивой <a
+href="#LIST - Turn the listfile generation on">LIST</a> для
+получения листингов отдельных
+частей исходных файлов </p>
+
+<p><b>Синтаксис:</b> <br>
+<tt>.NOLIST</tt> </p>
+
+<p><b>Пример:</b> <br>
+<tt>.NOLIST═══════════════ ; Отключить
+генерацию листинга</tt><br>
+<tt>.INCLUDE &quot;macro.inc&quot;══ ; Вложенные
+файлы не будут</tt> <br>
+<tt>.INCLUDE &quot;const.def&quot;══ ; отображены в
+листинге</tt> <br>
+<tt>.LIST═════════════════ ; Включить
+генерацию листинга</tt> </p>
+
+<h3><a name="ORG - Set program origin"></a>ORG -
+Установить положение в сегменте</h3>
+
+<p>Директива ORG устанавливает
+счётчик положения равным заданной
+величине, которая передаётся как
+параметр. Для сегмента данных она
+устанавливает счётчик положения в
+SRAM (ОЗУ), для сегмента программ это
+программный счётчик, а для сегмента
+EEPROM это положение в EEPROM. Если
+директиве предшествует метка (в той
+же строке) то метка размещается по
+адресу указанному в параметре
+директивы. Перед началом
+компиляции программный счётчик и
+счётчик EEPROM равны нулю, а счётчик
+ОЗУ равен 32 (поскольку адреса 0-31
+заняты регистрами). Обратите
+внимание что для ОЗУ и EEPROM
+используются побайтные счётчики а
+для программного сегмента -
+пословный. </p>
+
+<p><b>Синтаксис:</b> <br>
+<tt>.ORG выражение</tt> </p>
+
+<p><b>Пример:</b> <br>
+<tt>.DSEG═══════════════ ; Начало
+сегмента данных</tt></p>
+
+<p><tt>.ORG 0x37═══════════ ; Установить
+адрес SRAM равным 0x37</tt> <br>
+<tt>variable: .BYTE 1═══ ; Зарезервировать
+байт по адресу 0x37H</tt> </p>
+
+<p><tt>.CSEG</tt> <br>
+<tt>.ORG 0x10═══════════ ; Установить
+программный счётчик равным 0x10</tt> <br>
+<tt>═════════ mov r0,r1═ ; Данная команда
+будет размещена по адресу 0x10</tt></p>
+
+<h3><a name="SET - Set a symbol equal to an expression"></a>SET -
+Установить переменный
+символический эквивалент
+выражения</h3>
+
+<p>Директива SET присваивает имени
+некоторое значение. Это имя позднее
+может быть использовано в
+выражениях. Причем в отличии от
+директивы <a
+href="#EQU - Set a symbol equal to an expression">EQU</a>
+значение имени может быть изменено
+другой директивой SET. </p>
+
+<p><b>Синтаксис:</b> <br>
+<tt>.SET имя = выражение</tt> </p>
+
+<p><b>Пример:</b> <br>
+<tt>.SET io_offset = 0x23</tt> <br>
+<tt>.SET porta════ = io_offset + 2</tt> </p>
+
+<p><tt>.CSEG════════════════ ; Начало
+кодового сегмента</tt><br>
+<tt>═══════ clr r2═══════ ; Очистить
+регистр 2</tt> <br>
+<tt>═══════ out porta,r2═ ; Записать в порт
+A</tt> </p>
+
+<h2><a name="Expressions"></a>Выражения</h2>
+
+<p>Компилятор позволяет
+использовать в программе выражения
+которые могут состоять <a href="#Operands">операндов</a>,
+<a href="#Operators">знаков операций</a> и <a
+href="#Functions">функций</a>. Все выражения
+являются 32-битными. </p>
+
+<h3><a name="Operands"></a>Операнды</h3>
+
+<p>Могут быть использованы
+следующие операнды: </p>
+
+<ul>
+    <li>Метки определённые
+        пользователем (дают значение
+        своего положения).</li>
+    <li>Переменные определённые
+        директивой <a
+        href="#SET - Set a symbol equal to an expression">SET</a></li>
+    <li>Константы определённые
+        директивой <a
+        href="#EQU - Set a symbol equal to an expression">EQU</a></li>
+    <li>Числа заданные в формате:<ul>
+            <li>Десятичном (принят по
+                умолчанию): 10, 255</li>
+            <li>Шестнадцатеричном (два
+                варианта записи): 0x0a, $0a, 0xff,
+                $ff</li>
+            <li>Двоичном: 0b00001010, 0b11111111</li>
+            <li>Восьмеричном (начинаются с
+                нуля): 010, 077</li>
+        </ul>
+    </li>
+    <li>PC - текущее значение
+        программного счётчика (Programm
+        Counter)</li>
+</ul>
+
+<h3><a name="Operators"></a>Операции</h3>
+
+<p>Компилятор поддерживает ряд
+операций, которые перечислены в
+таблице (чем выше положение в
+таблице, тем выше приоритет
+операции). Выражения могут
+заключаться в круглые скобки, такие
+выражения вычисляются перед
+выражениями за скобками. </p>
+
+<table border="1" width="44%">
+    <tr>
+        <td><strong>Приоритет</strong></td>
+        <td><b>Символ</b></td>
+        <td><b>Описание</b></td>
+    </tr>
+    <tr>
+        <td>14</td>
+        <td><a href="#Logical Not"><tt>!</tt></a></td>
+        <td><a href="#Logical Not">Логическое
+        отрицание</a></td>
+    </tr>
+    <tr>
+        <td>14</td>
+        <td><a href="#Bitwise Not"><tt>~</tt></a></td>
+        <td><a href="#Bitwise Not">Побитное
+        отрицание</a></td>
+    </tr>
+    <tr>
+        <td>14</td>
+        <td><a href="#Unary Minus"><tt>-</tt></a></td>
+        <td><a href="#Unary Minus">Минус</a></td>
+    </tr>
+    <tr>
+        <td>13</td>
+        <td><a href="#Multiplication"><tt>*</tt></a></td>
+        <td><a href="#Multiplication">Умножение</a></td>
+    </tr>
+    <tr>
+        <td>13</td>
+        <td><a href="#Division"><tt>/</tt></a></td>
+        <td><a href="#Division">Деление</a></td>
+    </tr>
+    <tr>
+        <td>12</td>
+        <td><a href="#Addition"><tt>+</tt></a></td>
+        <td><a href="#Addition">Суммирование</a></td>
+    </tr>
+    <tr>
+        <td>12</td>
+        <td><a href="#Subtraction"><tt>-</tt></a></td>
+        <td><a href="#Subtraction">Вычитание</a></td>
+    </tr>
+    <tr>
+        <td>11</td>
+        <td><a href="#Shift left"><tt>&lt;&lt;</tt></a></td>
+        <td><a href="#Shift left">Сдвиг влево</a></td>
+    </tr>
+    <tr>
+        <td>11</td>
+        <td><a href="#Shift right"><tt>&gt;&gt;</tt></a></td>
+        <td><a href="#Shift right">Сдвиг вправо</a></td>
+    </tr>
+    <tr>
+        <td>10</td>
+        <td><a href="#Less than"><tt>&lt;</tt></a></td>
+        <td><a href="#Less than">Меньше чем</a></td>
+    </tr>
+    <tr>
+        <td>10</td>
+        <td><a href="#Less or Equal"><tt>&lt;=</tt></a></td>
+        <td><a href="#Less or Equal">Меньше или
+        равно</a></td>
+    </tr>
+    <tr>
+        <td>10</td>
+        <td><a href="#Greater than"><tt>&gt;</tt></a></td>
+        <td><a href="#Greater than">Больше чем</a></td>
+    </tr>
+    <tr>
+        <td>10</td>
+        <td><a href="#Greater or equal"><tt>&gt;=</tt></a></td>
+        <td><a href="#Greater or equal">Больше или
+        равно</a></td>
+    </tr>
+    <tr>
+        <td>9</td>
+        <td><a href="#Equal"><tt>==</tt></a></td>
+        <td><a href="#Equal">Равно</a></td>
+    </tr>
+    <tr>
+        <td>9</td>
+        <td><a href="#Not equal"><tt>!=</tt></a></td>
+        <td><a href="#Not equal">Не равно</a></td>
+    </tr>
+    <tr>
+        <td>8</td>
+        <td><a href="#Bitwise And"><tt>&amp;</tt></a></td>
+        <td><a href="#Bitwise And">Побитное И</a></td>
+    </tr>
+    <tr>
+        <td>7</td>
+        <td><a href="#Bitwise Xor"><tt>^</tt></a></td>
+        <td><a href="#Bitwise Xor">Побитное
+        исключающее ИЛИ</a></td>
+    </tr>
+    <tr>
+        <td>6</td>
+        <td><a href="#Bitwise Or"><tt>|</tt></a></td>
+        <td><a href="#Bitwise Or">Побитное ИЛИ</a></td>
+    </tr>
+    <tr>
+        <td>5</td>
+        <td><a href="#Logical And"><tt>&amp;&amp;</tt></a></td>
+        <td><a href="#Logical And">Логическое И</a></td>
+    </tr>
+    <tr>
+        <td>4</td>
+        <td><a href="#Logical Or"><tt>||</tt></a></td>
+        <td><a href="#Logical Or">Логическое ИЛИ</a></td>
+    </tr>
+</table>
+
+<h4><a name="Logical Not"></a>Логическое
+отрицание</h4>
+
+<p><strong><tt>Символ</tt></strong><tt>: !</tt> <br>
+<strong><tt>Описание</tt></strong><tt>:
+Возвращает 1 если выражение равно 0,
+и наоборот</tt> <br>
+<strong><tt>Приоритет</tt></strong><tt>: 14</tt> <br>
+<strong><tt>Пример</tt></strong><tt>: ldi r16, !0xf0═ ; В
+r16 загрузить 0x00</tt> </p>
+
+<h4><a name="Bitwise Not"></a>Побитное отрицание</h4>
+
+<p><strong><tt>Символ</tt></strong><tt>: ~</tt> <br>
+<strong><tt>Описание</tt></strong><tt>:
+Возвращает выражение в котором все
+биты проинвертированы</tt> <br>
+<strong><tt>Приоритет</tt></strong><tt>: 14</tt> <br>
+<strong><tt>Пример</tt></strong><tt>: ldi r16, ~0xf0═ ; В
+r16 загрузить 0x0f</tt> </p>
+
+<h4><a name="Unary Minus"></a>Минус</h4>
+
+<p><strong><tt>Символ</tt></strong><tt>: -</tt> <br>
+<strong><tt>Описание</tt></strong><tt>:
+Возвращает арифметическое
+отрицание выражения</tt> <br>
+<strong><tt>Приоритет</tt></strong><tt>: 14</tt> <br>
+<strong><tt>Пример</tt></strong><tt>: ldi r16,-2═ ;
+Загрузить -2(0xfe) в r16</tt> </p>
+
+<h4><a name="Multiplication"></a>Умножение</h4>
+
+<p><strong><tt>Символ</tt></strong><tt>: *</tt> <br>
+<strong><tt>Описание</tt></strong><tt>:
+Возвращает результат умножения
+двух выражений</tt> <br>
+<strong><tt>Приоритет</tt></strong><tt>: 13</tt> <br>
+<strong><tt>Пример</tt></strong><tt>: ldi r30, label*2</tt>
+</p>
+
+<h4><a name="Division"></a>Деление</h4>
+
+<p><strong><tt>Символ</tt></strong><tt>: /</tt> <br>
+<strong><tt>Описание</tt></strong><tt>:
+Возвращает целую часть результата
+деления левого выражения на правое</tt>
+<br>
+<strong><tt>Приоритет</tt></strong><tt>: 13</tt> <br>
+<strong><tt>Пример</tt></strong><tt>: ldi r30, label/2</tt>
+</p>
+
+<h4><a name="Addition"></a>Суммирование</h4>
+
+<p><strong><tt>Символ</tt></strong><tt>: +</tt> <br>
+<strong><tt>Описание</tt></strong><tt>:
+Возвращает сумму двух выражений</tt> <br>
+<strong><tt>Приоритет</tt></strong><tt>: 12</tt> <br>
+<strong><tt>Пример</tt></strong><tt>: ldi r30, c1+c2</tt> </p>
+
+<h4><a name="Subtraction"></a>Вычитание</h4>
+
+<p><strong><tt>Символ</tt></strong><tt>: -</tt> <br>
+<strong><tt>Описание</tt></strong><tt>:
+Возвращает результат вычитания
+правого выражения из левого</tt> <br>
+<strong><tt>Приоритет</tt></strong><tt>: 12</tt> <br>
+<strong><tt>Пример</tt></strong><tt>: ldi r17, c1-c2</tt> </p>
+
+<h4><a name="Shift left"></a>Сдвиг влево</h4>
+
+<p><strong><tt>Символ</tt></strong><tt>: &lt;&lt;</tt> <br>
+<strong><tt>Описание</tt></strong><tt>:
+Возвращает левое выражение
+сдвинутое влево на число бит
+указанное справа</tt> <br>
+<strong><tt>Приоритет</tt></strong><tt>: 11</tt> <br>
+<strong><tt>Пример</tt></strong><tt>: ldi r17,
+1&lt;&lt;bitmask═ ; В r17 загрузить 1
+сдвинутую влево bitmask раз</tt> </p>
+
+<h4><a name="Shift right"></a>Сдвиг вправо</h4>
+
+<p><strong><tt>Символ</tt></strong><tt>: &gt;&gt;</tt> <br>
+<strong><tt>Описание</tt></strong><tt>:
+Возвращает левое выражение
+сдвинутое вправо на число бит
+указанное справа</tt> <br>
+<strong><tt>Приоритет</tt></strong><tt>: 11</tt> <br>
+<strong><tt>Пример</tt></strong><tt>: ldi r17,
+c1&gt;&gt;c2═ ; В r17 загрузить c1 сдвинутое
+вправо c2 раз</tt> </p>
+
+<h4><a name="Less than"></a>Меньше чем</h4>
+
+<p><strong><tt>Символ</tt></strong><tt>: &lt;</tt> <br>
+<strong><tt>Описание</tt></strong><tt>:
+Возвращает 1 если левое выражение
+меньше чем правое (учитывается
+знак), и 0 в противном случае</tt> <br>
+<strong><tt>Приоритет</tt></strong><tt>: 10</tt> <br>
+<strong><tt>Пример</tt></strong><tt>: ori r18,
+bitmask*(c1&lt;c2)+1</tt> </p>
+
+<h4><a name="Less or Equal"></a>Меньше или равно</h4>
+
+<p><strong><tt>Символ</tt></strong><tt>: &lt;=</tt> <br>
+<strong><tt>Описание</tt></strong><tt>:
+Возвращает 1 если левое выражение
+меньше или равно чем правое
+(учитывается знак), и 0 в противном
+случае</tt><br>
+<strong><tt>Приоритет</tt></strong><tt>: 10</tt> <br>
+<strong><tt>Пример</tt></strong><tt>: ori r18,
+bitmask*(c1&lt;=c2)+1</tt> </p>
+
+<h4><a name="Greater than"></a>Больше чем</h4>
+
+<p><strong><tt>Символ</tt></strong><tt>: &gt;</tt> <br>
+<strong><tt>Описание</tt></strong><tt>:
+Возвращает 1 если левое выражение
+больше чем правое (учитывается
+знак), и 0 в противном случае</tt><br>
+<strong><tt>Приоритет</tt></strong><tt>: 10</tt> <br>
+<strong><tt>Пример</tt></strong><tt>: ori r18,
+bitmask*(c1&gt;c2)+1</tt> </p>
+
+<h4><a name="Greater or equal"></a>Больше или равно</h4>
+
+<p><strong><tt>Символ</tt></strong><tt>: &gt;=</tt> <br>
+<strong><tt>Описание</tt></strong><tt>:
+Возвращает 1 если левое выражение
+больше или равно чем правое
+(учитывается знак), и 0 в противном
+случае</tt><br>
+<strong><tt>Приоритет</tt></strong><tt>: 10</tt> <br>
+<strong><tt>Пример</tt></strong><tt>: ori r18,
+bitmask*(c1&gt;=c2)+1</tt> </p>
+
+<h4><a name="Equal"></a>Равно</h4>
+
+<p><strong><tt>Символ</tt></strong><tt>: ==</tt> <br>
+<strong><tt>Описание</tt></strong><tt>:
+Возвращает 1 если левое выражение
+равно правому (учитывается знак), и 0
+в противном случае</tt><br>
+<strong><tt>Приоритет</tt></strong><tt>: 9</tt> <br>
+<strong><tt>Пример</tt></strong><tt>: andi r19,
+bitmask*(c1==c2)+1</tt> </p>
+
+<h4><a name="Not equal"></a>Не равно</h4>
+
+<p><strong><tt>Символ</tt></strong><tt>: !=</tt> <br>
+<strong><tt>Описание</tt></strong><tt>:
+Возвращает 1 если левое выражение
+не равно правому (учитывается знак),
+и 0 в противном случае</tt><br>
+<strong><tt>Приоритет</tt></strong><tt>: 9</tt> <br>
+<strong><tt>Пример</tt></strong><tt>: .SET flag =
+(c1!=c2)═ ;Установить flag равным 1 или 0</tt>
+</p>
+
+<h4><a name="Bitwise And"></a>Побитное И</h4>
+
+<p><strong><tt>Символ</tt></strong><tt>: &amp;</tt> <br>
+<strong><tt>Описание</tt></strong><tt>:
+Возвращает результат побитового И
+выражений</tt> <br>
+<strong><tt>Приоритет</tt></strong><tt>:═ 8</tt> <br>
+<strong><tt>Пример</tt></strong><tt>: ldi r18,
+High(c1&amp;c2)</tt> </p>
+
+<h4><a name="Bitwise Xor"></a>Побитное
+исключающее ИЛИ</h4>
+
+<p><strong><tt>Символ</tt></strong><tt>: ^</tt> <br>
+<strong><tt>Описание</tt></strong><tt>:
+Возвращает результат побитового
+исключающего ИЛИ выражений</tt> <br>
+<strong><tt>Приоритет</tt></strong><tt>: 7</tt> <br>
+<strong><tt>Пример</tt></strong><tt>: ldi r18, Low(c1^c2)</tt>
+</p>
+
+<h4><a name="Bitwise Or"></a>Побитное ИЛИ</h4>
+
+<p><strong><tt>Символ</tt></strong><tt>: |</tt> <br>
+<strong><tt>Описание</tt></strong><tt>:
+Возвращает результат побитового
+ИЛИ выражений</tt> <br>
+<strong><tt>Приоритет</tt></strong><tt>: 6</tt> <br>
+<strong><tt>Пример</tt></strong><tt>: ldi r18, Low(c1|c2)</tt>
+</p>
+
+<h4><a name="Logical And"></a>Логическое И</h4>
+
+<p><strong><tt>Символ</tt></strong><tt>: &amp;&amp;</tt> <br>
+<strong><tt>Описание</tt></strong><tt>:
+Возвращает 1 если оба выражения не
+равны нулю, и 0 в противном случае</tt>
+<br>
+<strong><tt>Приоритет</tt></strong><tt>: 5</tt> <br>
+<strong><tt>Пример</tt></strong><tt>: ldi r18,
+Low(c1&amp;&amp;c2)</tt> </p>
+
+<h4><a name="Logical Or"></a>Логическое ИЛИ</h4>
+
+<p><strong><tt>Символ</tt></strong><tt>: ||</tt> <br>
+<strong><tt>Описание</tt></strong><tt>:
+Возвращает 1 если хотя бы одно
+выражение не равно нулю, и 0 в
+противном случае</tt><br>
+<strong><tt>Приоритет</tt></strong><tt>: 4</tt> <br>
+<strong><tt>Пример</tt></strong><tt>: ldi r18, Low(c1||c2)</tt>
+</p>
+
+<h3><a name="Functions"></a>Функции</h3>
+
+<p>Определены следующие функции: </p>
+
+<ul>
+    <li>LOW(выражение) возвращает
+        младший байт выражения</li>
+    <li>HIGH(выражение) возвращает
+        второй байт выражения</li>
+    <li>BYTE2(выражение) то же что и
+        функция HIGH</li>
+    <li>BYTE3(выражение) возвращает
+        третий байт выражения</li>
+    <li>BYTE4(выражение) возвращает
+        четвёртый байт выражения</li>
+    <li>LWRD(выражение) возвращает биты
+        0-15 выражения</li>
+    <li>HWRD(выражение) возвращает биты
+        16-31 выражения</li>
+    <li>PAGE(выражение) возвращает биты
+        16-21 выражения</li>
+    <li>EXP2(выражение) возвращает 2 в
+        степени (выражение)</li>
+    <li>LOG2(выражение) возвращает целую
+        часть log2(выражение)</li>
+</ul>
+
+<h2><a name="General usage"></a>Использование
+программы</h2>
+
+<p>Этот раздел описывает
+использование компилятора и
+встроенного редактора </p>
+
+<ul>
+    <li><a href="#Opening Assembly Files">Открытие
+        файлов</a></li>
+    <li><a href="#Click On Errors">Сообщения об
+        ошибках</a></li>
+    <li><a href="#Setting Program Options">Опции</a></li>
+</ul>
+
+<h3><a name="Opening Assembly Files"></a>Открытие
+файлов</h3>
+
+<p>В WAVRASM могут быть открыты как
+новые так и существующие файлы.
+Количество открытых файлов
+ограничено размером памяти, однако
+объём одного файла не может
+превышать 28 килобайт (в связи с
+ограничением MS-Windows). Компиляция
+файлов большего размера возможна,
+но они не могут быть редактируемы
+встроенным редактором. Каждый файл
+открывается в отдельном окне. </p>
+
+<h3><a name="Click On Errors"></a>Сообщения об
+ошибках</h3>
+
+<p>После компиляции программы
+появляется окно сообщений. Все
+обнаруженные компилятором ошибки
+будут перечислены в этом окне. При
+выборе строки с сообщением о
+ошибке, строка исходного файла, в
+которой найдена ошибка, становится
+красной. Если же ошибка находится
+во вложенном файле, то этого
+подсвечивания не произойдёт.</p>
+
+<p>Если по строке в окне сообщений
+клацнуть дважды, то окно файла с
+указанной ошибкой становится
+активным, и курсор помещается в
+начале строки содержащей ошибку.
+Если же файл с ошибкой не открыт
+(например это вложенный файл) то он
+будет автоматически открыт. </p>
+
+<p>Учтите, что если вы внесли
+изменения в исходные тексты
+(добавили или удалили строки), то
+информация о номерах строк в окне
+сообщений не является корректной.</p>
+
+<h3><a name="Setting Program Options"></a>Опции</h3>
+
+<p>Некоторые установки программы
+могут быть изменены через пункт
+меню "Options". 
+
+<!-- Если выбрать этот пункт
+то появится вот такое диалоговое
+окно:</p>
+
+<blockquote>
+    <p><img src="options.JPG" width="332" height="249"></p>
+</blockquote -->
+
+<p>В поле ввода, озаглавленном
+&quot;List-file extension&quot;, вводится
+расширение, используемое для файла
+листинга, а в поле &quot;Output-file
+extension&quot; находится расширение для
+файлов с результатом компиляции
+программы. В прямоугольнике &quot;Output
+file format&quot; можно выбрать формат
+выходного файла (как правило
+используется интеловский). Однако
+это не влияет на объектный файл
+(используемый AVR Studio), который
+всегда имеет один и тот же формат, и
+расширение OBJ. Если в исходном файле
+присутствует сегмент EEPROM то будет
+также создан файл с расширением EEP.
+Установки заданные в данном окне
+запоминаются на постоянно, и при
+следующем запуске программы, их нет
+необходимости переустанавливать.</p>
+
+<p>Опция &quot;Wrap relative jumps&quot; даёт
+возможность &quot;заворачивать&quot;
+адреса. Эта опция может быть
+использована только на чипах с
+объёмом программной памяти 4К слов
+(8К байт), при этом становится
+возможным делать относительные
+переходы (rjmp) и вызовы подпрограмм
+(rcall) по всей памяти.</p>
+
+<p>Опция &quot;Save before assemble&quot; указывает
+программе на необходимость
+автоматического сохранения
+активного окна (и только его) перед
+компиляцией.</p>
+
+<p>Если вы хотите, чтобы при закрытии
+программы закрывались все
+открытые окна, то поставьте галочку
+в поле &quot;Close all windows before exit&quot;.</p>
+
+<hr>
+
+<p>Atmel, AVR являются
+зарегистрированными товарными
+знаками фирмы Atmel Corporation</p>
+
+<p><font size="2">Перевод выполнил Руслан
+Шимкевич, </font><a href="mailto:ruslansh@i.com.ua"><font
+size="2">ruslansh@i.com.ua</font></a></p>
+</body>
+</html>
