@@ -1,0 +1,22 @@
+
+#ifndef _MACRO_INC_
+#define _MACRO_INC_
+
+
+.macro uout
+   .if @0<0x40
+       out @0,@1
+   .else
+       sts @0,@1
+   .endif
+.endm
+.macro uin
+   .if @1<0x40
+       in @0,@1
+   .else
+       lds @0,@1
+   .endif
+.endm
+
+
+#endif  /* _MACRO_INC_ */
