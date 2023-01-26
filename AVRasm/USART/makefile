@@ -6,10 +6,11 @@ TARGET_MCU	:= atmega328p
 PORT		:= com8
 # PORT		:= com12
 
-# BAUD		:= 9600
 # BAUD		:= 19200
+# для LGT8F
+# BAUD		:= 57600 
+# для NANO
 BAUD		:= 115200
-# BAUD		:= 921600
 
 FILE_NAME	:= USART
 ASM			:= $(FILE_NAME).asm

@@ -1,0 +1,37 @@
+<ASSEMBLER_INFO>
+ <VERSION>2.1.30</VERSION>
+ <DEVICE>ATmega16</DEVICE>
+ <WORKING_DIR>E:\VSCode\AsmStudy\AVRasm\Examles\10. Fast_PWM</WORKING_DIR>
+ <INCLUDE_PATH>
+  <DIR></DIR>
+ </INCLUDE_PATH>
+ <SOURCE_FILE>Fast_PWM.asm</SOURCE_FILE>
+ <INCLUDED_FILES>
+  <FILE>./lib/m16def.inc</FILE>
+ </INCLUDED_FILES>
+ <OBJECT_FILES>
+  <FILE>Fast_PWM.obj</FILE>
+ </OBJECT_FILES>
+ <HEX_FILES>
+  <FILE>Fast_PWM.hex</FILE>
+  <FILE>Fast_PWM.eep</FILE>
+ </HEX_FILES>
+ <OUTPUT_FILES>
+  <FILE>Fast_PWM.map</FILE>
+ </OUTPUT_FILES>
+ <LABELS>
+  <Digits><FILE>Fast_PWM.asm</FILE><LINE>54</LINE></Digits>
+  <eDigits><FILE>Fast_PWM.asm</FILE><LINE>58</LINE></eDigits>
+  <RESET><FILE>Fast_PWM.asm</FILE><LINE>129</LINE></RESET>
+  <TIMER1_COMPA><FILE>Fast_PWM.asm</FILE><LINE>72</LINE></TIMER1_COMPA>
+  <TIMER0_COMP><FILE>Fast_PWM.asm</FILE><LINE>75</LINE></TIMER0_COMP>
+  <T0_CheckChAup><FILE>Fast_PWM.asm</FILE><LINE>82</LINE></T0_CheckChAup>
+  <T0_CheckChAdown><FILE>Fast_PWM.asm</FILE><LINE>92</LINE></T0_CheckChAdown>
+  <T0_CheckChBup><FILE>Fast_PWM.asm</FILE><LINE>102</LINE></T0_CheckChBup>
+  <T0_CheckChBdown><FILE>Fast_PWM.asm</FILE><LINE>112</LINE></T0_CheckChBdown>
+  <T0_Next><FILE>Fast_PWM.asm</FILE><LINE>122</LINE></T0_Next>
+  <RAM_Flush><FILE>Fast_PWM.asm</FILE><LINE>139</LINE></RAM_Flush>
+  <Reg_Flush><FILE>Fast_PWM.asm</FILE><LINE>147</LINE></Reg_Flush>
+  <Main><FILE>Fast_PWM.asm</FILE><LINE>195</LINE></Main>
+ </LABELS>
+</ASSEMBLER_INFO>

@@ -1,0 +1,45 @@
+<ASSEMBLER_INFO>
+ <VERSION>2.1.30</VERSION>
+ <DEVICE>ATmega16</DEVICE>
+ <WORKING_DIR>E:\VSCode\AsmStudy\AVRasm\Examles\5. Dynamic_Indication</WORKING_DIR>
+ <INCLUDE_PATH>
+  <DIR></DIR>
+ </INCLUDE_PATH>
+ <SOURCE_FILE>Dynamic_Indication.asm</SOURCE_FILE>
+ <INCLUDED_FILES>
+  <FILE>./lib/m16def.inc</FILE>
+  <FILE>./lib/Delay.asm</FILE>
+ </INCLUDED_FILES>
+ <OBJECT_FILES>
+  <FILE>Dynamic_Indication.obj</FILE>
+ </OBJECT_FILES>
+ <HEX_FILES>
+  <FILE>Dynamic_Indication.hex</FILE>
+  <FILE>Dynamic_Indication.eep</FILE>
+ </HEX_FILES>
+ <OUTPUT_FILES>
+  <FILE>Dynamic_Indication.map</FILE>
+ </OUTPUT_FILES>
+ <LABELS>
+  <Digits><FILE>Dynamic_Indication.asm</FILE><LINE>48</LINE></Digits>
+  <eDigits><FILE>Dynamic_Indication.asm</FILE><LINE>52</LINE></eDigits>
+  <RESET><FILE>Dynamic_Indication.asm</FILE><LINE>67</LINE></RESET>
+  <TIMER1_COMPA><FILE>Dynamic_Indication.asm</FILE><LINE>64</LINE></TIMER1_COMPA>
+  <RAM_Flush><FILE>Dynamic_Indication.asm</FILE><LINE>77</LINE></RAM_Flush>
+  <Reg_Flush><FILE>Dynamic_Indication.asm</FILE><LINE>85</LINE></Reg_Flush>
+  <Main><FILE>Dynamic_Indication.asm</FILE><LINE>113</LINE></Main>
+  <Display><FILE>Dynamic_Indication.asm</FILE><LINE>138</LINE></Display>
+  <Delay1us><FILE>./lib/Delay.asm</FILE><LINE>14</LINE></Delay1us>
+  <Delay5us><FILE>./lib/Delay.asm</FILE><LINE>19</LINE></Delay5us>
+  <Delay5us_loop><FILE>./lib/Delay.asm</FILE><LINE>22</LINE></Delay5us_loop>
+  <Delay10us><FILE>./lib/Delay.asm</FILE><LINE>31</LINE></Delay10us>
+  <Delay10us_loop><FILE>./lib/Delay.asm</FILE><LINE>34</LINE></Delay10us_loop>
+  <Delayus><FILE>./lib/Delay.asm</FILE><LINE>42</LINE></Delayus>
+  <Delayus_loop1><FILE>./lib/Delay.asm</FILE><LINE>44</LINE></Delayus_loop1>
+  <Delayus_loop2><FILE>./lib/Delay.asm</FILE><LINE>46</LINE></Delayus_loop2>
+  <Delayms><FILE>./lib/Delay.asm</FILE><LINE>58</LINE></Delayms>
+  <Delayms_loop><FILE>./lib/Delay.asm</FILE><LINE>61</LINE></Delayms_loop>
+  <Decoder><FILE>Dynamic_Indication.asm</FILE><LINE>122</LINE></Decoder>
+  <LedMatrix><FILE>Dynamic_Indication.asm</FILE><LINE>129</LINE></LedMatrix>
+ </LABELS>
+</ASSEMBLER_INFO>

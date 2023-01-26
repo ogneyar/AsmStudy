@@ -1,0 +1,38 @@
+<ASSEMBLER_INFO>
+ <VERSION>2.1.30</VERSION>
+ <DEVICE>ATmega16</DEVICE>
+ <WORKING_DIR>E:\VSCode\AsmStudy\AVRasm\Examles\4. IO_Ports</WORKING_DIR>
+ <INCLUDE_PATH>
+  <DIR></DIR>
+ </INCLUDE_PATH>
+ <SOURCE_FILE>IO_Ports.asm</SOURCE_FILE>
+ <INCLUDED_FILES>
+  <FILE>m16def.inc</FILE>
+ </INCLUDED_FILES>
+ <OBJECT_FILES>
+  <FILE>IO_Ports.obj</FILE>
+ </OBJECT_FILES>
+ <HEX_FILES>
+  <FILE>IO_Ports.hex</FILE>
+  <FILE>IO_Ports.eep</FILE>
+ </HEX_FILES>
+ <OUTPUT_FILES>
+  <FILE>IO_Ports.map</FILE>
+ </OUTPUT_FILES>
+ <LABELS>
+  <Digits><FILE>IO_Ports.asm</FILE><LINE>47</LINE></Digits>
+  <eDigits><FILE>IO_Ports.asm</FILE><LINE>51</LINE></eDigits>
+  <RESET><FILE>IO_Ports.asm</FILE><LINE>103</LINE></RESET>
+  <TIMER1_COMPA><FILE>IO_Ports.asm</FILE><LINE>65</LINE></TIMER1_COMPA>
+  <TIMER0_COMP><FILE>IO_Ports.asm</FILE><LINE>90</LINE></TIMER0_COMP>
+  <LeftToRight><FILE>IO_Ports.asm</FILE><LINE>74</LINE></LeftToRight>
+  <RightToLeft><FILE>IO_Ports.asm</FILE><LINE>79</LINE></RightToLeft>
+  <Timer1Out><FILE>IO_Ports.asm</FILE><LINE>86</LINE></Timer1Out>
+  <ChangeDirection><FILE>IO_Ports.asm</FILE><LINE>84</LINE></ChangeDirection>
+  <Timer0Out><FILE>IO_Ports.asm</FILE><LINE>100</LINE></Timer0Out>
+  <ChangeInt><FILE>IO_Ports.asm</FILE><LINE>173</LINE></ChangeInt>
+  <RAM_Flush><FILE>IO_Ports.asm</FILE><LINE>113</LINE></RAM_Flush>
+  <Reg_Flush><FILE>IO_Ports.asm</FILE><LINE>121</LINE></Reg_Flush>
+  <Main><FILE>IO_Ports.asm</FILE><LINE>168</LINE></Main>
+ </LABELS>
+</ASSEMBLER_INFO>

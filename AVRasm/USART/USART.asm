@@ -6,7 +6,7 @@
 .INCLUDE "m328Pdef.inc" ; загрузка предопределений для ATmega328p 
 #include "macro.inc" ; подключение файла с макросами
 
-;.LIST ; включить генерацию листинга 
+;.LIST ; включить генерацию листинга
 .CSEG ; начало сегмента кода 
 .ORG 0x0000 ; начальное значение для адресации 
 
@@ -115,17 +115,18 @@ USART_Init: ; r16 = ubrr & 0xff, r17 = (ubrr >> 8) & 0xff,
 	; Enable receiver and transmitter
 	ldi r16, (1 << RXEN0) | (1 << TXEN0)
 	uout UCSR0B, r16	
-	; Enabled, Even Parity
-	ldi r16, (1 << UPM01) | (1 << UCSZ01) | (1 << UCSZ00)
+	; UPM01 - Enabled, Even Parity
+	ldi r16, (1 << UCSZ01) | (1 << UCSZ00) ; (1 << UPM01) | 
 	uout UCSR0C, r16
 ret
 
 ; -- функция передачи данных -- 
 USART_Transmit: ; data in r16
 	; Wait for empty transmit buffer
-	uin r17, UCSR0A ; uin - macros из файла macro.inc
-	sbrs r17, UDRE0 ; Skip if Bit in Register Set
-	rjmp USART_Transmit
+	;uin r17, UCSR0A ; uin - macros из файла macro.inc
+	;sbrs r17, UDRE0 ; Skip if Bit in Register Set
+	SBIS	UCSR0A, UDRE0
+	RJMP 	USART_Transmit
 	; Put data (r16) into buffer, sends the data
 	uout UDR0, r16
 ret
@@ -133,14 +134,15 @@ ret
 ; -- функция приёма данных -- 
 USART_Receive:
 	; Wait for data to be received
-	uin r17, UCSR0A
-	sbrs r17, RXC0 ; Skip if Bit in Register Set
-	rjmp USART_Receive
+	;uin r17, UCSR0A
+	;sbrs r17, RXC0 ; Skip if Bit in Register Set
+	SBIS	UCSRA, RXC
+	RJMP	USART_Receive
 	; Get and return received data from buffer
 	uin r16, UDR0
 ret
 
 
 ; Program_name: .DB "USART Transmit-Reseive" 
-Test: .DB "Test",'\n',0
+Test: .DB "Test"
 

@@ -3,13 +3,15 @@ PROGRAMMER	:= arduino
 
 TARGET_MCU	:= atmega328p
 
-PORT		:= com8
-# PORT		:= com12
+# PORT		:= com8
+PORT		:= com12
 
-# BAUD		:= 9600
+# для ATmega8
 # BAUD		:= 19200
-BAUD		:= 115200
-# BAUD		:= 921600
+# для LGT8F
+BAUD		:= 57600 
+# для NANO
+# BAUD		:= 115200
 
 FILE_NAME	:= blink
 ASM			:= $(FILE_NAME).asm

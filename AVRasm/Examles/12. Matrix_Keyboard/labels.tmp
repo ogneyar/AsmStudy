@@ -1,0 +1,42 @@
+<ASSEMBLER_INFO>
+ <VERSION>2.1.30</VERSION>
+ <DEVICE>ATmega16</DEVICE>
+ <WORKING_DIR>E:\VSCode\AsmStudy\AVRasm\Examles\12. Matrix_Keyboard</WORKING_DIR>
+ <INCLUDE_PATH>
+  <DIR></DIR>
+ </INCLUDE_PATH>
+ <SOURCE_FILE>Matrix_Keyboard.asm</SOURCE_FILE>
+ <INCLUDED_FILES>
+  <FILE>./lib/m16def.inc</FILE>
+ </INCLUDED_FILES>
+ <OBJECT_FILES>
+  <FILE>Matrix_Keyboard.obj</FILE>
+ </OBJECT_FILES>
+ <HEX_FILES>
+  <FILE>Matrix_Keyboard.hex</FILE>
+  <FILE>Matrix_Keyboard.eep</FILE>
+ </HEX_FILES>
+ <OUTPUT_FILES>
+  <FILE>Matrix_Keyboard.map</FILE>
+ </OUTPUT_FILES>
+ <LABELS>
+  <Digits><FILE>Matrix_Keyboard.asm</FILE><LINE>45</LINE></Digits>
+  <eDigits><FILE>Matrix_Keyboard.asm</FILE><LINE>49</LINE></eDigits>
+  <RESET><FILE>Matrix_Keyboard.asm</FILE><LINE>65</LINE></RESET>
+  <TIMER0_OVF><FILE>Matrix_Keyboard.asm</FILE><LINE>61</LINE></TIMER0_OVF>
+  <Shift><FILE>Matrix_Keyboard.asm</FILE><LINE>119</LINE></Shift>
+  <RAM_Flush><FILE>Matrix_Keyboard.asm</FILE><LINE>75</LINE></RAM_Flush>
+  <Reg_Flush><FILE>Matrix_Keyboard.asm</FILE><LINE>83</LINE></Reg_Flush>
+  <Main><FILE>Matrix_Keyboard.asm</FILE><LINE>114</LINE></Main>
+  <Shift1><FILE>Matrix_Keyboard.asm</FILE><LINE>121</LINE></Shift1>
+  <Shift2><FILE>Matrix_Keyboard.asm</FILE><LINE>130</LINE></Shift2>
+  <ShiftEnd><FILE>Matrix_Keyboard.asm</FILE><LINE>178</LINE></ShiftEnd>
+  <Shift3><FILE>Matrix_Keyboard.asm</FILE><LINE>135</LINE></Shift3>
+  <Shift4><FILE>Matrix_Keyboard.asm</FILE><LINE>140</LINE></Shift4>
+  <Shift5><FILE>Matrix_Keyboard.asm</FILE><LINE>149</LINE></Shift5>
+  <Shift6><FILE>Matrix_Keyboard.asm</FILE><LINE>154</LINE></Shift6>
+  <Shift7><FILE>Matrix_Keyboard.asm</FILE><LINE>159</LINE></Shift7>
+  <Shift8><FILE>Matrix_Keyboard.asm</FILE><LINE>168</LINE></Shift8>
+  <Shift9><FILE>Matrix_Keyboard.asm</FILE><LINE>173</LINE></Shift9>
+ </LABELS>
+</ASSEMBLER_INFO>
