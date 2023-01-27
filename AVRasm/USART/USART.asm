@@ -1,148 +1,150 @@
 
 ; Светодиодная мигалка на микроконтроллере ATmega328p
 
-;.NOLIST ; Отключить генерацию листинга.
-
 .INCLUDE "m328Pdef.inc" ; загрузка предопределений для ATmega328p 
 #include "macro.inc" ; подключение файла с макросами
 
-;.LIST ; включить генерацию листинга
-.CSEG ; начало сегмента кода 
-.ORG 0x0000 ; начальное значение для адресации 
+;=================================================
+; Имена регистров, а также различные константы
+	.equ 	F_CPU 					= 16000000 		; Частота МК
+	.equ 	UART_BaudRate 			= 115200		; Скорость обмена по UART
+	.equ 	UART_BaudDivider 		= F_CPU/8/UART_BaudRate-1 ; (F_CPU/8/x-1) при U2X0 в 1, (F_CPU/16/x-1) при U2X0 в 0
+	.equ 	I2C_Frequency 			= 80000			; Частота шины I2C
+	.equ 	I2C_BaudDivider 		= (F_CPU/(8*I2C_Frequency)-2)
+;=================================================
+	.def 	USART_Data				= R16			; регистр данных USART
+	.def 	Temp					= R17			; регистр для временных данных
+	.def 	Flag 					= R25 			; регистр для флага
+;=================================================	
+	.set 	Delay 					= 50 			; установка переменной времени задержки 
+;=================================================
+; Сегмент SRAM памяти
+.DSEG			
+;=================================================
+; Сегмент EEPROM памяти
+.ESEG
+;=================================================
+; Сегмент FLASH памяти
+.CSEG
+;=================================================
+; Таблица прерываний
+	.ORG 0x00
+		RJMP	RESET
 
-; -- инициализация стека -- 
-LDI R16, LOW(RAMEND) ; младший байт конечного адреса ОЗУ в R16 
-OUT SPL, R16 ; установка младшего байта указателя стека 
-LDI R16, HIGH(RAMEND) ; старший байт конечного адреса ОЗУ в R16 
-OUT SPH, R16 ; установка старшего байта указателя стека 
+;=================================================
+; Program_name: .db "USART Transmit-Reseive" 
+Hello_String: 
+	.db '\n',"Hello Чел!",'\n','\n'
+	.db "Чтобы включить LED, пришли 1",'\n'
+	.db "Чтобы погасить LED, пришли 0",'\n','\n',0
+LedOn: .db "LED включен!",'\n','\n',0
+LedOff: .db "LED погашен!",'\n','\n',0
+;=================================================
 
-;.SET Delay = 50 ; установка переменной времени задержки 
+; Прерывание по сбросу, стартовая инициализация 
+RESET:	
+	; -- инициализация стека -- 
+	LDI 	Temp, LOW(RAMEND) ; младший байт конечного адреса ОЗУ в R16 
+	OUT 	SPL, Temp ; установка младшего байта указателя стека 
+	LDI 	Temp, HIGH(RAMEND) ; старший байт конечного адреса ОЗУ в R16 
+	OUT 	SPH, Temp ; установка старшего байта указателя стека 
 
-.EQU F_CPU = 16000000
-.EQU BAUD = 115200
-.EQU UBRR = F_CPU/8/BAUD-1 ; (F_CPU/8/x-1) при U2X0 в 1, (F_CPU/16/x-1) при U2X0 в 0
+	; -- устанавливаем пин PB5 порта PORTB на вывод -- 
+	LDI 	Temp, 0b00100000 ; поместим в регистр R16 число 32 (0x20) 
+	OUT 	DDRB, Temp ; загрузим значение из регистра R16 в порт DDRB
 
-
-; -- устанавливаем пин PB5 порта PORTB на вывод -- 
-LDI R16, 0b00100000 ; поместим в регистр R16 число 32 (0x20) 
-OUT DDRB, R16 ; загрузим значение из регистра R16 в порт DDRB 
-
-CBI PORTB, PORTB5 ; подача на пин PB5 низкого уровня 
-
-;LDI R20, 1 ; флаг задержки времени
-
-LDI R16, LOW(UBRR) ; (UBRR & 0xff) ; 16 ;
-LDI R17, HIGH(UBRR) ; ((UBRR >> 8) & 0xff) ; 0 ;
-RCALL USART_Init 
- 
-
-LDI r16, '\n'
-RCALL USART_Transmit
-LDI r16, 'H'
-RCALL USART_Transmit
-LDI r16, 'e'
-RCALL USART_Transmit
-LDI r16, 'l'
-RCALL USART_Transmit
-LDI r16, 'l'
-RCALL USART_Transmit
-LDI r16, 'o'
-RCALL USART_Transmit
-LDI r16, ' '
-RCALL USART_Transmit
-LDI r16, 'B'
-RCALL USART_Transmit
-LDI r16, 'r'
-RCALL USART_Transmit
-LDI r16, 'o'
-RCALL USART_Transmit
-LDI r16, '!'
-RCALL USART_Transmit
-LDI r16, '\n'
-RCALL USART_Transmit
-LDI r16, '\n'
-RCALL USART_Transmit
-
-LDI R20, 1 ; флаг
-
-; -- основной цикл программы -- 
-Start: 	
-	; LDI r16, Test
-	; RCALL USART_Transmit
-	; INC r16
-	; RCALL USART_Transmit
-	; LDI r16, '\n'
-	; RCALL USART_Transmit
-_one:
-	RCALL USART_Receive
-	LDI R21, 0
-	CPSE R21, R20
-	RJMP _two
-	LDI R20, 1 ; флаг
-	RJMP _one
-_two:
-	LDI R20, 0 ; флаг
-	SBI PORTB, PORTB5 ; подача на пин PB5 высокого уровня 	
-	LDI R21, '1'
-	CPSE R21, R16
-	CBI PORTB, PORTB5 ; подача на пин PB5 низкого уровня 
-
-	RCALL USART_Transmit
-	LDI r16, '\n'
-	RCALL USART_Transmit
-
-	LDI r16, '\n'
-	RCALL USART_Transmit
-	LDI r16, 'O'
-	RCALL USART_Transmit
-	LDI r16, 'k'
-	RCALL USART_Transmit
-	LDI r16, '\n'
-	RCALL USART_Transmit
-	LDI r16, '\n'
-	RCALL USART_Transmit
+	; -- инициализация USART --
+	RCALL 	USART_Init 
 	
-RJMP Start ; возврат к метке Start, повторяем все в цикле 
+	; вывод в порт приветствия
+	SETstr 	Hello_String
+	RCALL 	USART_Print_String
+
+	; LDI 	Flag, 1 ; флаг
+
+;=================================================
+; Основная программа (цикл)
+Start:
+	RCALL 	USART_Receive
+	; сравнение пришедших данных с \n и \r
+	CPI 	USART_Data, 0xa ; NL (\n)
+	BREQ	Start
+	CPI 	USART_Data, 0xd ; CR (\r)
+	BREQ	Start
+	; сравнение пришедших данных с 0 и 1
+	CPI 	USART_Data, '1'
+	BREQ	Led_ON
+	CPI 	USART_Data, '0'
+	BREQ	Led_OFF
+	RJMP	Continuation
+Led_ON:
+	SBI 	PORTB, PORTB5 ; подача на пин PB5 высокого уровня 
+	SETstr 	LedOn
+	RCALL 	USART_Print_String
+	RJMP	Continuation
+Led_OFF:
+	CBI 	PORTB, PORTB5 ; подача на пин PB5 низкого уровня
+	SETstr 	LedOff
+	RCALL 	USART_Print_String
+Continuation:	
+	RJMP Start ; возврат к метке Start, повторяем все в цикле 
+;=================================================
 
 
 ; -- функция инициализации USART -- 
 USART_Init: ; r16 = ubrr & 0xff, r17 = (ubrr >> 8) & 0xff,  
+	PUSH	R16
+	PUSH	R17
+	LDI 	R16, LOW(UART_BaudDivider) ; (UBRR & 0xff) ; 16 ;
+	LDI 	R17, HIGH(UART_BaudDivider) ; ((UBRR >> 8) & 0xff) ; 0 ;
 	; Set baud rate to UBRR0
-	uout UBRR0L, r16 ; uout - macros из файла macro.inc
-	uout UBRR0H, r17 
-	ldi r16, (1 << U2X0)
-	uout UCSR0A, r16	
+	UOUT 	UBRR0L, R16 ; uout - macros из файла macro.inc
+	UOUT 	UBRR0H, R17 
+	LDI 	R16, (1 << U2X0)
+	UOUT 	UCSR0A, R16	
 	; Enable receiver and transmitter
-	ldi r16, (1 << RXEN0) | (1 << TXEN0)
-	uout UCSR0B, r16	
+	LDI 	R16, (1 << RXEN0) | (1 << TXEN0)
+	UOUT 	UCSR0B, R16	
 	; UPM01 - Enabled, Even Parity
-	ldi r16, (1 << UCSZ01) | (1 << UCSZ00) ; (1 << UPM01) | 
-	uout UCSR0C, r16
+	LDI 	R16, (1 << UCSZ01) | (1 << UCSZ00) ; (1 << UPM01) | 
+	UOUT 	UCSR0C, R16
+	POP		R17
+	POP		R16
 ret
 
 ; -- функция передачи данных -- 
 USART_Transmit: ; data in r16
+	PUSH	R17
+wait_flag_UDRE0:
 	; Wait for empty transmit buffer
-	;uin r17, UCSR0A ; uin - macros из файла macro.inc
-	;sbrs r17, UDRE0 ; Skip if Bit in Register Set
-	SBIS	UCSR0A, UDRE0
-	RJMP 	USART_Transmit
+	UIN 	R17, UCSR0A ; uin - macros из файла macro.inc
+	SBRS 	R17, UDRE0 ; Skip if Bit in Register Set
+	RJMP 	wait_flag_UDRE0
+	POP		R17
 	; Put data (r16) into buffer, sends the data
-	uout UDR0, r16
+	UOUT 	UDR0, R16
 ret
 
 ; -- функция приёма данных -- 
 USART_Receive:
+	PUSH	R17
+wait_flag_RXC0:
 	; Wait for data to be received
-	;uin r17, UCSR0A
-	;sbrs r17, RXC0 ; Skip if Bit in Register Set
-	SBIS	UCSRA, RXC
-	RJMP	USART_Receive
+	UIN 	R17, UCSR0A
+	SBRS 	R17, RXC0 ; Skip if Bit in Register Set
+	RJMP	wait_flag_RXC0
+	POP		R17
 	; Get and return received data from buffer
-	uin r16, UDR0
+	UIN 	R16, UDR0
 ret
 
-
-; Program_name: .DB "USART Transmit-Reseive" 
-Test: .DB "Test"
+; -- функция вывода строки в порт -- 
+USART_Print_String: ; use macro SETstr
+	LPM		R16, Z+
+	CPI		R16, 0
+	BREQ	End_print
+	RCALL 	USART_Transmit
+	RJMP	USART_Print_String
+End_print:
+ret
 

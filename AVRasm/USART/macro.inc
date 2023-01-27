@@ -18,5 +18,10 @@
    .endif
 .endm
 
+.macro SETstr
+    LDI 	ZL, LOW(@0*2)   
+	LDI 	ZH, HIGH(@0*2)
+.endm
+
 
 #endif  /* _MACRO_INC_ */

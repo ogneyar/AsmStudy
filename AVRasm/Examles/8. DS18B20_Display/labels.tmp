@@ -1,39 +1,39 @@
 <ASSEMBLER_INFO>
  <VERSION>2.1.30</VERSION>
  <DEVICE>ATmega16</DEVICE>
- <WORKING_DIR>E:\VSCode\AsmStudy\AVRasm\Examles\8. DS18B20</WORKING_DIR>
+ <WORKING_DIR>E:\VSCode\AsmStudy\AVRasm\Examles\8. DS18B20_Display</WORKING_DIR>
  <INCLUDE_PATH>
   <DIR></DIR>
  </INCLUDE_PATH>
- <SOURCE_FILE>DS18B20.asm</SOURCE_FILE>
+ <SOURCE_FILE>DS18B20_Display.asm</SOURCE_FILE>
  <INCLUDED_FILES>
   <FILE>./lib/m16def.inc</FILE>
   <FILE>./lib/Delay.asm</FILE>
   <FILE>./lib/DS18B20.asm</FILE>
  </INCLUDED_FILES>
  <OBJECT_FILES>
-  <FILE>DS18B20.obj</FILE>
+  <FILE>DS18B20_Display.obj</FILE>
  </OBJECT_FILES>
  <HEX_FILES>
-  <FILE>DS18B20.hex</FILE>
-  <FILE>DS18B20.eep</FILE>
+  <FILE>DS18B20_Display.hex</FILE>
+  <FILE>DS18B20_Display.eep</FILE>
  </HEX_FILES>
  <OUTPUT_FILES>
-  <FILE>DS18B20.map</FILE>
+  <FILE>DS18B20_Display.map</FILE>
  </OUTPUT_FILES>
  <LABELS>
-  <Digits><FILE>DS18B20.asm</FILE><LINE>67</LINE></Digits>
-  <TempData><FILE>DS18B20.asm</FILE><LINE>68</LINE></TempData>
-  <TempCRC><FILE>DS18B20.asm</FILE><LINE>69</LINE></TempCRC>
-  <eDigits><FILE>DS18B20.asm</FILE><LINE>73</LINE></eDigits>
-  <RESET><FILE>DS18B20.asm</FILE><LINE>102</LINE></RESET>
-  <TIMER1_COMPA><FILE>DS18B20.asm</FILE><LINE>85</LINE></TIMER1_COMPA>
+  <Digits><FILE>DS18B20_Display.asm</FILE><LINE>67</LINE></Digits>
+  <TempData><FILE>DS18B20_Display.asm</FILE><LINE>68</LINE></TempData>
+  <TempCRC><FILE>DS18B20_Display.asm</FILE><LINE>69</LINE></TempCRC>
+  <eDigits><FILE>DS18B20_Display.asm</FILE><LINE>73</LINE></eDigits>
+  <RESET><FILE>DS18B20_Display.asm</FILE><LINE>102</LINE></RESET>
+  <TIMER1_COMPA><FILE>DS18B20_Display.asm</FILE><LINE>85</LINE></TIMER1_COMPA>
   <DS18B20_GetTemp><FILE>./lib/DS18B20.asm</FILE><LINE>190</LINE></DS18B20_GetTemp>
   <DS18B20_ConvertTemp><FILE>./lib/DS18B20.asm</FILE><LINE>175</LINE></DS18B20_ConvertTemp>
-  <RAM_Flush><FILE>DS18B20.asm</FILE><LINE>112</LINE></RAM_Flush>
-  <Reg_Flush><FILE>DS18B20.asm</FILE><LINE>120</LINE></Reg_Flush>
-  <Main><FILE>DS18B20.asm</FILE><LINE>158</LINE></Main>
-  <Display><FILE>DS18B20.asm</FILE><LINE>184</LINE></Display>
+  <RAM_Flush><FILE>DS18B20_Display.asm</FILE><LINE>112</LINE></RAM_Flush>
+  <Reg_Flush><FILE>DS18B20_Display.asm</FILE><LINE>120</LINE></Reg_Flush>
+  <Main><FILE>DS18B20_Display.asm</FILE><LINE>158</LINE></Main>
+  <Display><FILE>DS18B20_Display.asm</FILE><LINE>184</LINE></Display>
   <Delay1us><FILE>./lib/Delay.asm</FILE><LINE>14</LINE></Delay1us>
   <Delay5us><FILE>./lib/Delay.asm</FILE><LINE>19</LINE></Delay5us>
   <Delay5us_loop><FILE>./lib/Delay.asm</FILE><LINE>22</LINE></Delay5us_loop>
@@ -66,11 +66,11 @@
   <IntNext><FILE>./lib/DS18B20.asm</FILE><LINE>233</LINE></IntNext>
   <TempTable><FILE>./lib/DS18B20.asm</FILE><LINE>261</LINE></TempTable>
   <FracAdd><FILE>./lib/DS18B20.asm</FILE><LINE>255</LINE></FracAdd>
-  <Decoder><FILE>DS18B20.asm</FILE><LINE>168</LINE></Decoder>
-  <LedMatrix><FILE>DS18B20.asm</FILE><LINE>175</LINE></LedMatrix>
-  <D1><FILE>DS18B20.asm</FILE><LINE>191</LINE></D1>
-  <D2><FILE>DS18B20.asm</FILE><LINE>203</LINE></D2>
-  <D3><FILE>DS18B20.asm</FILE><LINE>216</LINE></D3>
-  <D4><FILE>DS18B20.asm</FILE><LINE>228</LINE></D4>
+  <Decoder><FILE>DS18B20_Display.asm</FILE><LINE>168</LINE></Decoder>
+  <LedMatrix><FILE>DS18B20_Display.asm</FILE><LINE>175</LINE></LedMatrix>
+  <D1><FILE>DS18B20_Display.asm</FILE><LINE>191</LINE></D1>
+  <D2><FILE>DS18B20_Display.asm</FILE><LINE>203</LINE></D2>
+  <D3><FILE>DS18B20_Display.asm</FILE><LINE>216</LINE></D3>
+  <D4><FILE>DS18B20_Display.asm</FILE><LINE>228</LINE></D4>
  </LABELS>
 </ASSEMBLER_INFO>

@@ -48,7 +48,7 @@ RET
 ; выполняет прием байта из линии
 ; 	выход: Temp1 принятый байт
 DS18B20_Resive:
-	SER		Temp1
+	SER		Temp1 ; Set Register (Rd < $FF)
 ;=======================================================================
 ; выполняет передачу байта в линию
 ; если делать ВЫВОД 0хFF, то на выходе будет ПРИНЯТЫЙ байт
@@ -62,8 +62,8 @@ sw1_next:
 	CLI							; запрещаем прерывания
 	SBI		WireDDR, TEMP_DQ	; 1->DDR = 0 на выходе						; давим линию в 0
 	RCALL	Delay1us			; 1 мкс задержки
-	ROR		Temp1				; выталкиваем выводимый бит
-	BRCC	S0					; если бит C = 0 - обход 
+	ROR		Temp1				; выталкиваем выводимый бит (Rotate Right Through Carry) >> c переносом (Carry)
+	BRCC	S0					; если бит C = 0 - обход (Branch if Carry Cleared)
 	CBI		WireDDR, TEMP_DQ	; 0->DDR = Z-состояние						; линию в 1
 s0:
 	PUSH	Temp2
@@ -121,10 +121,10 @@ CRC8:
 	LDI		Temp3, 8
 CRC8_loop:
 	LDS		Temp2, TempCRC
-	EOR		Temp1, Temp2
-	ROR		Temp1
+	EOR		Temp1, Temp2 ; Exclusive OR
+	ROR		Temp1 ; >>
 	MOV		Temp1, Temp2
-	BRCC 	Zero
+	BRCC 	Zero ; Branch if Carry Cleared
 	LDI		Temp2, 0x18
 	EOR		Temp1, Temp2
 Zero:
@@ -190,7 +190,7 @@ RET
 DS18B20_GetTemp:
 	; Reset 1-wire
 	RCALL	DS18B20_Init
-	BREQ	DNext
+	BREQ	DNext ; Branch if Equal (if flag Zero=1)
 	LDI		Temp1, 0xFF
 	RET
 DNext:
@@ -207,12 +207,12 @@ DNext:
 	LDS		Temp1,TempData+1	; Load MS
 	CLR		Temp3
 	; проверка отрицательной температуры
-	CPI 	Temp1,0x08			
-	BRLO 	IsPlus				
+	CPI 	Temp1,0x08 ; Compare with Immediate (Temp1 - 0x08)
+	BRLO 	IsPlus ; Branch if Lower (if flag Carry=1 then Temp1 < 0x08)
 IsMinus:
 	; если температура отрицательная то...
-	NEG 	Temp2
-	COM 	Temp1
+	NEG 	Temp2 ; 0 - Temp2 (перевод в отрицательное значение)
+	COM 	Temp1 ; 0xff - Temp1 (0 заменятся на 1, 1 на 0)
 	STS		TempData,Temp2
 	STS		TempData+1,Temp1
 	; установили знак минуса
@@ -222,12 +222,12 @@ IsPlus:
 	; получаем в Temp2 целую часть
 	ANDI 	Temp2, 0xF0
 	OR 		Temp2, Temp1
-	SWAP 	Temp2
+	SWAP 	Temp2 ;  Swap Nibbles (Rd(3..0) - Rd(7..4))
 	CLR		Temp1
 IntLoop:
-	CPI		Temp2,10
-	BRLO	IntNext
-	SUBI	Temp2,10
+	CPI		Temp2,10 ; Compare with Immediate
+	BRLO	IntNext ; Branch if Lower (Rd < x)
+	SUBI	Temp2,10 ; вычитание
 	INC		Temp1
 	JMP		IntLoop	
 IntNext:
@@ -242,11 +242,11 @@ IntNext:
 	LDI 	ZL,LOW(TempTable*2)   
 	LDI 	ZH,HIGH(TempTable*2)
 	CLR		R24
-	LSL 	Temp3
+	LSL 	Temp3 ; Logical Shift Left <<
 	ADD		ZL,Temp3
 	ADC		ZH,R24
 
-	LPM		Temp1,Z+
+	LPM		Temp1,Z+ ; Load Program Memory and PostIncrement
 	LPM		Temp2,Z+
 
 	CPI		Temp2,6
