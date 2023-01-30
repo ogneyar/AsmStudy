@@ -1,14 +1,14 @@
 
 ; Светодиодная мигалка на микроконтроллере ATmega328p
 
-.INCLUDE "m328Pdef.inc" ; загрузка предопределений для ATmega328p 
-#include "macro.inc" ; подключение файла с макросами
+.INCLUDE "../libs/m328Pdef.inc" ; загрузка предопределений для ATmega328p 
+#include "../libs/macro.inc" ; подключение файла с макросами
 
 ;=================================================
 ; Имена регистров, а также различные константы
 	.equ 	F_CPU 					= 16000000 		; Частота МК
-	.equ 	UART_BaudRate 			= 115200		; Скорость обмена по UART
-	.equ 	UART_BaudDivider 		= F_CPU/8/UART_BaudRate-1 ; (F_CPU/8/x-1) при U2X0 в 1, (F_CPU/16/x-1) при U2X0 в 0
+	.equ 	UART_BaudRate 			= 9600		; Скорость обмена по UART
+	.equ 	UART_BaudDivider 		= (F_CPU/8/UART_BaudRate-1) ; (F_CPU/8/x-1) при U2X0 в 1, (F_CPU/16/x-1) при U2X0 в 0
 	.equ 	I2C_Frequency 			= 80000			; Частота шины I2C
 	.equ 	I2C_BaudDivider 		= (F_CPU/(8*I2C_Frequency)-2)
 ;=================================================
@@ -40,7 +40,10 @@ Hello_String:
 LedOn: .db "LED включен!",'\n','\n',0
 LedOff: .db "LED погашен!",'\n','\n',0
 ;=================================================
+; Подключение библиотек
+#include "../libs/usart.asm"    ; подключение библиотеки USART (ей требуется UART_BaudDivider)
 
+;=================================================
 ; Прерывание по сбросу, стартовая инициализация 
 RESET:	
 	; -- инициализация стека -- 
@@ -48,19 +51,38 @@ RESET:
 	OUT 	SPL, Temp ; установка младшего байта указателя стека 
 	LDI 	Temp, HIGH(RAMEND) ; старший байт конечного адреса ОЗУ в R16 
 	OUT 	SPH, Temp ; установка старшего байта указателя стека 
-
+;==============================================================
+; Очистка ОЗУ и регистров R0-R31
+	LDI		ZL, LOW(SRAM_START)		; Адрес начала ОЗУ в индекс
+	LDI		ZH, HIGH(SRAM_START)
+	CLR		R16					; Очищаем R16
+RAM_Flush:
+	ST 		Z+, R16				
+	CPI		ZH, HIGH(RAMEND+1)	
+	BRNE	RAM_Flush			
+	CPI		ZL, LOW(RAMEND+1)	
+	BRNE	RAM_Flush
+	LDI		ZL, (0x1F-2)			; Адрес регистра R29
+	CLR		ZH
+Reg_Flush:
+	ST		Z, ZH
+	DEC		ZL
+	BRNE	Reg_Flush
+	CLR		ZL
+	CLR		ZH
+;==============================================================
 	; -- устанавливаем пин PB5 порта PORTB на вывод -- 
 	LDI 	Temp, 0b00100000 ; поместим в регистр R16 число 32 (0x20) 
 	OUT 	DDRB, Temp ; загрузим значение из регистра R16 в порт DDRB
 
-	; -- инициализация USART --
+	; -- инициализация USART --	
+	LDI 	R16, LOW(UART_BaudDivider)
+	LDI 	R17, HIGH(UART_BaudDivider)
 	RCALL 	USART_Init 
 	
 	; вывод в порт приветствия
 	SETstr 	Hello_String
 	RCALL 	USART_Print_String
-
-	; LDI 	Flag, 1 ; флаг
 
 ;=================================================
 ; Основная программа (цикл)
@@ -89,62 +111,4 @@ Led_OFF:
 Continuation:	
 	RJMP Start ; возврат к метке Start, повторяем все в цикле 
 ;=================================================
-
-
-; -- функция инициализации USART -- 
-USART_Init: ; r16 = ubrr & 0xff, r17 = (ubrr >> 8) & 0xff,  
-	PUSH	R16
-	PUSH	R17
-	LDI 	R16, LOW(UART_BaudDivider) ; (UBRR & 0xff) ; 16 ;
-	LDI 	R17, HIGH(UART_BaudDivider) ; ((UBRR >> 8) & 0xff) ; 0 ;
-	; Set baud rate to UBRR0
-	UOUT 	UBRR0L, R16 ; uout - macros из файла macro.inc
-	UOUT 	UBRR0H, R17 
-	LDI 	R16, (1 << U2X0)
-	UOUT 	UCSR0A, R16	
-	; Enable receiver and transmitter
-	LDI 	R16, (1 << RXEN0) | (1 << TXEN0)
-	UOUT 	UCSR0B, R16	
-	; UPM01 - Enabled, Even Parity
-	LDI 	R16, (1 << UCSZ01) | (1 << UCSZ00) ; (1 << UPM01) | 
-	UOUT 	UCSR0C, R16
-	POP		R17
-	POP		R16
-ret
-
-; -- функция передачи данных -- 
-USART_Transmit: ; data in r16
-	PUSH	R17
-wait_flag_UDRE0:
-	; Wait for empty transmit buffer
-	UIN 	R17, UCSR0A ; uin - macros из файла macro.inc
-	SBRS 	R17, UDRE0 ; Skip if Bit in Register Set
-	RJMP 	wait_flag_UDRE0
-	POP		R17
-	; Put data (r16) into buffer, sends the data
-	UOUT 	UDR0, R16
-ret
-
-; -- функция приёма данных -- 
-USART_Receive:
-	PUSH	R17
-wait_flag_RXC0:
-	; Wait for data to be received
-	UIN 	R17, UCSR0A
-	SBRS 	R17, RXC0 ; Skip if Bit in Register Set
-	RJMP	wait_flag_RXC0
-	POP		R17
-	; Get and return received data from buffer
-	UIN 	R16, UDR0
-ret
-
-; -- функция вывода строки в порт -- 
-USART_Print_String: ; use macro SETstr
-	LPM		R16, Z+
-	CPI		R16, 0
-	BREQ	End_print
-	RCALL 	USART_Transmit
-	RJMP	USART_Print_String
-End_print:
-ret
 

@@ -3,16 +3,16 @@ PROGRAMMER	:= arduino
 
 TARGET_MCU	:= atmega328p
 
-# PORT		:= com8
-PORT		:= com12
+PORT		:= com8
+# PORT		:= com12
 
 # BAUD		:= 19200
 # для LGT8F
-BAUD		:= 57600 
+# BAUD		:= 57600 
 # для NANO
-# BAUD		:= 115200
+BAUD		:= 115200
 
-FILE_NAME	:= blinky
+FILE_NAME	:= SPI
 ASM			:= $(FILE_NAME).asm
 HEX			:= $(FILE_NAME).hex
 

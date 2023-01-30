@@ -11,6 +11,27 @@ OUT SPH, R16
 LDI R16, LOW(RAMEND)
 OUT SPL, R16
 
+;==============================================================
+; Очистка ОЗУ и регистров R0-R31
+	LDI		ZL, LOW(SRAM_START)		; Адрес начала ОЗУ в индекс
+	LDI		ZH, HIGH(SRAM_START)
+	CLR		R16					; Очищаем R16
+RAM_Flush:
+	ST 		Z+, R16				
+	CPI		ZH, HIGH(RAMEND+1)	
+	BRNE	RAM_Flush			
+	CPI		ZL, LOW(RAMEND+1)	
+	BRNE	RAM_Flush
+	LDI		ZL, (0x1F-2)			; Адрес регистра R29
+	CLR		ZH
+Reg_Flush:
+	ST		Z, ZH
+	DEC		ZL
+	BRNE	Reg_Flush
+	CLR		ZL
+	CLR		ZH
+;==============================================================
+
 ;MAIN LABEL
 MAIN:
   LDI R16, 0xFF 

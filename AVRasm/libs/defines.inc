@@ -5,8 +5,11 @@
 ;=============================================================
 ; defines TWIRE (I2C)
 ;=============================================================
+#define TW_STATUS_MSK		0xf8
+#define TW_MAX_ADDRESS		0x80
+
 #define TW_START            0x08
-#define TW_RE_START          0x10
+#define TW_RE_START         0x10
 
 #define TW_MT_SLA_ACK       0x18 ; Master Transmit SLA+W Ack
 #define TW_MT_SLA_NOACK     0x20 ; Master Transmit SLA+W NoAck
