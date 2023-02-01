@@ -3,22 +3,22 @@
 #define _MACRO_INC_
 
 
-.macro uout
+.macro mOUT
    .if @0<0x40
-       out @0,@1
+       OUT @0,@1
    .else
-       sts @0,@1
+       STS @0,@1
    .endif
 .endm
-.macro uin
+.macro mIN
    .if @1<0x40
-       in @0,@1
+       IN @0,@1
    .else
-       lds @0,@1
+       LDS @0,@1
    .endif
 .endm
 
-.macro SETstr
+.macro mSetStr
     LDI 	ZL, LOW(@0*2)   
 	LDI 	ZH, HIGH(@0*2)
 .endm

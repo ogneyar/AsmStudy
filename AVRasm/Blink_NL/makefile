@@ -3,30 +3,31 @@ PROGRAMMER	:= arduino
 
 TARGET_MCU	:= atmega328p
 
-PORT		:= com8
-# PORT		:= com12
+PORT_NANO	:= com8
+PORT_LGT	:= com12
 
-# для ATmega8
-# BAUD		:= 19200
-# для LGT8F
-# BAUD		:= 57600 
-# для NANO
-BAUD		:= 115200
+BAUD_NANO	:= 115200
+BAUD_LGT	:= 57600 
 
 FILE_NAME	:= Blink_NL
 ASM			:= $(FILE_NAME).asm
-HEX			:= $(FILE_NAME).hex
+HEX_NANO	:= $(FILE_NAME)_atmega328p.hex
+HEX_LGT		:= $(FILE_NAME)_lgt8f328p.hex
 
 all: upload
-	@echo Finish
+	@echo Finish All
 	
 compile:
-	@avrasm2.exe -fI $(ASM)
-
-# avrasm2.exe -fI Blink_NL.asm
+	@avrasm2.exe -fI $(ASM) -o $(HEX_NANO)
 	
 upload: compile
 	@echo Program $(TARGET_MCU)
-	@avrdude -p $(TARGET_MCU) -c $(PROGRAMMER) -P $(PORT) -b $(BAUD) -U flash:w:$(HEX):a
+	@avrdude -p $(TARGET_MCU) -c $(PROGRAMMER) -P $(PORT_NANO) -b $(BAUD_NANO) -U flash:w:$(HEX_NANO):a
 	
-# avrdude -p atmega328p -c arduino -P com8 -b 115200 -U flash:w:Blink_NL.hex:a
+lgt8f:
+	@avrasm2.exe -fI $(ASM) -o $(HEX_LGT)
+	@avrdude -p $(TARGET_MCU) -c $(PROGRAMMER) -P $(PORT_LGT)  -b $(BAUD_LGT) -U flash:w:$(HEX_LGT):a
+
+nano: all
+	@echo Finish nano
+

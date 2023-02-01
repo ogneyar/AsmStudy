@@ -2,7 +2,7 @@
 ; Светодиодная мигалка на микроконтроллере ATmega328p
 
 ;.INCLUDEPATH "E:\Libraries\AVR-master\asm\include" ; путь для подгрузки INC файлов 
-.INCLUDE "m328Pdef.inc" ; загрузка предопределений для ATmega328p 
+.INCLUDE "..\libs\m328Pdef.inc" ; загрузка предопределений для ATmega328p 
 ;.INCLUDE "E:\Libraries\AVR-master\asm\include\m328Pdef.inc" ; загрузка предопределений для ATmega328p 
 
 .LIST ; включить генерацию листинга 

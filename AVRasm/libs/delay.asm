@@ -2,13 +2,15 @@
 #ifndef _DELAY_INC_
 #define _DELAY_INC_
 
-#ifndef F_CPU
-#define F_CPU 16000000
+#ifdef __LGT8F__
+#define XTAL 32000000
+#else
+#define XTAL 16000000
 #endif
 
-#define DELAY_DATA_1000 F_CPU/5 ; ( ( _delay_ms / 1000 ) * F_CPU / 5 )
-#define DELAY_DATA_500 F_CPU/10
-#define DELAY_DATA_100 F_CPU/50
+#define DELAY_DATA_1000 XTAL/5 ; ( ( _delay_ms / 1000 ) * XTAL / 5 )
+#define DELAY_DATA_500 XTAL/10
+#define DELAY_DATA_100 XTAL/50
 
 ; N = Time*Fcpu/(r+2) // где r — число регистров 
 ; N = T*F/5 // T = 500ms = 0,5s // N = 1 600 000 при 16 МГц

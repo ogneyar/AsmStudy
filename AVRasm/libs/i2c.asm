@@ -1,4 +1,9 @@
 
+#ifndef _I2C_ASM_
+#define _I2C_ASM_
+
+#include "macro.inc" ; подключение файла с макросами (mIN, mOUT)
+
 ; Example
 ; I2C_BaudDivider = ((XTAL/I2C_Frequency)-16)/2
 ; I2C_Frequency = 100000 ; 100KHz
@@ -87,4 +92,6 @@ ret
 
 
 ;=================================================
+
+#endif  /* _I2C_ASM_ */
 

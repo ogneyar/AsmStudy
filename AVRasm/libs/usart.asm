@@ -1,4 +1,8 @@
 
+#ifndef _USART_ASM_
+#define _USART_ASM_
+
+#include "macro.inc" ; подключение файла с макросами (mIN, mOUT)
 	
 ; Example
 ; UART_BaudDivider = (XTAL/8/UART_BaudRate-1)
@@ -13,17 +17,26 @@
 USART_Init: ; r16 = ubrr & 0xff, r17 = (ubrr >> 8) & 0xff,  
 	push	R16
 	push	R17
+	push	R18
+	;-----------------------------------
+	; prescaler settings for LGT8F328P
+	LDI 	R18, 0x80
+	mOUT 	CLKPR, R18
+	LDI 	R18, 0x00
+	mOUT 	CLKPR, R18
+	;-----------------------------------
 	; Set baud rate to UBRR0
-	UOUT 	UBRR0L, R16 ; uout - macros из файла macro.inc
-	UOUT 	UBRR0H, R17 
+	mOUT 	UBRR0L, R16 ; mOUT - macros из файла macro.inc
+	mOUT 	UBRR0H, R17 
 	LDI 	R16, (1 << U2X0)
-	UOUT 	UCSR0A, R16	
+	mOUT 	UCSR0A, R16	
 	; Enable receiver and transmitter
 	LDI 	R16, (1 << RXEN0) | (1 << TXEN0)
-	UOUT 	UCSR0B, R16	
+	mOUT 	UCSR0B, R16	
 	; UPM01 - Enabled, Even Parity
 	LDI 	R16, (1 << UCSZ01) | (1 << UCSZ00) ; (1 << UPM01) | 
-	UOUT 	UCSR0C, R16
+	mOUT 	UCSR0C, R16
+	pop		R18
 	pop		R17
 	pop		R16
 ret
@@ -33,12 +46,12 @@ USART_Transmit: ; data in r16
 	push	R17
 wait_flag_UDRE0:
 	; Wait for empty transmit buffer
-	UIN 	R17, UCSR0A ; uin - macros из файла macro.inc
+	mIN 	R17, UCSR0A ; mIN - macros из файла macro.inc
 	SBRS 	R17, UDRE0 ; Skip if Bit in Register Set
 	RJMP 	wait_flag_UDRE0
 	pop		R17
 	; отправляем данные
-	UOUT 	UDR0, R16
+	mOUT 	UDR0, R16
 ret
 
 ; -- Подпрограмма приёма данных -- 
@@ -46,16 +59,16 @@ USART_Receive: ; возвращает данные в регистр R16
 	push	R17
 wait_flag_RXC0:
 	; Wait for data to be received
-	UIN 	R17, UCSR0A
+	mIN 	R17, UCSR0A
 	SBRS 	R17, RXC0 ; Skip if Bit in Register Set
 	RJMP	wait_flag_RXC0
 	pop		R17
 	; принимаем данные
-	UIN 	R16, UDR0
+	mIN 	R16, UDR0
 ret
 
 ; -- Подпрограмма вывода строки в порт -- 
-USART_Print_String: ; use macro SETstr
+USART_Print_String: ; use macro mSetStr
 	LPM		R16, Z+
 	CPI		R16, 0
 	BREQ	End_USART_Print_String
@@ -65,3 +78,4 @@ End_USART_Print_String:
 ret
 ;=================================================
 
+#endif  /* _USART_ASM_ */

@@ -1,5 +1,16 @@
 
-; Светодиодная мигалка на микроконтроллере ATmega328p
+; I2C сканер на микроконтроллере ATmega328p
+
+; ------------------------------------------------------------------------
+
+	; необходимо резисторами подтянуть PC4 и PC5 к питанию
+	; либо подключить устройство к I2C шине (с резисторами на плате)
+	; иначе программа зависнет!!!
+
+; ------------------------------------------------------------------------
+
+; разкомментируй строку ниже если используешь LGT8F328P
+#define __LGT8F__ ; for LGT8F328P
 
 .INCLUDE "../libs/m328Pdef.inc" ; загрузка предопределений для ATmega328p 
 #include "../libs/macro.inc"    ; подключение файла 'макросов'
@@ -7,14 +18,20 @@
 
 ;=================================================
 ; Имена регистров, а также различные константы
-	.equ 	XTAL 					= 16000000 		; Частота МК
-	.equ 	UART_BaudRate 			= 9600		; Скорость обмена по UART
-	.equ 	UART_BaudDivider 		= (XTAL/8/UART_BaudRate-1) ; (XTAL/8/x-1) при U2X0 в 1, (XTAL/16/x-1) при U2X0 в 0
-	.equ 	I2C_Frequency 			= 100000			; Частота шины I2C (Nano работает даже на 1MHz)
-	.equ 	I2C_BaudDivider 		= ((XTAL/I2C_Frequency)-16)/2	; prescaler = 1
+#ifdef __LGT8F__
+	.equ 	F_CPU 					= 32000000		; Частота МК LGT8F328P
+#else
+	.equ 	F_CPU 					= 16000000		; Частота МК ATmega328p
+#endif
+	.equ 	DIVIDER					= 8				; 8 при U2X0 = 1, 16 при U2X0 = 0
+	.equ 	BAUD 					= 115200		; Скорость обмена по UART
+	.equ 	UBRR 					= F_CPU/DIVIDER/BAUD-1
+	.equ 	I2C_Frequency 			= 100000		; Частота шины I2C (Nano работает даже на 1MHz)
+	.equ 	I2C_BaudDivider 		= ((F_CPU/I2C_Frequency)-16)/2	; prescaler = 1
 ;	.equ 	I2C_Address_Device		= 0x27							; адрес устройства 
 ;	.equ 	I2C_Address_Write		= (I2C_Address_Device << 1)		; адрес устройства на запись
 ;	.equ 	I2C_Address_Read		= (I2C_Address_Write & 0x01)	; адрес устройства на чтение
+
 ;=================================================
 	.def 	USART_Data				= R16			; регистр данных USART
 	.def 	I2C_Data				= R17			; регистр данных I2C
@@ -23,55 +40,84 @@
 	.def 	Temp1					= R20			; регистр для временных данных
 ; 	.def 	Temp2					= R21			; регистр для временных данных
 	.def 	Flag 					= R25 			; регистр для флага
+
 ;=================================================	
 	.set 	_delay_ms 				= 50 			; установка переменной времени задержки 
+
 ;=================================================
 ; Сегмент SRAM памяти
 .DSEG
+
 ;=================================================
 ; Сегмент EEPROM памяти
 .ESEG
+
 ;=================================================
 ; Сегмент FLASH памяти
 .CSEG
+
 ;=================================================
 ; Таблица прерываний
 	.ORG 0x00
 		RJMP	RESET
+
 ;=================================================
 ; Переменные во флеш памяти
-Hello_String: 
-	.db ' ','\n',"Поиск I2C устройства начался!",'\n','\n',0
+Program_name: .db "Search address I2C device on ATmega328p/LGT8F328P",0
+Hello_String: .db "Поиск I2C устройства начался!",'\n','\n',0
 AddressOn: .db "Адрес устройства: 0b",0
 AddressOff: .db "Нет найденных устройств!",0
 EndSearchDevices: .db '\n','\n',"Поиск I2C устройств завершён!",'\n','\n',0
 ErrorStr: .db '\n',"Непредвиденная ошибка!",'\n','\n',0
+
 ;=================================================
 ; Подключение библиотек
 #include "../libs/delay.asm"    ; подключение файла 'задержек'
 #include "../libs/usart.asm"    ; подключение библиотеки USART (ей требуется UART_BaudDivider)
-#include "../libs/i2c.asm"    ; подключение библиотеки I2C (ей требуется I2C_BaudDivider) 
+#include "../libs/i2c.asm"    	; подключение библиотеки I2C (ей требуется I2C_BaudDivider) 
 
 ;=================================================
 ; Прерывание по сбросу, стартовая инициализация 
 RESET:	
+
+;=================================================
 	; -- инициализация стека -- 
 	LDI 	Temp1, LOW(RAMEND) ; младший байт конечного адреса ОЗУ в R16 
-	OUT 	SPL, Temp1 ; установка младшего байта указателя стека 
+	mOUT 	SPL, Temp1 ; установка младшего байта указателя стека 
 	LDI 	Temp1, HIGH(RAMEND) ; старший байт конечного адреса ОЗУ в R16 
-	OUT 	SPH, Temp1 ; установка старшего байта указателя стека 
+	mOUT 	SPH, Temp1 ; установка старшего байта указателя стека 
 
-	; -- устанавливаем пин PB5 порта PORTB на вывод -- 
-	LDI		Temp1, (1 << PORTB5)
-	OUT 	DDRB, Temp1
+;==============================================================
+; Очистка ОЗУ и регистров R0-R31
+	LDI		ZL, LOW(SRAM_START)		; Адрес начала ОЗУ в индекс
+	LDI		ZH, HIGH(SRAM_START)
+	CLR		R16					; Очищаем R16
+RAM_Flush:
+	ST 		Z+, R16				
+	CPI		ZH, HIGH(RAMEND+1)	
+	BRNE	RAM_Flush			
+	CPI		ZL, LOW(RAMEND+1)	
+	BRNE	RAM_Flush
+	LDI		ZL, (0x1F-2)			; Адрес регистра R29
+	CLR		ZH
+Reg_Flush:
+	ST		Z, ZH
+	DEC		ZL
+	BRNE	Reg_Flush
+	CLR		ZL
+	CLR		ZH
+
+;=================================================
+	; -- устанавливаем пин 5 порта B на выход -- 
+	SBI 	DDRB, PORTB5
 
 	; -- инициализация USART --
-	LDI 	R16, LOW(UART_BaudDivider)
-	LDI 	R17, HIGH(UART_BaudDivider)
+	LDI 	R16, LOW(UBRR)
+	LDI 	R17, HIGH(UBRR)
 	RCALL 	USART_Init 
-		
+	
 	; вывод в порт приветствия
-	SETstr 	Hello_String
+	mSetStr Hello_String
 	RCALL 	USART_Print_String
 
 	; -- инициализация I2C --
@@ -138,8 +184,8 @@ Clear_I2C_Address:
 	RJMP	AddressOff_send
 AddressOn_send:
 	RCALL	I2C_Stop ; команда СТОП
-	SETstr	AddressOn
-	RCALL	USART_Print_String ; вывод в порт AddressOn
+	mSetStr	AddressOn
+	CALL	USART_Print_String ; вывод в порт AddressOn
 Loop_I2C_Scan:
 	CLC ; Clear Carry (сбрасываем флаг переноса)
 	ROL		I2C_Address ; круговой сдвиг влево (ROL 0b11110000 = 0b11100001)
@@ -159,11 +205,11 @@ Decrement_Bit:
 	BREQ	End_I2C_Scan
 	RJMP	Loop_I2C_Scan
 AddressOff_send:
-	SETstr	AddressOff
-	RCALL	USART_Print_String ; вывод в порт AddressOff
+	mSetStr	AddressOff
+	CALL	USART_Print_String ; вывод в порт AddressOff
 End_I2C_Scan:
-	SETstr	EndSearchDevices
-	RCALL	USART_Print_String
+	mSetStr	EndSearchDevices
+	CALL	USART_Print_String
 	
 	pop		R18 ; I2C_Address
 	pop		R17 ; Counter
@@ -173,7 +219,7 @@ ret
 
 ;=================================================
 ERROR:
-	SETstr	ErrorStr
+	mSetStr	ErrorStr
 	RCALL	USART_Print_String ; вывод сообщения в порт
 loop_ERROR:
 	SBI 	PORTB, PORTB5 ; включаем светодиод

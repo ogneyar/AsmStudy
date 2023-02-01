@@ -1,22 +1,33 @@
 
-; Светодиодная мигалка на микроконтроллере ATmega328p
+; Тестирование USART на микроконтроллере ATmega328p
+
+; разкомментируй строку ниже если используешь LGT8F328P
+#define __LGT8F__ ; for LGT8F328P
 
 .INCLUDE "../libs/m328Pdef.inc" ; загрузка предопределений для ATmega328p 
 #include "../libs/macro.inc" ; подключение файла с макросами
 
 ;=================================================
 ; Имена регистров, а также различные константы
-	.equ 	F_CPU 					= 16000000 		; Частота МК
-	.equ 	UART_BaudRate 			= 9600		; Скорость обмена по UART
-	.equ 	UART_BaudDivider 		= (F_CPU/8/UART_BaudRate-1) ; (F_CPU/8/x-1) при U2X0 в 1, (F_CPU/16/x-1) при U2X0 в 0
+#ifdef __LGT8F__
+	.equ 	F_CPU 					= 32000000		; Частота МК LGT8F328P
+#else
+	.equ 	F_CPU 					= 16000000		; Частота МК ATmega328p
+#endif
+	.equ 	DIVIDER					= 8				; 8 при U2X0 = 1, 16 при U2X0 = 0
+	.equ 	BAUD 					= 115200		; Скорость обмена по UART
+	.equ 	UBRR 					= F_CPU/DIVIDER/BAUD-1
 	.equ 	I2C_Frequency 			= 80000			; Частота шины I2C
 	.equ 	I2C_BaudDivider 		= (F_CPU/(8*I2C_Frequency)-2)
+
 ;=================================================
 	.def 	USART_Data				= R16			; регистр данных USART
 	.def 	Temp					= R17			; регистр для временных данных
 	.def 	Flag 					= R25 			; регистр для флага
+
 ;=================================================	
 	.set 	Delay 					= 50 			; установка переменной времени задержки 
+
 ;=================================================
 ; Сегмент SRAM памяти
 .DSEG			
@@ -32,13 +43,15 @@
 		RJMP	RESET
 
 ;=================================================
-; Program_name: .db "USART Transmit-Reseive" 
+; Переменные во флеш памяти
+Program_name: .db "Test USART Transmit-Reseive on ATmega328p/LGT8F328P",0
 Hello_String: 
 	.db '\n',"Hello Чел!",'\n','\n'
 	.db "Чтобы включить LED, пришли 1",'\n'
 	.db "Чтобы погасить LED, пришли 0",'\n','\n',0
 LedOn: .db "LED включен!",'\n','\n',0
 LedOff: .db "LED погашен!",'\n','\n',0
+
 ;=================================================
 ; Подключение библиотек
 #include "../libs/usart.asm"    ; подключение библиотеки USART (ей требуется UART_BaudDivider)
@@ -46,11 +59,14 @@ LedOff: .db "LED погашен!",'\n','\n',0
 ;=================================================
 ; Прерывание по сбросу, стартовая инициализация 
 RESET:	
+
+;=================================================
 	; -- инициализация стека -- 
 	LDI 	Temp, LOW(RAMEND) ; младший байт конечного адреса ОЗУ в R16 
-	OUT 	SPL, Temp ; установка младшего байта указателя стека 
+	mOUT 	SPL, Temp ; установка младшего байта указателя стека 
 	LDI 	Temp, HIGH(RAMEND) ; старший байт конечного адреса ОЗУ в R16 
-	OUT 	SPH, Temp ; установка старшего байта указателя стека 
+	mOUT 	SPH, Temp ; установка старшего байта указателя стека 
+
 ;==============================================================
 ; Очистка ОЗУ и регистров R0-R31
 	LDI		ZL, LOW(SRAM_START)		; Адрес начала ОЗУ в индекс
@@ -70,18 +86,18 @@ Reg_Flush:
 	BRNE	Reg_Flush
 	CLR		ZL
 	CLR		ZH
+	
 ;==============================================================
 	; -- устанавливаем пин PB5 порта PORTB на вывод -- 
-	LDI 	Temp, 0b00100000 ; поместим в регистр R16 число 32 (0x20) 
-	OUT 	DDRB, Temp ; загрузим значение из регистра R16 в порт DDRB
+	SBI 	DDRB, PORTB5 ;
 
 	; -- инициализация USART --	
-	LDI 	R16, LOW(UART_BaudDivider)
-	LDI 	R17, HIGH(UART_BaudDivider)
+	LDI 	R16, LOW(UBRR)
+	LDI 	R17, HIGH(UBRR)
 	RCALL 	USART_Init 
 	
 	; вывод в порт приветствия
-	SETstr 	Hello_String
+	mSetStr	Hello_String
 	RCALL 	USART_Print_String
 
 ;=================================================
@@ -101,12 +117,12 @@ Start:
 	RJMP	Continuation
 Led_ON:
 	SBI 	PORTB, PORTB5 ; подача на пин PB5 высокого уровня 
-	SETstr 	LedOn
+	mSetStr 	LedOn
 	RCALL 	USART_Print_String
 	RJMP	Continuation
 Led_OFF:
 	CBI 	PORTB, PORTB5 ; подача на пин PB5 низкого уровня
-	SETstr 	LedOff
+	mSetStr 	LedOff
 	RCALL 	USART_Print_String
 Continuation:	
 	RJMP Start ; возврат к метке Start, повторяем все в цикле 
