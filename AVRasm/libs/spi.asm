@@ -50,9 +50,9 @@ SPI_Master_Init: ; ожидаем в R16 значение от 0 - 3 (скоро
 	LDI		DD_Temp, 3
 	CPSE	R16, DD_Temp ; если 3
 	ORI		R18, 0
-    RJMP   END_TEST_SPI
 
-	
+
+;     RJMP   END_TEST_SPI	
 ; TEST_SPI:
 ;     ORI		R18, (1 << SPR1) | (1 << SPR0)    
 ; END_TEST_SPI:
