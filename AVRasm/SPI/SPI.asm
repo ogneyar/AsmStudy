@@ -1,18 +1,24 @@
 
-; НЕ РАБОТАЕТ!!! 
+; Тестирование SPI на микроконтроллере ATmega328p
 
-; Светодиодная мигалка на микроконтроллере ATmega328p
+; разкомментируй строку ниже если используешь LGT8F328P
+#define __LGT8F__ ; for LGT8F328P
 
 .INCLUDE "../libs/m328Pdef.inc" ; загрузка предопределений для ATmega328p 
 #include "../libs/macro.inc"    ; подключение файла 'макросов'
 
 ;=================================================
 ; Имена регистров, а также различные константы
-	.equ 	XTAL 					= 16000000 		; Частота МК
-	.equ 	UART_BaudRate 			= 9600		; Скорость обмена по UART
-	.equ 	UART_BaudDivider 		= (XTAL/8/UART_BaudRate-1) ; (XTAL/8/x-1) при U2X0 в 1, (XTAL/16/x-1) при U2X0 в 0
+#ifdef __LGT8F__
+	.equ 	F_CPU 					= 32000000		; Частота МК LGT8F328P
+#else
+	.equ 	F_CPU 					= 16000000		; Частота МК ATmega328p
+#endif
+	.equ 	DIVIDER					= 8				; 8 при U2X0 = 1, 16 при U2X0 = 0
+	.equ 	BAUD 					= 115200		; Скорость обмена по UART
+	.equ 	UBRR 					= F_CPU/DIVIDER/BAUD-1
 	.equ 	I2C_Frequency 			= 100000			; Частота шины I2C (Nano работает даже на 1MHz)
-	.equ 	I2C_BaudDivider 		= ((XTAL/I2C_Frequency)-16)/2	; prescaler = 1
+	.equ 	I2C_BaudDivider 		= ((F_CPU/I2C_Frequency)-16)/2	; prescaler = 1
 ;	.equ 	I2C_Address_Device		= 0x27							; адрес устройства 
 ;	.equ 	I2C_Address_Write		= (I2C_Address_Device << 1)		; адрес устройства на запись
 ;	.equ 	I2C_Address_Read		= (I2C_Address_Write & 0x01)	; адрес устройства на чтение
@@ -30,8 +36,6 @@
 ;=================================================
 ; Сегмент SRAM памяти
 .DSEG
-	; Test: .byte 1
-	Test_String: .byte 100
 	
 ;=================================================
 ; Сегмент EEPROM памяти
@@ -48,8 +52,9 @@
 		
 ;=================================================
 ; Переменные во флеш памяти
+Program_name: .db "Test SPI Master mode on ATmega328p/LGT8F328P ",0
 Hello_String: .db '\n',"Проверка работы SPI!",'\n','\n',0
-Cancel_String: .db '\n',"Крнец передачи байта!",'\n','\n',0
+Cancel_String: .db '\n',"Конец передачи байта! ",'\n','\n',0
 ErrorStr: .db '\n',"Непредвиденная ошибка!",'\n','\n',0
 
 ;=================================================
@@ -67,14 +72,34 @@ RESET:
 	LDI 	Temp1, HIGH(RAMEND) ; старший байт конечного адреса ОЗУ в R16 
 	OUT 	SPH, Temp1 ; установка старшего байта указателя стека 
 
-
+;==============================================================
+; Очистка ОЗУ и регистров R0-R31
+	LDI		ZL, LOW(SRAM_START)		; Адрес начала ОЗУ в индекс
+	LDI		ZH, HIGH(SRAM_START)
+	CLR		R16					; Очищаем R16
+RAM_Flush:
+	ST 		Z+, R16				
+	CPI		ZH, HIGH(RAMEND+1)	
+	BRNE	RAM_Flush			
+	CPI		ZL, LOW(RAMEND+1)	
+	BRNE	RAM_Flush
+	LDI		ZL, (0x1F-2)			; Адрес регистра R29
+	CLR		ZH
+Reg_Flush:
+	ST		Z, ZH
+	DEC		ZL
+	BRNE	Reg_Flush
+	CLR		ZL
+	CLR		ZH
+	
+;==============================================================
 	; -- инициализация USART --
-	LDI 	R16, LOW(UART_BaudDivider)
-	LDI 	R17, HIGH(UART_BaudDivider)
+	LDI 	R16, LOW(UBRR)
+	LDI 	R17, HIGH(UBRR)
 	RCALL 	USART_Init 
 		
 	; вывод в порт приветствия
-	SETstr 	Hello_String
+	mSetStr	Hello_String
 	RCALL 	USART_Print_String
 
 	; -- инициализация I2C --
@@ -85,9 +110,33 @@ RESET:
 	LDI 	R16, 0xaa
 	RCALL 	SPI_Master_SendByte
 	
-	SETstr 	Cancel_String
+	LDI		R16, 'H'
+	RCALL 	USART_Transmit
+
+	LDI		R16, 'e'
+	RCALL 	USART_Transmit
+
+	LDI		R16, 'l'
+	RCALL 	USART_Transmit
+
+	LDI		R16, 'l'
+	RCALL 	USART_Transmit
+
+	LDI		R16, 'o'
+	RCALL 	USART_Transmit
+
+	LDI		R16, '\n'
+	RCALL 	USART_Transmit
+
+	LDI		R16, '\n'
+	RCALL 	USART_Transmit
+
+	mSetStr 	Cancel_String
 	RCALL 	USART_Print_String
 
+
+
+	RJMP ERROR
 
 ;=================================================
 ; Основная программа (цикл)
@@ -96,67 +145,13 @@ Main:
 ;=================================================
 
 
-; 
-SPI_Master_Init: ; ожидаем в R16 значение от 0 - 3
-	push	R16	
-	push	R17
-	push	R18
-	
-	LDI		R17, (1 << PORTB3) | (1 << PORTB5) ; PORTB3 - MOSI, PORTB5 - SCK
-	OUT 	DDRB, R17
-	
-	
-	; Разрешить работу SPI, режим Master, установить скорость тактов
-	; SPI2X SPR1 SPR0 - 0 0 0 = fck/4; 0 0 1 = fck/16; 0 1 0 = fck/64; 0 1 1 = fck/128;      1 0 0 = fck/2; 1 0 1 = fck/8; 1 1 0 = fck/32; 1 1 1 = fck/64
-	LDI		R18, (1 << SPE) | (1 << MSTR) ; | (1 << SPR1) | (1 << SPR0);
-	
-	; R16 = 0 -> fck/128 = 125KHz
-	LDI		R17, 0
-	CPSE	R16, R17 ; если 0
-	ORI		R18, (1 << SPR1) | (1 << SPR0)
-	; R16 = 1 -> fck/64  = 250KHz
-	LDI		R17, 1
-	CPSE	R16, R17 ; если 1
-	ORI		R18, (1 << SPR1)
-	; R16 = 2 -> fck/16  = 1MHz
-	LDI		R17, 2
-	CPSE	R16, R17 ; если 2
-	ORI		R18, (1 << SPR0)
-	; R16 = 3 -> fck/4   = 4KHz
-	LDI		R17, 3
-	CPSE	R16, R17 ; если 3
-	ORI		R18, 0
-	
-	UOUT 	SPCR, R18
-	
-	LDI		R17, SPI2X
-	UOUT 	SPSR, R17
-	
-	pop		R18
-	pop		R17
-	pop		R16
-ret
-
-;
-SPI_Master_SendByte:
-    ; Запуск передачи данных
-	STS 	SPDR, R16
-	NOP
-SPI_Wait_SPIF: ; Ожидание завершения передачи   
-	LDS 	R16, SPSR
-	SBRS 	R16, SPIF ; Skip if Bit in Register Set
-	RJMP 	SPI_Wait_SPIF
-ret
-
-
-
 
 ;=================================================
 ERROR:
 	; -- устанавливаем пин PB5 порта PORTB на вывод -- 
 	LDI		Temp1, (1 << PORTB5)
 	OUT 	DDRB, Temp1
-	SETstr	ErrorStr
+	mSetStr	ErrorStr
 	RCALL	USART_Print_String ; вывод сообщения в порт
 loop_ERROR:
 	SBI 	PORTB, PORTB5 ; включаем светодиод
