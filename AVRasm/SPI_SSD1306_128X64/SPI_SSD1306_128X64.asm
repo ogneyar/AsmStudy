@@ -4,6 +4,47 @@
 ; разкомментируй строку ниже если используешь LGT8F328P
 #define __LGT8F__ ; for LGT8F328P
 
+#define PORT_RES 	PORTB0
+#define PORT_DC  	PORTB1
+#define PORT_CS 	PORTB2
+
+#define OLED_WIDTH              128
+#define OLED_HEIGHT_32          0x02
+#define OLED_HEIGHT_64          0x12
+#define OLED_64                 0x3F
+#define OLED_32                 0x1F
+
+#define OLED_DISPLAY_OFF        0xAE
+#define OLED_DISPLAY_ON         0xAF
+
+#define OLED_COMMAND_MODE       0x00
+#define OLED_ONE_COMMAND_MODE   0x80
+#define OLED_DATA_MODE          0x40
+#define OLED_ONE_DATA_MODE      0xC0
+
+#define OLED_ADDRESSING_MODE    0x20
+#define OLED_HORIZONTAL         0x00
+#define OLED_VERTICAL           0x01
+
+#define OLED_NORMAL_V           0xC8
+#define OLED_FLIP_V             0xC0
+#define OLED_NORMAL_H           0xA1
+#define OLED_FLIP_H             0xA0
+
+#define OLED_CONTRAST           0x81
+#define OLED_SETCOMPINS         0xDA
+#define OLED_SETVCOMDETECT      0xDB
+#define OLED_CLOCKDIV           0xD5
+#define OLED_SETMULTIPLEX       0xA8
+#define OLED_COLUMNADDR         0x21
+#define OLED_PAGEADDR           0x22
+#define OLED_CHARGEPUMP         0x8D
+
+#define OLED_NORMALDISPLAY      0xA6
+#define OLED_INVERTDISPLAY      0xA7
+
+
+
 .INCLUDE "../libs/m328Pdef.inc" ; загрузка предопределений для ATmega328p 
 #include "../libs/macro.inc"    ; подключение файла 'макросов'
 
@@ -136,27 +177,15 @@ Reg_Flush:
 	SEI
 
 	; -- инициализация SPI --
-	LDI 	R16, 0 ; 0 - 125KHz, 1 - 250KHz, 2 - 1MHz, 3 - 4MHz
+	LDI 	R16, 2 ; 0 - 125KHz при Fcpu=16MHz, 1 - 250KHz при Fcpu=16MHz, 2 - 1MHz при Fcpu=16MHz, 3 - 4MHz при Fcpu=16MHz  (0 - 250KHz при Fcpu=32MHz, 1 - 500KHz при Fcpu=32MHz, 2 - 2MHz при Fcpu=32MHz, 3 - 8MHz при Fcpu=32MHz)
 	RCALL 	SPI_Master_Init
-	
-	; передача байта по SPI
-	; LDI 	R16, 0xaa
-	; RCALL 	SPI_Master_SendByte
-	
-	LDI		R16, 'H'
-	RCALL 	USART_Transmit
-	LDI		R16, 'e'
-	RCALL 	USART_Transmit
-	LDI		R16, 'l'
-	RCALL 	USART_Transmit
-	LDI		R16, 'l'
-	RCALL 	USART_Transmit
-	LDI		R16, 'o'
-	RCALL 	USART_Transmit
-	LDI		R16, '\n'
-	RCALL 	USART_Transmit
-	LDI		R16, '\n'
-	RCALL 	USART_Transmit
+
+	; -- инициализация дисплея --
+	RCALL 	SSD1306_Init
+
+	; вывод всех пикселей на экран
+	RCALL 	SSD1306_Send_Data
+
 
 	mSetStr Cancel_String
 	RCALL 	USART_Print_String
@@ -171,17 +200,182 @@ Reg_Flush:
 ; Основная программа (цикл)
 Main:	
 	SBI		PORTB, PORTB5
-	LDI		R20, 100
+	LDI		R20, 200
 	RCALL	Wait
-
-
 	CBI		PORTB, PORTB5
-	LDI		R20, 100
+	LDI		R20, 200
 	RCALL	Wait
 	RJMP 	Main ; возврат к метке Main, повторяем все в цикле 
 ;=================================================
 
 
+
+
+;=====================================================================
+; OLED Init
+;=====================================================================
+SSD1306_Init:
+	SBI 	PORTB, PORT_CS ; CS - pull up
+
+	SBI 	PORTB, PORT_RES ; RST - pull up
+	LDI		R20, 1
+	RCALL	Wait ; delay(1)
+	CBI 	PORTB, PORT_RES ; RST - pull down
+	LDI		R20, 10
+	RCALL	Wait ; delay(10)
+	SBI 	PORTB, PORT_RES ; RST - pull up
+
+	; beginCommand
+    CBI 	PORTB, PORT_CS ; CS - pull down
+	CBI 	PORTB, PORT_DC ; DC - pull down
+
+	; for (uint8_t i = 0; i < 15; i++) sendByte(pgm_read_byte(&_oled_init[i]));		
+	; OLED_DISPLAY_OFF
+	LDI 	R16, OLED_DISPLAY_OFF
+	RCALL 	SPI_Master_SendByte ; передача байта по SPI
+	; OLED_CLOCKDIV
+	LDI 	R16, OLED_CLOCKDIV
+	RCALL 	SPI_Master_SendByte ; передача байта по SPI
+    ; value
+	LDI 	R16, 0x80
+	RCALL 	SPI_Master_SendByte ; передача байта по SPI
+	; OLED_CHARGEPUMP
+	LDI 	R16, OLED_CHARGEPUMP
+	RCALL 	SPI_Master_SendByte ; передача байта по SPI
+	; value
+	LDI 	R16, 0x14
+	RCALL 	SPI_Master_SendByte ; передача байта по SPI
+	; OLED_ADDRESSING_MODE
+	LDI 	R16, OLED_ADDRESSING_MODE
+	RCALL 	SPI_Master_SendByte ; передача байта по SPI
+	; OLED_VERTICAL
+	LDI 	R16, OLED_VERTICAL
+	RCALL 	SPI_Master_SendByte ; передача байта по SPI
+	; OLED_NORMAL_H
+	LDI 	R16, OLED_NORMAL_H
+	RCALL 	SPI_Master_SendByte ; передача байта по SPI
+	; OLED_NORMAL_V
+	LDI 	R16, OLED_NORMAL_V
+	RCALL 	SPI_Master_SendByte ; передача байта по SPI
+	; OLED_CONTRAST
+	LDI 	R16, OLED_CONTRAST
+	RCALL 	SPI_Master_SendByte ; передача байта по SPI
+	; value
+	LDI 	R16, 0x7F
+	RCALL 	SPI_Master_SendByte ; передача байта по SPI
+	; OLED_SETVCOMDETECT
+	LDI 	R16, OLED_SETVCOMDETECT
+	RCALL 	SPI_Master_SendByte ; передача байта по SPI
+	; value
+	LDI 	R16, 0x40
+	RCALL 	SPI_Master_SendByte ; передача байта по SPI
+	; OLED_NORMALDISPLAY
+	LDI 	R16, OLED_NORMALDISPLAY
+	RCALL 	SPI_Master_SendByte ; передача байта по SPI
+	; OLED_DISPLAY_ON
+	LDI 	R16, OLED_DISPLAY_ON
+	RCALL 	SPI_Master_SendByte ; передача байта по SPI
+	; OLED_SETCOMPINS
+	LDI 	R16, OLED_SETCOMPINS
+	RCALL 	SPI_Master_SendByte ; передача байта по SPI
+	; OLED_HEIGHT_64
+	LDI 	R16, OLED_HEIGHT_64
+	RCALL 	SPI_Master_SendByte ; передача байта по SPI
+	; OLED_SETMULTIPLEX
+	LDI 	R16, OLED_SETMULTIPLEX
+	RCALL 	SPI_Master_SendByte ; передача байта по SPI
+	; OLED_64
+	LDI 	R16, OLED_64
+	RCALL 	SPI_Master_SendByte ; передача байта по SPI
+
+
+    ; endTransmission
+	SBI 	PORTB, PORT_CS ; CS - pull up
+ret
+;=====================================================================
+
+
+
+;=====================================================================
+; OLED Send Data
+;=====================================================================
+SSD1306_Send_Data:
+	; beginCommand
+    CBI 	PORTB, PORT_CS ; CS - pull down
+	CBI 	PORTB, PORT_DC ; DC - pull down
+
+	; Установка столбца
+	LDI 	R16, 0x21
+	RCALL 	SPI_Master_SendByte ; передача байта по SPI	
+	; Начальный адрес
+	LDI 	R16, 0
+	RCALL 	SPI_Master_SendByte ; передача байта по SPI
+	; Конечный адрес
+	LDI 	R16, 127
+	RCALL 	SPI_Master_SendByte ; передача байта по SPI
+    
+	; Установка строки
+	LDI 	R16, 0x22
+	RCALL 	SPI_Master_SendByte ; передача байта по SPI
+	; Начальный адрес
+	LDI 	R16, 0
+	RCALL 	SPI_Master_SendByte ; передача байта по SPI	
+	; Конечный адрес
+	LDI 	R16, 7
+	RCALL 	SPI_Master_SendByte ; передача байта по SPI
+
+ 	; endTransmission
+	SBI 	PORTB, PORT_CS ; CS - pull up
+
+	; beginData
+    CBI 	PORTB, PORT_CS ; CS - pull down
+	SBI 	PORTB, PORT_DC ; DC - pull up
+	
+    
+    ; Вывод всех пикселей на экран
+	LDI		Flag, 0xff
+	LDI 	R16, 0xff
+	RCALL 	SPI_Master_SendByte ; передача байта по SPI
+send_0xff_256_pcs_1:
+	LDI 	R16, 0xff
+	RCALL 	SPI_Master_SendByte ; передача байта по SPI
+	DEC		Flag ; Flag--
+	BRNE	send_0xff_256_pcs_1
+
+	LDI		Flag, 0xff
+	LDI 	R16, 0xff
+	RCALL 	SPI_Master_SendByte ; передача байта по SPI
+send_0xff_256_pcs_2:
+	LDI 	R16, 0xff
+	RCALL 	SPI_Master_SendByte ; передача байта по SPI
+	DEC		Flag ; Flag--
+	BRNE	send_0xff_256_pcs_2
+	
+	LDI		Flag, 0xff
+	LDI 	R16, 0xff
+	RCALL 	SPI_Master_SendByte ; передача байта по SPI
+send_0xff_256_pcs_3:
+	LDI 	R16, 0xff
+	RCALL 	SPI_Master_SendByte ; передача байта по SPI
+	DEC		Flag ; Flag--
+	BRNE	send_0xff_256_pcs_3
+	
+	LDI		Flag, 0xff
+	LDI 	R16, 0xff
+	RCALL 	SPI_Master_SendByte ; передача байта по SPI
+send_0xff_256_pcs_4:
+	LDI 	R16, 0xff
+	RCALL 	SPI_Master_SendByte ; передача байта по SPI
+	DEC		Flag ; Flag--
+	BRNE	send_0xff_256_pcs_4
+	RCALL 	USART_Transmit
+ret
+;=====================================================================
+
+
+
+
+;
 TimerCounter1_Init: ; Настраиваем таймеры
 	; Разрешение прерывания таймера 1 по совпадению канала А 
 	LDI 	R16, (1 << OCIE1A)

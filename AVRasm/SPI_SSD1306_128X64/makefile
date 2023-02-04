@@ -5,11 +5,12 @@ TARGET_MCU	:= atmega328p
 
 PORT_NANO	:= com8
 PORT_LGT	:= com12
+PORT_MINI	:= com15
 
 BAUD_NANO	:= 115200
 BAUD_LGT	:= 57600 
 
-FILE_NAME	:= SPI
+FILE_NAME	:= SPI_SSD1306_128X64
 ASM			:= $(FILE_NAME).asm
 HEX_NANO	:= $(FILE_NAME)_atmega328p.hex
 HEX_LGT		:= $(FILE_NAME)_lgt8f328p.hex
@@ -30,4 +31,8 @@ lgt8f:
 
 nano: all
 	@echo Finish nano
+
+pro_mini:
+	@avrasm2.exe -fI $(ASM) -o $(HEX_NANO)
+	@avrdude -p $(TARGET_MCU) -c $(PROGRAMMER) -P $(PORT_MINI)  -b $(BAUD_NANO) -U flash:w:$(HEX_NANO):a
 
