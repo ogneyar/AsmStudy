@@ -9,6 +9,7 @@ PORT_MINI	:= com15
 
 BAUD_NANO	:= 115200
 BAUD_LGT	:= 57600 
+BAUD_MINI	:= 57600 
 
 FILE_NAME	:= SPI_SSD1306_128X64
 ASM			:= $(FILE_NAME).asm
@@ -34,5 +35,5 @@ nano: all
 
 pro_mini:
 	@avrasm2.exe -fI $(ASM) -o $(HEX_NANO)
-	@avrdude -p $(TARGET_MCU) -c $(PROGRAMMER) -P $(PORT_MINI)  -b $(BAUD_NANO) -U flash:w:$(HEX_NANO):a
+	@avrdude -p $(TARGET_MCU) -c $(PROGRAMMER) -P $(PORT_MINI)  -b $(BAUD_MINI) -U flash:w:$(HEX_NANO):a
 
