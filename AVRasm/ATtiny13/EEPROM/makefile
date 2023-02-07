@@ -5,7 +5,7 @@ TARGET_MCU	:= 	ATtiny13
 
 BAUD		:= 115200
 
-FILE_NAME	:= Blink_NL
+FILE_NAME	:= EEPROM
 ASM			:= $(FILE_NAME).asm
 HEX			:= $(FILE_NAME)_ATtiny13.hex
 

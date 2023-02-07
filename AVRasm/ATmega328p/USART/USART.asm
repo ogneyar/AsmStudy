@@ -17,16 +17,11 @@
 	.equ 	DIVIDER					= 8				; 8 при U2X0 = 1, 16 при U2X0 = 0
 	.equ 	BAUD 					= 115200		; Скорость обмена по UART
 	.equ 	UBRR 					= F_CPU/DIVIDER/BAUD-1
-	.equ 	I2C_Frequency 			= 80000			; Частота шины I2C
-	.equ 	I2C_BaudDivider 		= (F_CPU/(8*I2C_Frequency)-2)
 
 ;=================================================
 	.def 	USART_Data				= R16			; регистр данных USART
 	.def 	Temp					= R17			; регистр для временных данных
 	.def 	Flag 					= R25 			; регистр для флага
-
-;=================================================	
-	.set 	Delay 					= 50 			; установка переменной времени задержки 
 
 ;=================================================
 ; Сегмент SRAM памяти
@@ -54,7 +49,7 @@ LedOff: .db "LED погашен!",'\n','\n',0
 
 ;=================================================
 ; Подключение библиотек
-#include "../libs/usart.asm"    ; подключение библиотеки USART (ей требуется UART_BaudDivider)
+#include "../libs/usart.asm"    ; подключение библиотеки USART (ей требуется UBRR)
 
 ;=================================================
 ; Прерывание по сбросу, стартовая инициализация 
@@ -117,12 +112,12 @@ Start:
 	RJMP	Continuation
 Led_ON:
 	SBI 	PORTB, PORTB5 ; подача на пин PB5 высокого уровня 
-	mSetStr 	LedOn
+	mSetStr LedOn
 	RCALL 	USART_Print_String
 	RJMP	Continuation
 Led_OFF:
 	CBI 	PORTB, PORTB5 ; подача на пин PB5 низкого уровня
-	mSetStr 	LedOff
+	mSetStr LedOff
 	RCALL 	USART_Print_String
 Continuation:	
 	RJMP Start ; возврат к метке Start, повторяем все в цикле 

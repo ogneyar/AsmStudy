@@ -37,7 +37,7 @@ EEPROM_Write: ; адрес в ZL:ZH, а данные ожидаются в R16
 	; Запустите запись в eeprom, установив EEPE
 	SBI 	EECR, EEPE ; Set Bit in I/O Register
 	; возвращяем статус регистры
-	mOUT	SREG, R19
+	mOUT	SREG, R17
     pop     R17
 ret
 
