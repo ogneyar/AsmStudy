@@ -11,7 +11,7 @@
 	.equ 	F_CPU 					= 9600000		; Частота МК
 	.equ 	DIVIDER					= 8				; делитель
 	.equ 	BAUD 					= 9600			; Скорость обмена по UART
-	.equ 	UBRR 					= 123  ; F_CPU/DIVIDER/BAUD-1
+	.equ 	UBRR 					= F_CPU/DIVIDER/BAUD-1
 
 ;=================================================
 	.def 	Data					= R16			; регистр данных USART
@@ -38,7 +38,7 @@
 ;=================================================
 ; Переменные во флеш памяти
 ; Program_name: .db "Test USART Transmit-Reseive on ATtiny13",0
-Hello_String: .db '\n',"Hello Bro!",'\n','\n',"Are you fine?",'\n','\n',0
+Hello_String: .db '\n',"Hello Bro!",'\n',"Are you fine?",'\n','\n',0
 
 ;=================================================
 ; Подключение библиотек
