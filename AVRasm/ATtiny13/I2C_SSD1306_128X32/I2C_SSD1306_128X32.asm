@@ -1,5 +1,5 @@
 
-; OLED SSD1306 I2C на микроконтроллере ATtiny13A
+; OLED SSD1306 I2C на микроконтроллере ATtiny13A 
 
 .INCLUDE "../libs/tn13Adef.inc" ; загрузка предопределений для ATtiny13A 
 #include "../libs/macro.inc"    ; подключение файла 'макросов'
