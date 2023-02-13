@@ -1,5 +1,5 @@
 
-; OLED SSD1306 SPI на микроконтроллере ATtiny13A
+; OLED SSD1306 SPI на микроконтроллере ATtiny88
 
 #define	SPI_MOSI	PB0	
 #define	SPI_SCK		PB2	
@@ -7,13 +7,13 @@
 #define SPI_DC   	PB4
 #define SPI_RES  	PB1
 
-.INCLUDE "../libs/tn13Adef.inc" ; загрузка предопределений для ATtiny13A 
+.INCLUDE "../libs/tn88def.inc" ; загрузка предопределений для ATtiny88 
 #include "../libs/macro.inc"    ; подключение файла 'макросов'
 #include "../libs/defines.inc"  ; подключение файла 'определений'
 
 ;=================================================
 ; Имена регистров, а также различные константы
-	.equ 	F_CPU 					= 9600000		; Частота МК
+	.equ 	F_CPU 					= 16000000		; Частота МК
 	
 ;=================================================
 	.def 	Data					= R16			; регистр данных
@@ -41,7 +41,7 @@
 
 ;=================================================
 ; Переменные во флеш памяти
-; Program_name: .db "OLED SSD1306 SPI Master mode on ATtiny13A ",0
+; Program_name: .db "OLED SSD1306 SPI Master mode on ATtiny88",0
 
 ;=================================================
 ; Подключение библиотек
@@ -54,8 +54,8 @@ RESET:
 	; -- инициализация стека -- 
 	LDI 	R16, LOW(RAMEND) ; младший байт конечного адреса ОЗУ в R16 
 	OUT 	SPL, R16 ; установка младшего байта указателя стека 
-	; LDI 	R16, High(RAMEND) ; старший байт конечного адреса ОЗУ в R16 
-	; OUT 	SPH, R16 ; установка старшего байта указателя стека 
+	LDI 	R16, High(RAMEND) ; старший байт конечного адреса ОЗУ в R16 
+	OUT 	SPH, R16 ; установка старшего байта указателя стека 
 
 ;==============================================================
 ; Очистка ОЗУ и регистров R0-R31
@@ -64,8 +64,8 @@ RESET:
 	CLR		R16					; Очищаем R16
 RAM_Flush:
 	ST 		Z+, R16			
-	; CPI		ZH, HIGH(RAMEND+1)	
-	; BRNE	RAM_Flush				
+	CPI		ZH, HIGH(RAMEND+1)	
+	BRNE	RAM_Flush				
 	CPI		ZL, LOW(RAMEND+1)	
 	BRNE	RAM_Flush
 	LDI		ZL, (0x1F-2)			; Адрес регистра R29
@@ -79,13 +79,32 @@ Reg_Flush:
 		
 ;==============================================================
 	; -- инициализация SPI --
+	LDI 	DD_Speed, 2 ; 0 - 125KHz, 1 - 250KHz, 2 - 1MHz, 3 - 4MHz
 	RCALL 	SPI_Master_Init
 
 	; -- инициализация дисплея --
 	RCALL 	SSD1306_Init
+	
+	; очистка экрана
+	RCALL	SSD1306_Clear
+
+	; задержка 1 сек
+	RCALL 	Delay_1000ms
 
 	; вывод всех пикселей на экран
 	RCALL 	SSD1306_Send_Data
+
+	; задержка 1 сек
+	RCALL 	Delay_1000ms
+	
+	; очистка экрана
+	RCALL	SSD1306_Clear
+
+	; задержка 1 сек
+	RCALL 	Delay_1000ms
+	
+	; вывод чередующихся пикселей на экран
+	RCALL 	SSD1306_Send_Data_2
 
 
 ;=================================================
@@ -95,20 +114,15 @@ Main:
 ;================================================= 
 
 
-
-
-;=====================================================================
-; OLED Init
-;=====================================================================
+;
 SSD1306_Init:
-	CBI 	SPI_PORT, SPI_RES ; RST - pull down
-	; LDI		Counter, 10
-	; RCALL	Wait ; delay(10)
+	; display reset
+	CBI 	PORT_SPI, DD_RES ; RST - pull down
 	RCALL	Delay_10ms ; delay(10)
-	SBI 	SPI_PORT, SPI_RES ; RST - pull up
+	SBI 	PORT_SPI, DD_RES ; RST - pull up
 
 	; beginCommand
-	CBI 	SPI_PORT, SPI_DC ; DC - pull down
+	CBI 	PORT_SPI, DD_DC ; DC - pull down
 
 	; for (uint8_t i = 0; i < 15; i++) sendByte(pgm_read_byte(&_oled_init[i]));		
 	; OLED_DISPLAY_OFF
@@ -172,23 +186,106 @@ SSD1306_Init:
 	LDI 	R16, OLED_DISPLAY_ON
 	RCALL 	SSD1306_Write ; передача байта по SPI
 ret
-;=====================================================================
 
 ;
 SSD1306_Write:
     ; beginTransmission
-    CBI 	SPI_PORT, SPI_CS ; CS - pull down
-	RCALL 	SPI_Transfer ; Data in R16
+    CBI 	PORT_SPI, DD_SS ; CS - pull down
+	RCALL 	SPI_Master_SendByte ; Data in R16
     ; endTransmission
-	SBI 	SPI_PORT, SPI_CS ; CS - pull up
+	SBI 	PORT_SPI, DD_SS ; CS - pull up
 ret
 
-;=====================================================================
-; OLED Send Data
-;=====================================================================
-SSD1306_Send_Data:
+;
+SSD1306_Send_Data:	
+	; установка адреса экрана
+	RCALL 	SSD1306_SetColumnAndPage
+
+	; beginData
+	SBI 	PORT_SPI, DD_DC ; DC - pull up	
+    
+    ; Вывод всех пикселей на экран
+;-------------------------------------- 1 - 256
+	LDI		Flag, 0xff
+	LDI 	R16, 0xff
+	RCALL 	SSD1306_Write ; передача байта по SPI
+loop1_SSD1306_Send_Data:
+	RCALL 	SSD1306_Write ; передача байта по SPI
+	DEC		Flag ; Flag--
+	BRNE	loop1_SSD1306_Send_Data
+;-------------------------------------- 2 - 256
+	LDI		Flag, 0xff
+	LDI 	R16, 0xff
+	RCALL 	SSD1306_Write ; передача байта по SPI
+loop2_SSD1306_Send_Data:
+	RCALL 	SSD1306_Write ; передача байта по SPI
+	DEC		Flag ; Flag--
+	BRNE	loop2_SSD1306_Send_Data
+;-------------------------------------- 3 - 256
+	LDI		Flag, 0xff
+	LDI 	R16, 0xff
+	RCALL 	SSD1306_Write ; передача байта по SPI
+loop3_SSD1306_Send_Data:
+	RCALL 	SSD1306_Write ; передача байта по SPI
+	DEC		Flag ; Flag--
+	BRNE	loop3_SSD1306_Send_Data
+;-------------------------------------- 4 - 256
+	LDI		Flag, 0xff
+	LDI 	R16, 0xff
+	RCALL 	SSD1306_Write ; передача байта по SPI
+loop4_SSD1306_Send_Data:
+	RCALL 	SSD1306_Write ; передача байта по SPI
+	DEC		Flag ; Flag--
+	BRNE	loop4_SSD1306_Send_Data
+ret
+
+;
+SSD1306_Send_Data_2:	
+	; установка адреса экрана
+	RCALL 	SSD1306_SetColumnAndPage
+
+	; beginData
+	SBI 	PORT_SPI, DD_DC ; DC - pull up	
+    
+    ; Вывод всех пикселей на экран
+;-------------------------------------- 1 - 256
+	LDI		Flag, 0xff
+	LDI 	R16, 0xaa
+	RCALL 	SSD1306_Write ; передача байта по SPI
+loop1_SSD1306_Send_Data_2:
+	RCALL 	SSD1306_Write ; передача байта по SPI
+	DEC		Flag ; Flag--
+	BRNE	loop1_SSD1306_Send_Data_2
+;-------------------------------------- 2 - 256
+	LDI		Flag, 0xff
+	LDI 	R16, 0xaa
+	RCALL 	SSD1306_Write ; передача байта по SPI
+loop2_SSD1306_Send_Data_2:
+	RCALL 	SSD1306_Write ; передача байта по SPI
+	DEC		Flag ; Flag--
+	BRNE	loop2_SSD1306_Send_Data_2
+;-------------------------------------- 3 - 256
+	LDI		Flag, 0xff
+	LDI 	R16, 0xaa
+	RCALL 	SSD1306_Write ; передача байта по SPI
+loop3_SSD1306_Send_Data_2:
+	RCALL 	SSD1306_Write ; передача байта по SPI
+	DEC		Flag ; Flag--
+	BRNE	loop3_SSD1306_Send_Data_2
+;-------------------------------------- 4 - 256
+	LDI		Flag, 0xff
+	LDI 	R16, 0xaa
+	RCALL 	SSD1306_Write ; передача байта по SPI
+loop4_SSD1306_Send_Data_2:
+	RCALL 	SSD1306_Write ; передача байта по SPI
+	DEC		Flag ; Flag--
+	BRNE	loop4_SSD1306_Send_Data_2
+ret
+
+;
+SSD1306_SetColumnAndPage:
 	; beginCommand
-	CBI 	PORTB, SPI_DC ; DC - pull down
+	CBI 	PORT_SPI, DD_DC ; DC - pull down
 
 	; Установка столбца
 	LDI 	R16, 0x21
@@ -209,47 +306,48 @@ SSD1306_Send_Data:
 	; Конечный адрес
 	LDI 	R16, 7
 	RCALL 	SSD1306_Write ; передача байта по SPI
+ret
+
+; 
+SSD1306_Clear:
+	; установка адреса экрана
+	RCALL 	SSD1306_SetColumnAndPage
 
 	; beginData
-	SBI 	PORTB, SPI_DC ; DC - pull up	
-    
+	SBI 	PORT_SPI, DD_DC ; DC - pull up	  
+
     ; Вывод всех пикселей на экран
+;-------------------------------------- 1 - 256
 	LDI		Flag, 0xff
-	LDI 	R16, 0xff
+	LDI 	R16, 0x00
 	RCALL 	SSD1306_Write ; передача байта по SPI
-send_0xff_256_pcs_1:
-	; LDI 	R16, 0xff
+loop1_SSD1306_Clear:
 	RCALL 	SSD1306_Write ; передача байта по SPI
 	DEC		Flag ; Flag--
-	BRNE	send_0xff_256_pcs_1
-
+	BRNE	loop1_SSD1306_Clear
+;-------------------------------------- 2 - 256
 	LDI		Flag, 0xff
-	LDI 	R16, 0xff
+	LDI 	R16, 0x00
 	RCALL 	SSD1306_Write ; передача байта по SPI
-send_0xff_256_pcs_2:
-	; LDI 	R16, 0xff
+loop2_SSD1306_Clear:
 	RCALL 	SSD1306_Write ; передача байта по SPI
 	DEC		Flag ; Flag--
-	BRNE	send_0xff_256_pcs_2
-	
+	BRNE	loop2_SSD1306_Clear
+;-------------------------------------- 3 - 256
 	LDI		Flag, 0xff
-	LDI 	R16, 0xff
+	LDI 	R16, 0x00
 	RCALL 	SSD1306_Write ; передача байта по SPI
-send_0xff_256_pcs_3:
-	; LDI 	R16, 0xff
+loop3_SSD1306_Clear:
 	RCALL 	SSD1306_Write ; передача байта по SPI
 	DEC		Flag ; Flag--
-	BRNE	send_0xff_256_pcs_3
-	
+	BRNE	loop3_SSD1306_Clear
+;-------------------------------------- 4 - 256
 	LDI		Flag, 0xff
-	LDI 	R16, 0xff
+	LDI 	R16, 0x00
 	RCALL 	SSD1306_Write ; передача байта по SPI
-send_0xff_256_pcs_4:
-	; LDI 	R16, 0xff
+loop4_SSD1306_Clear:
 	RCALL 	SSD1306_Write ; передача байта по SPI
 	DEC		Flag ; Flag--
-	BRNE	send_0xff_256_pcs_4
+	BRNE	loop4_SSD1306_Clear
 ret
-;=====================================================================
-
 
