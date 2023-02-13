@@ -2,23 +2,24 @@
 #ifndef _I2C_ASM_
 #define _I2C_ASM_
 
-#include "macro.inc" ; подключение файла с макросами (mIN, mOUT)
+; #include "macro.inc" ; подключение файла с макросами (mIN, mOUT)
 
 ; Example
-; I2C_BaudDivider = ((XTAL/I2C_Frequency)-16)/2
-; I2C_Frequency = 100000 ; 100KHz
+; I2C_UBRR = ((XTAL/I2C_BAUD)-16)/2
+; I2C_BAUD = 100000 ; 100KHz
 ; XTAL = 16000000 ; 16MHz
 
 ; передача данных через R16
 ; приём данных через R17
 
 ;=================================================
-; -- функция инициализации I2C -- (ей требуется I2C_BaudDivider в R16) 
+; -- функция инициализации I2C -- (ей требуется I2C_UBRR) 
 I2C_Init: 
 	push	R17	
 	CLR 	R17
-	STS		0xb9, R17 ; 0xb9 -> TWSR (TWSR = 0 => prescaler = 1)
-	STS		0xb8, R16 ; 0xb8 -> TWBR (записываем I2C_BaudDivider)
+	STS		TWSR, R17 ; (TWSR = 0 => prescaler = 1)
+	LDI		R17, I2C_UBRR
+	STS		TWBR, R17
 
 	SBI		DDRC, PC4
 	SBI		DDRC, PC5

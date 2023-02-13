@@ -1,14 +1,16 @@
 
-; Тестирование USART на микроконтроллере ATtiny13A
+; Тестирование USART на микроконтроллере ATtiny88
 
-.INCLUDE "../libs/tn13Adef.inc" ; загрузка предопределений для ATtiny13A 
+.INCLUDE "../libs/tn88def.inc" ; загрузка предопределений для ATtiny88 
 #include "../libs/macro.inc" ; подключение файла с макросами
 
-; #define TxD		PB4
+; #define TxD      PD1
+; #define PORT_TxD PORTD
+; #define DDR_TxD  DDRD
 
 ;=================================================
 ; Имена регистров, а также различные константы
-	.equ 	F_CPU 					= 9600000		; Частота МК
+	.equ 	F_CPU 					= 16000000		; Частота МК
 	.equ 	DIVIDER					= 8				; делитель
 	.equ 	BAUD 					= 9600			; Скорость обмена по UART
 	.equ 	UBRR 					= F_CPU/DIVIDER/BAUD-1
@@ -37,7 +39,7 @@
 		
 ;=================================================
 ; Переменные во флеш памяти
-; Program_name: .db "Test USART Transmit-Reseive on ATtiny13",0
+; Program_name: .db "Test USART Transmit-Reseive on ATtiny88",0
 Hello_String: .db '\n',"Hello Bro!",'\n',"Are you fine?",'\n','\n',0
 
 ;=================================================
@@ -53,8 +55,8 @@ RESET:
 	; -- инициализация стека -- 
 	LDI 	R16, LOW(RAMEND) ; младший байт конечного адреса ОЗУ в R16 
 	OUT 	SPL, R16 ; установка младшего байта указателя стека 
-	; LDI R16, High(RAMEND) ; старший байт конечного адреса ОЗУ в R16 
-	; OUT SPH, R16 ; установка старшего байта указателя стека 
+	LDI R16, High(RAMEND) ; старший байт конечного адреса ОЗУ в R16 
+	OUT SPH, R16 ; установка старшего байта указателя стека 
 
 ;==============================================================
 ; Очистка ОЗУ и регистров R0-R31
@@ -63,8 +65,8 @@ RESET:
 	CLR		R16					; Очищаем R16
 RAM_Flush:
 	ST 		Z+, R16
-	; CPI		ZH, HIGH(RAMEND+1)	
-	; BRNE	RAM_Flush			
+	CPI		ZH, HIGH(RAMEND+1)	
+	BRNE	RAM_Flush			
 	CPI		ZL, LOW(RAMEND+1)	
 	BRNE	RAM_Flush
 	LDI		ZL, (0x1F-2)			; Адрес регистра R29
@@ -76,10 +78,10 @@ Reg_Flush:
 	CLR		ZL
 	CLR		ZH
 	
-;==============================================================
-	; -- устанавливаем пин 1 порта B на выход -- 
-	SBI 	DDRB, PB1 ;	
-	
+;==============================================================	
+	; -- устанавливаем пин 0 порта D на выход -- 
+	SBI 	DDRD, PD0 ;	
+
 	; инициализация USART
 	RCALL 	USART_Init
 	
@@ -89,10 +91,10 @@ Main:
 	mSetStr Hello_String
 	RCALL 	USART_Print_String
 
+	SBI 	PORTD, PD0
 	RCALL 	Delay_500ms
-	SBI 	PORTB, PB1
+	CBI 	PORTD, PD0
 	RCALL 	Delay_500ms
-	CBI 	PORTB, PB1
 
 	RJMP Main ; возврат к метке Main, повторяем все в цикле 
 ;=================================================

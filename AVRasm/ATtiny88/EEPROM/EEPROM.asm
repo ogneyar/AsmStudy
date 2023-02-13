@@ -1,11 +1,13 @@
 
-; Тестирование EEPROM памяти на микроконтроллере ATtiny13A
+; Тестирование EEPROM памяти на микроконтроллере ATtiny88
 
-.INCLUDE "../libs/tn13Adef.inc" ; загрузка предопределений для ATtiny13A
+.INCLUDE "../libs/tn88def.inc" ; загрузка предопределений для ATtiny88
 ; #include "../libs/macro.inc" ; подключение файла с макросами
 
 ;=================================================
 ; Имена регистров, а также различные константы
+	.equ 	F_CPU 					= 16000000		; Частота МК
+
 	.equ 	Address 				= 0 			; адрес ячейки памяти в EEPROM
 	.equ 	Key 					= 127 			; устанавливаемое значение ячейки памяти в EEPROM
 	.def 	Temp 					= R19 			; регистр для флага
@@ -27,7 +29,7 @@
 
 ;=================================================
 ; Переменные во флеш памяти
-Program_name: .db "Test EEPROM Read-Write on ATtiny13A",0
+; Program_name: .db "Test EEPROM Read-Write on ATtiny88",0
 
 ;=================================================
 ; Подключение библиотек
@@ -42,8 +44,8 @@ RESET:
 	; -- инициализация стека -- 
 	LDI R16, Low(RAMEND) ; младший байт конечного адреса ОЗУ в R16 
 	OUT SPL, R16 ; установка младшего байта указателя стека 
-	; LDI R16, High(RAMEND) ; старший байт конечного адреса ОЗУ в R16 
-	; OUT SPH, R16 ; установка старшего байта указателя стека 
+	LDI R16, High(RAMEND) ; старший байт конечного адреса ОЗУ в R16 
+	OUT SPH, R16 ; установка старшего байта указателя стека 
 
 ;==============================================================
 ; Очистка ОЗУ и регистров R0-R31
@@ -51,9 +53,9 @@ RESET:
 	LDI		ZH, HIGH(SRAM_START)
 	CLR		R16					; Очищаем R16
 RAM_Flush:
-	ST 		Z+, R16				
-	; CPI		ZH, HIGH(RAMEND+1)	
-	; BRNE	RAM_Flush			
+	ST 		Z+, R16			
+	CPI		ZH, HIGH(RAMEND+1)	
+	BRNE	RAM_Flush				
 	CPI		ZH, HIGH(RAMEND+1)	
 	BRNE	RAM_Flush			
 	CPI		ZL, LOW(RAMEND+1)	
@@ -68,8 +70,8 @@ Reg_Flush:
 	CLR		ZH
 
 ;==============================================================
-	; -- устанавливаем пин PB1 порта B на выход -- 
-	SBI		DDRB, PB1
+	; -- устанавливаем пин 0 порта D на выход -- 
+	SBI		DDRD, PB0
 
 	; чтение данных из EEPROM, в регистр R16
 	LDI 	R17, Address ; EEARL = Address
@@ -81,7 +83,7 @@ Reg_Flush:
 	CPSE 	R16, Temp ; сравниваем данные полученые из EEPROM с заданным ключём (Compare, Skip if Equal) пропустим следующую строку если значеия равны
 	RJMP 	Write ; прыжок до метки Write
 	LDI 	Flag, 1 ; флаг задержки времени
-	RJMP 	Start ; прыжок до метки Start
+	RJMP 	Main ; прыжок до метки Main
 
 Write: ; запись данных в EEPROM
 	LDI 	R17, Address ; EEARL = Address
@@ -91,13 +93,14 @@ Write: ; запись данных в EEPROM
 
 ;=================================================
 ; Основная программа (цикл)
-Start: 	
-	SBI 	PORTB, PB1 ; подача на пин PB1 высокого уровня 
+Main: 	
+	SBI 	PORTD, PD0 ; подача на пин PD0 высокого уровня 
 	RCALL 	Delay_100ms
-	CBI 	PORTB, PB1 ; подача на пин PB1 низкого уровня 
+	CBI 	PORTD, PD0 ; подача на пин PD0 низкого уровня 
 	LDI		R16, 1
 	CPSE	Flag, R16
 	RCALL 	Delay_500ms
 	RCALL 	Delay_100ms
-	RJMP 	Start ; возврат к метке Start, повторяем все в цикле 
+
+	RJMP 	Main ; возврат к метке Main, повторяем все в цикле 
 ;=================================================

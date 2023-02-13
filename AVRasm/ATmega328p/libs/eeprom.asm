@@ -20,9 +20,10 @@ ret
 ; -- функция записи данных в EEPROM -- 
 EEPROM_Write: ; адрес в ZL:ZH, а данные ожидаются в R16
     push    R17
+loop_EEPROM_Write:
  	; Дождитесь завершения предыдущей записи
 	SBIC 	EECR, EEPE ; Skip if Bit in I/O Register Cleared
-	RJMP 	EEPROM_write
+	RJMP 	loop_EEPROM_Write
 	; сохраняем статус регистры
 	mIN		R17, SREG
 	; Установите адрес (ZL:ZH) в регистре адресов

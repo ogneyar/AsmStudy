@@ -15,17 +15,15 @@ loop_EEPROM_Write:
 	RJMP 	loop_EEPROM_Write
 	; сохраняем статус регистры
 	IN		R18, SREG
-
+	; запрет прерываний
+	CLI
 	; Set Programming mode
 	LDI R19, (0 << EEPM1) | (0 << EEPM0)
 	OUT EECR, R19
-
 	; Установите адрес R17 в регистре адресов
 	OUT 	EEARL, R17 ; Out To I/O Location
 	; Запись данных (R16) в регистр данных
 	OUT 	EEDR, R16 ; Out To I/O Location
-	; запрет прерываний
-	CLI
 	; Напишите логическую единицу в EEMPE (EEPROM Master Program Enable)
 	SBI 	EECR, EEMPE ; Set Bit in I/O Register
 	; Запустите запись в eeprom, установив EEPE
@@ -40,15 +38,15 @@ ret
 EEPROM_Read: ; адрес в R17, данные возвращаются в регистре R16
 	; Дождитесь завершения предыдущей записи
 	SBIC 	EECR,EEPE ; Skip if Bit in I/O Register Cleared
-	RJMP 	EEPROM_read
+	RJMP 	EEPROM_Read
 	; Установите адрес R17 в регистре адресов
 	OUT 	EEARL, R17 ; Out To I/O Location
-	; Запустите чтение eeprom, написав EERE
+	; Запустите чтение eeprom, установив флаг EERE
 	SBI 	EECR,EERE ; Set Bit in I/O Register
 	NOP
 	NOP
 	; Считывание данных из регистра данных
-	IN 	R16, EEDR ; In From I/O Location
+	IN 		R16, EEDR ; In From I/O Location
 ret
 ;=================================================
 
