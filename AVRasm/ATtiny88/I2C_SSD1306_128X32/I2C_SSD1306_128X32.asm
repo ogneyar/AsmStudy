@@ -58,7 +58,7 @@ RESET:
 	; -- инициализация стека -- 
 	LDI 	R16, LOW(RAMEND) ; младший байт конечного адреса ОЗУ в R16 
 	OUT 	SPL, R16 ; установка младшего байта указателя стека 
-	LDI 	R16, High(RAMEND) ; старший байт конечного адреса ОЗУ в R16 
+	LDI 	R16, HIGH(RAMEND) ; старший байт конечного адреса ОЗУ в R16 
 	OUT 	SPH, R16 ; установка старшего байта указателя стека 
 
 ;==============================================================
@@ -88,6 +88,8 @@ Reg_Flush:
 	; очистка экрана
 	RCALL 	SSD1306_Clear
 
+	RCALL 	Delay_1000ms
+
 	; вывод данных на экран
 	RCALL 	SSD1306_Send_Data
 
@@ -107,22 +109,41 @@ SSD1306_Send_Data:
 	RCALL 	SSD1306_SetColumnAndPage
     
     ; Вывод всех пикселей на экран
-	LDI		R20, 0xff
-	LDI 	R18, 0xaa
-	RCALL 	SSD1306_Write_Data ; передача байта по I2C
-send_0xff_256_pcs_1:
-	RCALL 	SSD1306_Write_Data ; передача байта по I2C
-	DEC		R20 ; Flag--
-	BRNE	send_0xff_256_pcs_1
-
-	LDI		Flag, 0xff
+	LDI		R20, 0xff ; Flag
 	LDI 	R18, 0xff
 	RCALL 	SSD1306_Write_Data ; передача байта по I2C
-send_0xff_256_pcs_2:
+loop1_SSD1306_Send_Data:
 	RCALL 	SSD1306_Write_Data ; передача байта по I2C
 	DEC		R20 ; Flag--
-	BRNE	send_0xff_256_pcs_2
+	BRNE	loop1_SSD1306_Send_Data
+
+	LDI		R20, 0xff ; Flag
+	LDI 	R18, 0xff
+	RCALL 	SSD1306_Write_Data ; передача байта по I2C
+loop2_SSD1306_Send_Data:
+	RCALL 	SSD1306_Write_Data ; передача байта по I2C
+	DEC		R20 ; Flag--
+	BRNE	loop2_SSD1306_Send_Data
+
+; ------------------------------------------------------
+; это надо видимо для экранов с буфером (:
+	LDI		R20, 0xff ; Flag
+	LDI 	R18, 0xff
+	RCALL 	SSD1306_Write_Data ; передача байта по I2C
+loop3_SSD1306_Send_Data:
+	RCALL 	SSD1306_Write_Data ; передача байта по I2C
+	DEC		R20 ; Flag--
+	BRNE	loop3_SSD1306_Send_Data
 	
+	LDI		R20, 0xff ; Flag
+	LDI 	R18, 0xff
+	RCALL 	SSD1306_Write_Data ; передача байта по I2C
+loop4_SSD1306_Send_Data:
+	RCALL 	SSD1306_Write_Data ; передача байта по I2C
+	DEC		R20 ; Flag--
+	BRNE	loop4_SSD1306_Send_Data
+; ------------------------------------------------------
+
 	pop		R20 ; Flag
 	pop		R18 ; I2C_Payload
 ret

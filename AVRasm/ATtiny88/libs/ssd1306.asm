@@ -5,6 +5,8 @@
 #include "../libs/defines.inc"  ; подключение файла 'определений'
 #include "../libs/i2c.asm"    	; подключение библиотеки I2C (ей требуется I2C_UBRR)
 
+; #define SSD1306_128x32
+; #define SSD1306_128x64
 
 ; библиотеке требуется I2C_UBRR
 ; библиотеке требуется I2C_Address_Write
@@ -37,7 +39,7 @@ SSD1306_Init:
 	LDI 	R18, OLED_ADDRESSING_MODE
 	RCALL 	SSD1306_Write_Command ; передача байта по I2C
 	; OLED_HORIZONTAL or OLED_VERTICAL
-	LDI 	R18, OLED_VERTICAL
+	LDI 	R18, OLED_HORIZONTAL
 	RCALL 	SSD1306_Write_Command ; передача байта по I2C
 	; OLED_NORMAL_H
 	LDI 	R18, OLED_NORMAL_H
@@ -64,14 +66,14 @@ SSD1306_Init:
 	; OLED_SETCOMPINS
 	LDI 	R18, OLED_SETCOMPINS
 	RCALL 	SSD1306_Write_Command ; передача байта по I2C
-	; OLED_HEIGHT_32
+	; OLED_HEIGHT_32 or OLED_HEIGHT_64
 	LDI 	R18, OLED_HEIGHT_32
 	RCALL 	SSD1306_Write_Command ; передача байта по I2C
 	;---------------------------------------
 	; OLED_SETMULTIPLEX
 	LDI 	R18, OLED_SETMULTIPLEX
 	RCALL 	SSD1306_Write_Command ; передача байта по I2C
-	; OLED_32 
+	; OLED_32 or OLED_64
 	LDI 	R18, OLED_32
 	RCALL 	SSD1306_Write_Command ; передача байта по I2C
 	;---------------------------------------
@@ -119,7 +121,7 @@ SSD1306_SetColumnAndPage:
 	LDI 	R16, 0
 	RCALL 	SSD1306_Write_Command ; передача байта по I2C
 	; Конечный адрес
-	LDI 	R16, 127
+	LDI 	R16, 63
 	RCALL 	SSD1306_Write_Command ; передача байта по I2C
     
 	; Установка строки
@@ -127,8 +129,8 @@ SSD1306_SetColumnAndPage:
 	RCALL 	SSD1306_Write_Command ; передача байта по I2C
 	; Начальный адрес
 	LDI 	R16, 0
-	RCALL 	SSD1306_Write_Command ; передача байта по I2C	
-	; Конечный адрес
+	RCALL 	SSD1306_Write_Command ; передача байта по I2C
+	; Конечный адрес	
 	LDI 	R16, 3
 	RCALL 	SSD1306_Write_Command ; передача байта по I2C
 	pop		R16
@@ -143,7 +145,7 @@ SSD1306_Clear:
 	RCALL 	SSD1306_SetColumnAndPage
     
     ; Вывод всех пикселей на экран
-	LDI		R20, 0xff
+	LDI		R20, 0xff ; Flag
 	LDI 	R18, 0x00
 	RCALL 	SSD1306_Write_Data ; передача байта по I2C
 loop1_SSD1306_Clear:
@@ -151,7 +153,7 @@ loop1_SSD1306_Clear:
 	DEC		R20 ; Flag--
 	BRNE	loop1_SSD1306_Clear
 
-	LDI		Flag, 0xff
+	LDI		R20, 0xff ; Flag
 	LDI 	R18, 0x00
 	RCALL 	SSD1306_Write_Data ; передача байта по I2C
 loop2_SSD1306_Clear:
@@ -159,6 +161,25 @@ loop2_SSD1306_Clear:
 	DEC		R20 ; Flag--
 	BRNE	loop2_SSD1306_Clear
 	
+; ------------------------------------------------------
+; это надо видимо для экранов с буфером (:
+	LDI		R20, 0xff ; Flag
+	LDI 	R18, 0x00
+	RCALL 	SSD1306_Write_Data ; передача байта по I2C
+loop3_SSD1306_Clear:
+	RCALL 	SSD1306_Write_Data ; передача байта по I2C
+	DEC		R20 ; Flag--
+	BRNE	loop3_SSD1306_Clear
+
+	LDI		R20, 0xff ; Flag
+	LDI 	R18, 0x00
+	RCALL 	SSD1306_Write_Data ; передача байта по I2C
+loop4_SSD1306_Clear:
+	RCALL 	SSD1306_Write_Data ; передача байта по I2C
+	DEC		R20 ; Flag--
+	BRNE	loop4_SSD1306_Clear
+; ------------------------------------------------------
+
 	pop		R20 ; Flag
 	pop		R18 ; I2C_Payload
 ret
