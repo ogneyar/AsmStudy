@@ -1,14 +1,14 @@
 
-; Тестирование EEPROM памяти на микроконтроллере ATtiny88
+; Тестирование EEPROM памяти на микроконтроллере ATtiny85
 
-; 64b - EEPROM
+; 512b - EEPROM
 
-.INCLUDE "../libs/tn88def.inc" ; загрузка предопределений для ATtiny88
+.INCLUDE "../libs/tn85def.inc" ; загрузка предопределений для ATtiny85
 ; #include "../libs/macro.inc" ; подключение файла с макросами
 
 ;=================================================
 ; Имена регистров, а также различные константы
-	.equ 	F_CPU 					= 16000000		; Частота МК
+	.equ 	F_CPU 					= 10000000		; Частота МК 10MHz у ATtiny85V
 
 	.equ 	Address 				= 0 			; адрес ячейки памяти в EEPROM
 	.equ 	Key 					= 127 			; устанавливаемое значение ячейки памяти в EEPROM
@@ -31,7 +31,7 @@
 
 ;=================================================
 ; Переменные во флеш памяти
-; Program_name: .db "Test EEPROM Read-Write on ATtiny88",0
+; Program_name: .db "Test EEPROM Read-Write on ATtiny85",0
 
 ;=================================================
 ; Подключение библиотек
@@ -72,11 +72,12 @@ Reg_Flush:
 	CLR		ZH
 
 ;==============================================================
-	; -- устанавливаем пин 0 порта D на выход -- 
-	SBI		DDRD, PD0
+	; -- устанавливаем пин 1 порта B на выход -- 
+	SBI		DDRB, PB1
 
 	; чтение данных из EEPROM, в регистр R16
-	LDI 	R17, Address ; EEARL = Address
+	LDI 	ZL, LOW(Address)
+	LDI 	ZH, HIGH(Address)
 	RCALL 	EEPROM_Read ; вызов функции
 
 	LDI 	Flag, 0 ; флаг задержки времени
@@ -88,7 +89,8 @@ Reg_Flush:
 	RJMP 	Main ; прыжок до метки Main
 
 Write: ; запись данных в EEPROM
-	LDI 	R17, Address ; EEARL = Address
+	LDI 	ZL, LOW(Address)
+	LDI 	ZH, HIGH(Address)
 	LDI 	R16, Key ; EEDR = Key
 	RCALL 	EEPROM_write
 
@@ -96,9 +98,9 @@ Write: ; запись данных в EEPROM
 ;=================================================
 ; Основная программа (цикл)
 Main: 	
-	SBI 	PORTD, PD0 ; подача на пин PD0 высокого уровня 
+	SBI 	PORTB, PB1 ; подача на пин PB1 высокого уровня 
 	RCALL 	Delay_100ms
-	CBI 	PORTD, PD0 ; подача на пин PD0 низкого уровня 
+	CBI 	PORTB, PB1 ; подача на пин PB1 низкого уровня 
 	LDI		R16, 1
 	CPSE	Flag, R16
 	RCALL 	Delay_500ms

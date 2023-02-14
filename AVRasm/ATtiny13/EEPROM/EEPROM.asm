@@ -1,6 +1,8 @@
 
 ; Тестирование EEPROM памяти на микроконтроллере ATtiny13A
 
+; 64b - EEPROM
+
 .INCLUDE "../libs/tn13Adef.inc" ; загрузка предопределений для ATtiny13A
 ; #include "../libs/macro.inc" ; подключение файла с макросами
 
