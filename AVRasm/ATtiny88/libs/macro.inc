@@ -23,5 +23,10 @@
 	LDI 	ZH, HIGH(@0*2)
 .endm
 
+.macro mSetCol
+    LDI 	ZL, LOW(@0)   
+	LDI 	ZH, HIGH(@0)
+.endm
+
 
 #endif  /* _MACRO_INC_ */
