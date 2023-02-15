@@ -3,20 +3,20 @@
 #define _MACRO_INC_
 
 
-; .macro mOUT
-;    .if @0<0x40
-;        OUT @0,@1
-;    .else
-;        STS @0,@1
-;    .endif
-; .endm
-; .macro mIN
-;    .if @1<0x40
-;        IN @0,@1
-;    .else
-;        LDS @0,@1
-;    .endif
-; .endm
+.macro mOUT
+   .if @0<0x40
+       OUT @0,@1
+   .else
+       STS @0,@1
+   .endif
+.endm
+.macro mIN
+   .if @1<0x40
+       IN @0,@1
+   .else
+       LDS @0,@1
+   .endif
+.endm
 
 .macro mSetStr
     LDI 	ZL, LOW(@0*2)   
