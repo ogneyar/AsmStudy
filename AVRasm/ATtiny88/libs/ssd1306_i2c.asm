@@ -19,6 +19,7 @@ SSD1306_Init:
 	RCALL 	I2C_Init 
 
 	push	R18 ; I2C_Payload
+
 	; for (uint8_t i = 0; i < 15; i++) sendByte(pgm_read_byte(&_oled_init[i]));		
 	; OLED_DISPLAY_OFF
 	LDI 	R18, OLED_DISPLAY_OFF
@@ -39,7 +40,7 @@ SSD1306_Init:
 	LDI 	R18, OLED_ADDRESSING_MODE
 	RCALL 	SSD1306_Write_Command ; передача байта по I2C
 	; OLED_HORIZONTAL or OLED_VERTICAL
-	LDI 	R18, OLED_HORIZONTAL
+	LDI 	R18, OLED_VERTICAL
 	RCALL 	SSD1306_Write_Command ; передача байта по I2C
 	; OLED_NORMAL_H
 	LDI 	R18, OLED_NORMAL_H
@@ -80,6 +81,7 @@ SSD1306_Init:
 	; OLED_DISPLAY_ON
 	LDI 	I2C_Payload, OLED_DISPLAY_ON
 	RCALL 	SSD1306_Write_Command ; передача байта по I2C
+
 	pop		R18 ; I2C_Payload
 ret
 
@@ -138,8 +140,8 @@ ret
 
 ; Подпрограмма отправки данных на OLED экран
 SSD1306_Clear:
-	push		R18 ; I2C_Payload
-	push		R20 ; Flag
+	push	R18 ; I2C_Payload
+	push	R20 ; Flag
 
 	; установка адреса OLED экрана
 	RCALL 	SSD1306_SetColumnAndPage
@@ -160,25 +162,6 @@ loop2_SSD1306_Clear:
 	RCALL 	SSD1306_Write_Data ; передача байта по I2C
 	DEC		R20 ; Flag--
 	BRNE	loop2_SSD1306_Clear
-	
-; ------------------------------------------------------
-; это надо видимо для экранов с буфером (:
-	LDI		R20, 0xff ; Flag
-	LDI 	R18, 0x00
-	RCALL 	SSD1306_Write_Data ; передача байта по I2C
-loop3_SSD1306_Clear:
-	RCALL 	SSD1306_Write_Data ; передача байта по I2C
-	DEC		R20 ; Flag--
-	BRNE	loop3_SSD1306_Clear
-
-	LDI		R20, 0xff ; Flag
-	LDI 	R18, 0x00
-	RCALL 	SSD1306_Write_Data ; передача байта по I2C
-loop4_SSD1306_Clear:
-	RCALL 	SSD1306_Write_Data ; передача байта по I2C
-	DEC		R20 ; Flag--
-	BRNE	loop4_SSD1306_Clear
-; ------------------------------------------------------
 
 	pop		R20 ; Flag
 	pop		R18 ; I2C_Payload

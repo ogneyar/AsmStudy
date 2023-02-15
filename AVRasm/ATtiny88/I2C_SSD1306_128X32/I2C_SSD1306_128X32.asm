@@ -110,7 +110,7 @@ SSD1306_Send_Data:
     
     ; Вывод всех пикселей на экран
 	LDI		R20, 0xff ; Flag
-	LDI 	R18, 0xff
+	LDI 	R18, 0xaa
 	RCALL 	SSD1306_Write_Data ; передача байта по I2C
 loop1_SSD1306_Send_Data:
 	RCALL 	SSD1306_Write_Data ; передача байта по I2C
@@ -124,25 +124,6 @@ loop2_SSD1306_Send_Data:
 	RCALL 	SSD1306_Write_Data ; передача байта по I2C
 	DEC		R20 ; Flag--
 	BRNE	loop2_SSD1306_Send_Data
-
-; ------------------------------------------------------
-; это надо видимо для экранов с буфером (:
-	LDI		R20, 0xff ; Flag
-	LDI 	R18, 0xff
-	RCALL 	SSD1306_Write_Data ; передача байта по I2C
-loop3_SSD1306_Send_Data:
-	RCALL 	SSD1306_Write_Data ; передача байта по I2C
-	DEC		R20 ; Flag--
-	BRNE	loop3_SSD1306_Send_Data
-	
-	LDI		R20, 0xff ; Flag
-	LDI 	R18, 0xff
-	RCALL 	SSD1306_Write_Data ; передача байта по I2C
-loop4_SSD1306_Send_Data:
-	RCALL 	SSD1306_Write_Data ; передача байта по I2C
-	DEC		R20 ; Flag--
-	BRNE	loop4_SSD1306_Send_Data
-; ------------------------------------------------------
 
 	pop		R20 ; Flag
 	pop		R18 ; I2C_Payload

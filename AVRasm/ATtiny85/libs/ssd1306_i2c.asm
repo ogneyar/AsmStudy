@@ -18,71 +18,71 @@ SSD1306_Init:
 	; инициализация I2C
 	RCALL 	I2C_Init 
 
-	; push	R18 ; I2C_Payload
+	push	R18 ; I2C_Payload
 
 	; for (uint8_t i = 0; i < 15; i++) sendByte(pgm_read_byte(&_oled_init[i]));	
 	; OLED_DISPLAY_OFF ; 0xAE
-	; LDI 	R18, OLED_DISPLAY_OFF
-	; RCALL 	SSD1306_Write_Command ; передача байта по I2C
-	; ; OLED_CLOCKDIV ; 0xD5
-	; LDI 	R18, OLED_CLOCKDIV 	  
-	; RCALL 	SSD1306_Write_Command ; передача байта по I2C
-    ; ; value
-	; LDI 	R18, 0x80
-	; RCALL 	SSD1306_Write_Command ; передача байта по I2C
-	; ; OLED_CHARGEPUMP ; 0x8D
-	; LDI 	R18, OLED_CHARGEPUMP
-	; RCALL 	SSD1306_Write_Command ; передача байта по I2C
-	; ; value
-	; LDI 	R18, 0x14
-	; RCALL 	SSD1306_Write_Command ; передача байта по I2C
-	; ; OLED_ADDRESSING_MODE ; 0x20
-	; LDI 	R18, OLED_ADDRESSING_MODE
-	; RCALL 	SSD1306_Write_Command ; передача байта по I2C
-	; ; OLED_HORIZONTAL (0x00) or OLED_VERTICAL (0x01)
-	; LDI 	R18, OLED_VERTICAL
-	; RCALL 	SSD1306_Write_Command ; передача байта по I2C
-	; ; OLED_NORMAL_H ; 0xA1
-	; LDI 	R18, OLED_NORMAL_H
-	; RCALL 	SSD1306_Write_Command ; передача байта по I2C
-	; ; OLED_NORMAL_V ; 0xC8
-	; LDI 	R18, OLED_NORMAL_V
-	; RCALL 	SSD1306_Write_Command ; передача байта по I2C
-	; ; OLED_CONTRAST ; 0x81
-	; LDI 	R18, OLED_CONTRAST
-	; RCALL 	SSD1306_Write_Command ; передача байта по I2C
-	; ; value
-	; LDI 	R18, 0x7F
-	; RCALL 	SSD1306_Write_Command ; передача байта по I2C
-	; ; OLED_SETVCOMDETECT; 0xDB
-	; LDI 	R18, OLED_SETVCOMDETECT
-	; RCALL 	SSD1306_Write_Command ; передача байта по I2C
-	; ; value
-	; LDI 	R18, 0x40
-	; RCALL 	SSD1306_Write_Command ; передача байта по I2C
-	; ; OLED_NORMALDISPLAY ; 0xA6
-	; LDI 	R18, OLED_NORMALDISPLAY
-	; RCALL 	SSD1306_Write_Command ; передача байта по I2C
-	; ;---------------------------------------
-	; ; OLED_SETCOMPINS ; 0xDA
-	; LDI 	R18, OLED_SETCOMPINS
-	; RCALL 	SSD1306_Write_Command ; передача байта по I2C
-	; ; OLED_HEIGHT_32 (0x02) or OLED_HEIGHT_64 (0x12)
-	; LDI 	R18, OLED_HEIGHT_32
-	; RCALL 	SSD1306_Write_Command ; передача байта по I2C
-	; ;---------------------------------------
-	; ; OLED_SETMULTIPLEX ; 0xA8
-	; LDI 	R18, OLED_SETMULTIPLEX
-	; RCALL 	SSD1306_Write_Command ; передача байта по I2C
-	; ; OLED_32 (0x1F) or OLED_64 (0x3F)
-	; LDI 	R18, OLED_32
-	; RCALL 	SSD1306_Write_Command ; передача байта по I2C
-	; ;---------------------------------------
-	; ; OLED_DISPLAY_ON ; 0xAF
-	; LDI 	R18, OLED_DISPLAY_ON
-	; RCALL 	SSD1306_Write_Command ; передача байта по I2C
+	LDI 	R18, OLED_DISPLAY_OFF
+	RCALL 	SSD1306_Write_Command ; передача байта по I2C
+	; OLED_CLOCKDIV ; 0xD5
+	LDI 	R18, OLED_CLOCKDIV 	  
+	RCALL 	SSD1306_Write_Command ; передача байта по I2C
+    ; value
+	LDI 	R18, 0x80
+	RCALL 	SSD1306_Write_Command ; передача байта по I2C
+	; OLED_CHARGEPUMP ; 0x8D
+	LDI 	R18, OLED_CHARGEPUMP
+	RCALL 	SSD1306_Write_Command ; передача байта по I2C
+	; value
+	LDI 	R18, 0x14
+	RCALL 	SSD1306_Write_Command ; передача байта по I2C
+	; OLED_ADDRESSING_MODE ; 0x20
+	LDI 	R18, OLED_ADDRESSING_MODE
+	RCALL 	SSD1306_Write_Command ; передача байта по I2C
+	; OLED_HORIZONTAL (0x00) or OLED_VERTICAL (0x01)
+	LDI 	R18, OLED_VERTICAL
+	RCALL 	SSD1306_Write_Command ; передача байта по I2C
+	; OLED_NORMAL_H ; 0xA1
+	LDI 	R18, OLED_NORMAL_H
+	RCALL 	SSD1306_Write_Command ; передача байта по I2C
+	; OLED_NORMAL_V ; 0xC8
+	LDI 	R18, OLED_NORMAL_V
+	RCALL 	SSD1306_Write_Command ; передача байта по I2C
+	; OLED_CONTRAST ; 0x81
+	LDI 	R18, OLED_CONTRAST
+	RCALL 	SSD1306_Write_Command ; передача байта по I2C
+	; value
+	LDI 	R18, 0x7F
+	RCALL 	SSD1306_Write_Command ; передача байта по I2C
+	; OLED_SETVCOMDETECT; 0xDB
+	LDI 	R18, OLED_SETVCOMDETECT
+	RCALL 	SSD1306_Write_Command ; передача байта по I2C
+	; value
+	LDI 	R18, 0x40
+	RCALL 	SSD1306_Write_Command ; передача байта по I2C
+	; OLED_NORMALDISPLAY ; 0xA6
+	LDI 	R18, OLED_NORMALDISPLAY
+	RCALL 	SSD1306_Write_Command ; передача байта по I2C
+	;---------------------------------------
+	; OLED_SETCOMPINS ; 0xDA
+	LDI 	R18, OLED_SETCOMPINS
+	RCALL 	SSD1306_Write_Command ; передача байта по I2C
+	; OLED_HEIGHT_32 (0x02) or OLED_HEIGHT_64 (0x12)
+	LDI 	R18, OLED_HEIGHT_32
+	RCALL 	SSD1306_Write_Command ; передача байта по I2C
+	;---------------------------------------
+	; OLED_SETMULTIPLEX ; 0xA8
+	LDI 	R18, OLED_SETMULTIPLEX
+	RCALL 	SSD1306_Write_Command ; передача байта по I2C
+	; OLED_32 (0x1F) or OLED_64 (0x3F)
+	LDI 	R18, OLED_32
+	RCALL 	SSD1306_Write_Command ; передача байта по I2C
+	;---------------------------------------
+	; OLED_DISPLAY_ON ; 0xAF
+	LDI 	R18, OLED_DISPLAY_ON
+	RCALL 	SSD1306_Write_Command ; передача байта по I2C
 
-	; pop		R18 ; I2C_Payload
+	pop		R18 ; I2C_Payload
 ret
 
 ; Подпрограмма передачи команд (ей требуется I2C_Address_Write)
