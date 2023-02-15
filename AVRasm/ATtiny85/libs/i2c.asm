@@ -17,7 +17,7 @@
 #endif
 
 #ifndef SCL
-#define SCL			PB1
+#define SCL			PB4
 #endif
 
 // управление линиями
@@ -59,6 +59,7 @@ I2C_Start:
     SBI     DDRB, SDA ; SDA_0
 	RCALL   I2C_Delay
     SBI     DDRB, SCL ; SCL_0
+	RCALL   I2C_Delay
 ret
 
 ; -- I2C команда СТОП -- 
@@ -72,7 +73,7 @@ I2C_Stop:
 ret
 
 ; -- Подпрограмма отправки байта по I2C -- 
-I2C_Send: ; data в регистре R16, ask вернётся в R17
+I2C_Write: ; data в регистре R16, ask вернётся в R17
 ;---------------------------------------------------- 
 ; повторная инициализация необходима из-за USARTа, там например делитель на 8, тут на 1
 	RCALL	I2C_Init
@@ -101,7 +102,7 @@ continue_I2C_Send:
 	RCALL   I2C_Delay
 	CBI     DDRB, SCL ; SCL_1 - фронт такта
 	RCALL   I2C_Delay
-
+	
     IN      R17, PINB
 	ANDI    R17, (1 << SDA) ; читаем линию сда (если устройство ответит Ask (R17) будет равен 0)
 	SBI     DDRB, SCL ; SCL_0 - спад

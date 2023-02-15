@@ -113,27 +113,27 @@ ret
 
 ; Подпрограмма установки адреса OLED экрана
 SSD1306_SetColumnAndPage:
-	push	R16
+	push	R18
 	; Установка столбца
-	LDI 	R16, OLED_COLUMNADDR
+	LDI 	R18, OLED_COLUMNADDR
 	RCALL 	SSD1306_Write_Command ; передача байта по I2C	
 	; Начальный адрес
-	LDI 	R16, 0
+	LDI 	R18, 0
 	RCALL 	SSD1306_Write_Command ; передача байта по I2C
 	; Конечный адрес
-	LDI 	R16, 63
+	LDI 	R18, 127
 	RCALL 	SSD1306_Write_Command ; передача байта по I2C
     
 	; Установка строки
-	LDI 	R16, OLED_PAGEADDR
+	LDI 	R18, OLED_PAGEADDR
 	RCALL 	SSD1306_Write_Command ; передача байта по I2C
 	; Начальный адрес
-	LDI 	R16, 0
+	LDI 	R18, 0
 	RCALL 	SSD1306_Write_Command ; передача байта по I2C
 	; Конечный адрес	
-	LDI 	R16, 3
+	LDI 	R18, 3
 	RCALL 	SSD1306_Write_Command ; передача байта по I2C
-	pop		R16
+	pop		R18
 ret
 
 ; Подпрограмма отправки данных на OLED экран
