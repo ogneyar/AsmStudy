@@ -1,0 +1,39 @@
+
+Configuring AVRDUDE To Know About ATtiny104
+In order to modify avrdude to add support for the ATtiny102/104, 
+add this to avrdude.conf
+
+#------------------------------------------------------------
+# ATtiny102
+#------------------------------------------------------------
+
+part parent ".reduced_core_tiny"
+    id    = "t102";
+    desc  = "ATtiny102";
+    signature = 0x1e 0x90 0x0C;
+
+    memory "flash"
+        size    = 1024;
+        offset    = 0x4000;
+        page_size = 16;
+        blocksize = 128;
+    ;
+;
+
+
+#------------------------------------------------------------
+# ATtiny104
+#------------------------------------------------------------
+
+part parent ".reduced_core_tiny"
+    id    = "t104";
+    desc  = "ATtiny104";
+    signature = 0x1e 0x90 0x0B;
+
+    memory "flash"
+        size    = 1024;
+        offset    = 0x4000;
+        page_size = 16;
+        blocksize = 128;
+    ;
+;
