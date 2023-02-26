@@ -1,0 +1,93 @@
+STMicroelectronics assembler v4.52   (C)1987-2023   Sun Feb 26 14:00:49 2023
+Page 1  Assembler
+                                               e:\vscode\asmstudy\stmasm\stm8s103\blink_nl\blink_nl.asm
+
+   1                         stm8/     
+   2  000000                                 MOTOROLA 
+   3                         
+   4  000000                                 WORDS                  ; following addresses are 16-bit
+                                                                ; length
+   5                                   segment  byte at 5005 'periph2'
+   6                                   
+   7                         ; Port B at 0x5005
+   8                         ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                               ;;;;;;
+   9  005005                       .PB_ODR   DS.B     1             ; Port B data output latch 
+                                                                ;register
+  10  005006                       .PB_IDR   DS.B     1             ; Port B input pin value 
+                                                                ;register
+  11  005007                       .PB_DDR   DS.B     1             ; Port B data direction 
+                                                                ;register
+  12  005008                       .PB_CR1   DS.B     1             ; Port B control register 1
+  13  005009                       .PB_CR2   DS.B     1             ; Port B control register 2
+  14                         
+  15  00500A                                 WORDS                  ; The following addresses are 16
+                                                                ; bits long
+  16                                   segment  byte at 8080-9FFF 'rom'  
+  17                         
+  18  000005                       LED       equ      5
+  19                         
+  20                         
+  21                         .main     
+  22  008080   721A5007                      bset     PB_DDR, #LED         ; PB_DDR|=(1<<LED)
+  23  008084   721A5008                      bset     PB_CR1, #LED         ; PB_CR1|=(1<<LED)
+  24                         main_loop:  
+  25  008088   901A5005                      bcpl     PB_ODR, #LED         ; PB_ODR^=(1<<LED)	
+  26  00808C   CD8092                        call     delay
+  27  00808F   CC8088                        jp       main_loop
+  28                                   
+  29                         delay:    
+  30                                                          ; 0x61a80 = 400000 i.e. (2*10^6 
+                                                                ;MHz)/5cycles - 1 секуда
+  31                                                          ; 0x30d40 = 200000 i.e. (2*10^6 
+                                                                ;MHz)/5cycles / 2 - 0.5 
+                                                                ;секуды
+  32                                                          ; 0x13880 = 80000 i.e. (2*10^6 
+                                                                ;MHz)/5cycles / 5 - 0.2 
+                                                                ;секуды
+  33                                                          ; 0x09c40 = 40000 i.e. (2*10^6 
+                                                                ;MHz)/5cycles / 10 - 0.1 
+                                                                ;секуды
+  34  008092   A606                          ld       a, #$06       ; #$06 - 1000мс,   #$03 - 
+                                                                ;500мс,   #$01 - 200мс,   
+                                                                ;#$00 - 100мс
+  35  008094   90AE1A80                      ldw      y, #$1a80     ; #$1a80 - 1000мс, #$0d40 - 
+                                                                ;500мс, #$3880 - 200мс, 
+                                                                ;#$9c40 - 100мс
+  36                         loop:     
+  37  008098   72A20001                      subw     y, #$01       ; decrement with set carry
+  38  00809C   A200                          sbc      a,#0          ; decrement carry flag i.e. a = 
+                                                                ;a - carry_flag
+  39  00809E   26F8                          jrne     loop
+STMicroelectronics assembler v4.52   (C)1987-2023   Sun Feb 26 14:00:49 2023
+Page 2  Assembler
+                                               e:\vscode\asmstudy\stmasm\stm8s103\blink_nl\blink_nl.asm
+
+  40                                   
+  41  0080A0   81                            ret      
+  42                         
+  43  0080A1                                 end      
+STMicroelectronics assembler v4.52   (C)1987-2023   Sun Feb 26 14:00:49 2023
+Page 3  Assembler
+                                               e:\vscode\asmstudy\stmasm\stm8s103\blink_nl\blink_nl.asm
+
+Symbol Name                       Value     Call       Type  Scope      Rel.  Line  Privacy  Segment   Size  Bytes File
+
+LED                                   0005         no  WORD  Internal   ABS     18  private  text         0     0  -
+
+PB_ODR                                5005         no  WORD  Internal   ABS      9  public   bss          1     1  -
+PB_IDR                                5006         no  WORD  Internal   ABS     10  public   bss          1     1  -
+PB_DDR                                5007         no  WORD  Internal   ABS     11  public   bss          1     1  -
+PB_CR1                                5008         no  WORD  Internal   ABS     12  public   bss          1     1  -
+PB_CR2                                5009         no  WORD  Internal   ABS     13  public   bss          1     1  -
+
+delay                                 8092         no  WORD  Internal   ABS     29  private  text         6     0  -
+
+loop                                  8098         no  WORD  Internal   ABS     36  private  text         9     0  -
+
+main                                  8080         no  WORD  Internal   ABS     21  public   text         8     0  -
+main_loop                             8088         no  WORD  Internal   ABS     24  private  text        10     0  -
+
+
+10 labels
+No errors on assembly of 'e:\vscode\asmstudy\stmasm\stm8s103\blink_nl\blink_nl.asm'
