@@ -1,4 +1,4 @@
-STMicroelectronics assembler v4.52   (C)1987-2023   Sun Feb 26 14:47:12 2023
+STMicroelectronics assembler v4.52   (C)1987-2023   Sun Feb 26 18:07:11 2023
 Page 1  Assembler
                                                e:\vscode\asmstudy\stmasm\stm8s003\blink_nl\blink_nl.asm
 
@@ -48,10 +48,10 @@ Page 1  Assembler
   33                                                          ; 0x09c40 = 40000 i.e. (2*10^6 
                                                                 ;MHz)/5cycles / 10 - 0.1 
                                                                 ;секуды
-  34  008092   A601                          ld       a, #$01       ; #$06 - 1000мс,   #$03 - 
+  34  008092   A606                          ld       a, #$06       ; #$06 - 1000мс,   #$03 - 
                                                                 ;500мс,   #$01 - 200мс,   
                                                                 ;#$00 - 100мс
-  35  008094   90AE3880                      ldw      y, #$3880     ; #$1a80 - 1000мс, #$0d40 - 
+  35  008094   90AE1A80                      ldw      y, #$1a80     ; #$1a80 - 1000мс, #$0d40 - 
                                                                 ;500мс, #$3880 - 200мс, 
                                                                 ;#$9c40 - 100мс
   36                         loop:     
@@ -59,7 +59,7 @@ Page 1  Assembler
   38  00809C   A200                          sbc      a,#0          ; decrement carry flag i.e. a = 
                                                                 ;a - carry_flag
   39  00809E   26F8                          jrne     loop
-STMicroelectronics assembler v4.52   (C)1987-2023   Sun Feb 26 14:47:12 2023
+STMicroelectronics assembler v4.52   (C)1987-2023   Sun Feb 26 18:07:11 2023
 Page 2  Assembler
                                                e:\vscode\asmstudy\stmasm\stm8s003\blink_nl\blink_nl.asm
 
@@ -67,7 +67,7 @@ Page 2  Assembler
   41  0080A0   81                            ret      
   42                         
   43  0080A1                                 end      
-STMicroelectronics assembler v4.52   (C)1987-2023   Sun Feb 26 14:47:12 2023
+STMicroelectronics assembler v4.52   (C)1987-2023   Sun Feb 26 18:07:11 2023
 Page 3  Assembler
                                                e:\vscode\asmstudy\stmasm\stm8s003\blink_nl\blink_nl.asm
 

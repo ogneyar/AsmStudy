@@ -21,6 +21,7 @@ compile:
 	@E:\VSCode\AsmStudy\STMasm\program\stm8_asm\lyn $(BUILD_DIR)\$(OBJ), $(BUILD_DIR)\$(COD), ; 	
 	@E:\VSCode\AsmStudy\STMasm\program\stm8_asm\obsend $(BUILD_DIR)\$(COD),f,$(BUILD_DIR)\$(HEX),ix
 	@E:\VSCode\AsmStudy\STMasm\program\stm8_asm\obsend $(BUILD_DIR)\$(COD),f,$(BUILD_DIR)\$(S19),s	
+	@E:\VSCode\AsmStudy\STMasm\program\stm8flash\stm8flash -c stlinkv2 -p stm8s103f3 -w $(BUILD_DIR)\$(HEX)
 	pause
 
 #-li=list\$(STM8S_LSR)
