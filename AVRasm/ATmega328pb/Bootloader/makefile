@@ -1,24 +1,22 @@
 
+PROGRAMMER	:= usbasp
+
 TARGET_MCU	:= atmega328pb
 
-PROGRAMMER	:= usbasp
-# PROGRAMMER	:= arduino
-
 PORT		:= usb
-# PORT		:= com15
 
 BAUD		:= 57600 
 
-FILE_NAME	:= Blink_NL
-ASM			:= $(FILE_NAME).asm
-HEX			:= $(FILE_NAME)_m328pb.hex
+FILE_NAME	:= optiboot_m328pb
+# FILE_NAME	:= optiboot_atmega328pb_8mhz
+HEX			:= $(FILE_NAME).hex
+
 
 all: pb
 	@echo Finish All	
 	
 pb:
-	@avrasm2.exe -fI $(ASM) -o $(HEX)
-	@avrdude.exe -p $(TARGET_MCU) -c $(PROGRAMMER) -b $(BAUD) -P $(PORT) -U flash:w:$(HEX):a
+	@avrdude.exe -p $(TARGET_MCU) -b $(BAUD) -c $(PROGRAMMER) -U flash:w:$(HEX):a
 
 fuse_get:
 	@avrdude.exe -p $(TARGET_MCU) -B 125kHz -c $(PROGRAMMER) -P $(PORT) 	-U lock:r:lock.hex:r 	-U hfuse:r:hfuse.hex:r 	-U lfuse:r:lfuse.hex:r 	-U efuse:r:efuse.hex:r
