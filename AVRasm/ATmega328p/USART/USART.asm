@@ -2,7 +2,7 @@
 ; Тестирование USART на микроконтроллере ATmega328p
 
 ; разкомментируй строку ниже если используешь LGT8F328P
-#define __LGT8F__ ; for LGT8F328P
+;#define __LGT8F__ ; for LGT8F328P
 
 .INCLUDE "../libs/m328Pdef.inc" ; загрузка предопределений для ATmega328p 
 #include "../libs/macro.inc" ; подключение файла с макросами

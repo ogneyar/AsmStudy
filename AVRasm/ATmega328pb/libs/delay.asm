@@ -8,6 +8,7 @@
 
 #define DELAY_DATA_1000 XTAL/5 ; ( ( _delay_ms / 1000 ) * XTAL / 5 )
 #define DELAY_DATA_500 XTAL/10
+#define DELAY_DATA_200 XTAL/25
 #define DELAY_DATA_100 XTAL/50
 
 ; N = Time*Fcpu/(r+2) // где r — число регистров 
@@ -71,5 +72,23 @@ Loop_Delay_100ms:
 	sei ; разрешаем прерывания	 
 ret 
 
+Delay_200ms:
+	cli ; запрещаем прерывания
+	push	r16
+	push	r17
+	push	r18
+	ldi 	r18, byte3(DELAY_DATA_200) ; старший байт N
+	ldi 	r17, high(DELAY_DATA_200) ; средний байт N
+	ldi 	r16, low(DELAY_DATA_200) ; младший байт N
+Loop_Delay_200ms: 
+	subi 	r16, 1 ; Subtract Immediate
+	sbci 	r17, 0 ; Subtract Immediate with Carry
+	sbci 	r18, 0
+	brcc 	Loop_Delay_200ms ; Branch if Carry Cleared
+	pop 	r18
+	pop		r17
+	pop		r16
+	sei ; разрешаем прерывания	 
+ret 
 
 #endif  /* _DELAY_INC_ */

@@ -1,6 +1,6 @@
 
-#ifndef _SSD1306_ASM_
-#define _SSD1306_ASM_
+#ifndef _SSD1306_I2C_ASM_
+#define _SSD1306_I2C_ASM_
 
 #include "../libs/defines.inc"  ; подключение файла 'определений'
 #include "../libs/i2c.asm"    	; подключение библиотеки I2C (ей требуется I2C_UBRR)
@@ -204,4 +204,4 @@ ret
 
 ;=================================================
 
-#endif  /* _SSD1306_ASM_ */
+#endif  /* _SSD1306_I2C_ASM_ */

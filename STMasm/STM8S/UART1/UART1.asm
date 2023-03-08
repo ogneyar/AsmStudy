@@ -11,9 +11,9 @@ stm8/
 LED_B equ 5 ; PB5 for BLUE  BOARD STM8S
 LED_C equ 3 ; PC3 for BLACK BOARD STM8S
 
-    #define F_CPU       2000000
+    #define F_CPU       16000000
     #define BAUD        9600
-    #define UBRR        (F_CPU / BAUD)
+    #define UBRR        (F_CPU div BAUD)
     #define UBRR2       ( (UBRR & $0f) | ( (UBRR >> 8) & $f0) )
     #define UBRR1       ((UBRR >> 4) & $ff)
     ;
@@ -28,6 +28,7 @@ LED_C equ 3 ; PC3 for BLACK BOARD STM8S
 ; ================================================
 ; начало программы
 .main
+    mov     CLK_CKDIVR, #0      ; делитель 1 - 16MHz (по умолчанию делитель 8 - 2MHz)
     bset    PB_DDR, #LED_B       ; PB_DDR|=(1<<LED_B)
     bset    PB_CR1, #LED_B       ; PB_CR1|=(1<<LED_B)
     bset    PC_DDR, #LED_C
@@ -36,13 +37,17 @@ LED_C equ 3 ; PC3 for BLACK BOARD STM8S
     ; инициализация UART1
     bset    CLK_PCKENR1, #3 ; включить тактирование UART1 (PCKEN13 = #3)
 
-    ; ld    UART1_BRR2, UBRR2
-    ; ld    UART1_BRR1, UBRR1
+    ; ld    UART1_BRR2, #UBRR2
+    ; ld    UART1_BRR1, #UBRR1
     ; UART_DIV = F_CPU / BAUD = 2000000 / 9600 = 208 = $D0
-    mov    UART1_BRR2, #$0           ; [35 00 52 33]  для Fmaster=16/8=2МГц и 96000
-    mov    UART1_BRR1, #$D           ; [35 0D 52 32]  для Fmaster=16/8=2МГц и 96000
+    ; mov     UART1_BRR2, #$0      ; для Fmaster=16/8=2МГц и 96000
+    ; mov     UART1_BRR1, #$D      ; для Fmaster=16/8=2МГц и 96000
 
-    mov    UART1_CR2, #%00001100     ; [35 0C 52 35]    UART1_CR2.TEN <- 1  UART1_CR2.REN <- 1  разрешаем передачу/прием
+    ; UART_DIV = F_CPU / BAUD = 16000000 / 9600 = 1667 = $0683
+    mov     UART1_BRR2, #$03         ; для Fmaster=16МГц и 96000
+    mov     UART1_BRR1, #$68         ; для Fmaster=16МГц и 96000
+
+    mov    UART1_CR2, #%00001100    ; [35 0C 52 35]    UART1_CR2.TEN <- 1  UART1_CR2.REN <- 1  разрешаем передачу/прием
     
     ld      A, #'\n'
     call    UART_transmit
@@ -87,8 +92,14 @@ main_loop:
     
     CP      A, #'1' ; сравниваем принятый байт с 1
     JREQ    send_1
-    
-    jp      nothing
+       
+    CP      A, #'\n' ; сравниваем принятый байт с 1
+    JREQ    nothing
+       
+    CP      A, #'\r' ; сравниваем принятый байт с 1
+    JREQ    nothing
+
+    jp      send_nothing
 
 send_0:
     call    LED_OFF
@@ -98,31 +109,16 @@ send_1:
     call    LED_ON
     jp      continue
 
-nothing:
+send_nothing:
     call    LED_Nothing
+    jp      continue
+
+nothing:
     jp      continue
 
 continue:
     jp      main_loop
 ; ------------------------------------------------
-; ================================================
-
-
-; ================================================
-; подпрограмма задержки
-delay:
-	; 0x61a80 = 400000 i.e. (2*10^6 MHz)/5cycles - 1 секуда
-	; 0x30d40 = 200000 i.e. (2*10^6 MHz)/5cycles / 2 - 0.5 секуды
-	; 0x13880 = 80000 i.e. (2*10^6 MHz)/5cycles / 5 - 0.2 секуды
-	; 0x09c40 = 40000 i.e. (2*10^6 MHz)/5cycles / 10 - 0.1 секуды
-    ld 	    a, #$03 	; #$06 - 1000мс,   #$03 - 500мс,   #$01 - 200мс,   #$00 - 100мс
-    ldw     y, #$0d40 	; #$1a80 - 1000мс, #$0d40 - 500мс, #$3880 - 200мс, #$9c40 - 100мс
-loop:
-    subw    y, #$01 	; decrement with set carry
-    sbc     a,#0 		; decrement carry flag i.e. a = a - carry_flag
-    jrne    loop
-	
-	ret
 ; ================================================
 
 
