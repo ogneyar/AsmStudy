@@ -1,5 +1,5 @@
 stm8/
-    #include "STM8S103F.inc"
+    #include "../libs/STM8S103F.inc"
     MOTOROLA
 	
 	WORDS			; The following addresses are 16 bits long

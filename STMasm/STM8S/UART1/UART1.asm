@@ -1,21 +1,34 @@
 stm8/ 
 ; STM8S003F black
 ; STM8S103F blue - разница в размере EEPROM
-    #include "STM8S103F.inc"
+    #include "../libs/STM8S103F.inc"
+
     MOTOROLA
 
 	WORDS			; The following addresses are 16 bits long
-	segment byte at 8180-9FFF 'rom'
-	
+    
+
+	; segment byte at 8180-9FFF 'rom'
+	segment byte at 8180-9EFF 'rom'	; 0x0100 для usart.asm
+
+    ; #include "../libs/usart.asm"
+    extern UART_transmit ; from file usart.asm
+    extern UART_receive ; from file usart.asm
+
 
 LED_B equ 5 ; PB5 for BLUE  BOARD STM8S
 LED_C equ 3 ; PC3 for BLACK BOARD STM8S
 
     #define F_CPU       16000000
     #define BAUD        9600
-    #define UBRR        (F_CPU div BAUD)
-    #define UBRR2       ( (UBRR & $0f) | ( (UBRR >> 8) & $f0) )
-    #define UBRR1       ((UBRR >> 4) & $ff)
+    #define UBRR        {F_CPU div BAUD}
+    ; #define UBRR2       ( (UBRR & $0f) | ( (UBRR >> 8) & $f0) )
+    ; #define UBRR1       ((UBRR >> 4) & $ff)
+    #define UBRR2       { {UBRR & $0f} | { {UBRR >> 8} & $f0} }
+    #define UBRR1       {{UBRR >> 4} & $ff}
+
+    ; {{SEG {ms mult {F_CPU div 1000}}} div 5}
+    
     ;
     ;       7     6     5     4     3     2     1     0
     ;     ----- ----- ----- ----- ----- ----- ----- -----
@@ -47,7 +60,7 @@ LED_C equ 3 ; PC3 for BLACK BOARD STM8S
     mov     UART1_BRR2, #$03         ; для Fmaster=16МГц и 96000
     mov     UART1_BRR1, #$68         ; для Fmaster=16МГц и 96000
 
-    mov    UART1_CR2, #%00001100    ; [35 0C 52 35]    UART1_CR2.TEN <- 1  UART1_CR2.REN <- 1  разрешаем передачу/прием
+    mov     UART1_CR2, #%00001100    ; [35 0C 52 35]    UART1_CR2.TEN <- 1  UART1_CR2.REN <- 1  разрешаем передачу/прием
     
     ld      A, #'\n'
     call    UART_transmit
@@ -122,24 +135,24 @@ continue:
 ; ================================================
 
 
-; ================================================
-; подпрограмма передача байта по UART
-UART_transmit:
-    ; mov    UART1_DR, #97
-    ld    UART1_DR, A
-wait_UART_transmit:
-	btjf   UART1_SR, #7, wait_UART_transmit  ; skip if UART1_SR.TXE = 0 Transmit data register empty
-    ret
-; ================================================
+; ; ================================================
+; ; подпрограмма передача байта по UART
+; UART_transmit:
+;     ; mov    UART1_DR, #97
+;     ld    UART1_DR, A
+; wait_UART_transmit:
+; 	btjf   UART1_SR, #7, wait_UART_transmit  ; skip if UART1_SR.TXE = 0 Transmit data register empty
+;     ret
+; ; ================================================
 
 
-; ================================================
-; подпрограмма приёма байта по UART
-UART_receive:
-    btjf   UART1_SR, #5, UART_receive	; skip if UART1_SR.RXNE = 0 Read data register not empty
-	ld     A, UART1_DR
-    ret
-; ================================================
+; ; ================================================
+; ; подпрограмма приёма байта по UART
+; UART_receive:
+;     btjf   UART1_SR, #5, UART_receive	; skip if UART1_SR.RXNE = 0 Read data register not empty
+; 	ld     A, UART1_DR
+;     ret
+; ; ================================================
 
 
 ; ================================================
@@ -234,5 +247,6 @@ LED_Nothing:
     call    UART_transmit
     ret
 ; ================================================
+
 
     end

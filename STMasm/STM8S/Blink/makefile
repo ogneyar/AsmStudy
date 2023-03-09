@@ -6,7 +6,7 @@
 BUILD_DIR	:= build
 
 STM8S_NAME	:= STM8S103F
-STM8S_ASM	:= $(STM8S_NAME).asm
+STM8S_ASM	:= ../libs/$(STM8S_NAME).asm
 STM8S_LSR	:= $(STM8S_NAME).lsr
 STM8S_OBJ	:= $(STM8S_NAME).obj
 
@@ -24,6 +24,8 @@ all: clear
 	@echo Finish All
 	
 compile:
+#	@if exist $(BUILD_DIR) (rmdir /Q /S $(BUILD_DIR))
+	@if not exist $(BUILD_DIR) (mkdir $(BUILD_DIR))
 	@asm.exe -sym -li=$(BUILD_DIR)\$(STM8S_LSR) $(STM8S_ASM) -obj=$(BUILD_DIR)\$(STM8S_OBJ)
 	@asm.exe -sym -li=$(BUILD_DIR)\$(LSR) $(ASM) -obj=$(BUILD_DIR)\$(OBJ)
 	@lyn $(BUILD_DIR)\$(STM8S_OBJ)+$(BUILD_DIR)\$(OBJ), $(BUILD_DIR)\$(COD), ; 	
