@@ -6,14 +6,8 @@ stm8/
     MOTOROLA
 
 	WORDS			; The following addresses are 16 bits long
-    
 
-	; segment byte at 8180-9FFF 'rom'
-	segment byte at 8180-9EFF 'rom'	; 0x0100 для usart.asm
-
-    ; #include "../libs/usart.asm"
-    extern UART_transmit ; from file usart.asm
-    extern UART_receive ; from file usart.asm
+	segment byte at 8180-9FFF 'rom'
 
 
 LED_B equ 5 ; PB5 for BLUE  BOARD STM8S
@@ -21,22 +15,6 @@ LED_C equ 3 ; PC3 for BLACK BOARD STM8S
 
     #define F_CPU       16000000
     #define BAUD        9600
-    #define UBRR        {F_CPU div BAUD}
-    ; #define UBRR2       ( (UBRR & $0f) | ( (UBRR >> 8) & $f0) )
-    ; #define UBRR1       ((UBRR >> 4) & $ff)
-    #define UBRR2       { {UBRR & $0f} | { {UBRR >> 8} & $f0} }
-    #define UBRR1       {{UBRR >> 4} & $ff}
-
-    ; {{SEG {ms mult {F_CPU div 1000}}} div 5}
-    
-    ;
-    ;       7     6     5     4     3     2     1     0
-    ;     ----- ----- ----- ----- ----- ----- ----- -----
-    ;    |  15 |  14 |  13 |  12 |  3  |  2  |  1  |  0  |  UART2_BRR2
-    ;     ----- ----- ----- ----- ----- ----- ----- -----
-    ;    |  11 |  10 |  9  |  8  |  7  |  6  |  5  |  4  |  UART2_BRR1
-    ;     ----- ----- ----- ----- ----- ----- ----- -----
-
 
 ; ================================================
 ; начало программы
@@ -48,19 +26,7 @@ LED_C equ 3 ; PC3 for BLACK BOARD STM8S
     bset    PC_CR1, #LED_C
 
     ; инициализация UART1
-    bset    CLK_PCKENR1, #3 ; включить тактирование UART1 (PCKEN13 = #3)
-
-    ; ld    UART1_BRR2, #UBRR2
-    ; ld    UART1_BRR1, #UBRR1
-    ; UART_DIV = F_CPU / BAUD = 2000000 / 9600 = 208 = $D0
-    ; mov     UART1_BRR2, #$0      ; для Fmaster=16/8=2МГц и 96000
-    ; mov     UART1_BRR1, #$D      ; для Fmaster=16/8=2МГц и 96000
-
-    ; UART_DIV = F_CPU / BAUD = 16000000 / 9600 = 1667 = $0683
-    mov     UART1_BRR2, #$03         ; для Fmaster=16МГц и 96000
-    mov     UART1_BRR1, #$68         ; для Fmaster=16МГц и 96000
-
-    mov     UART1_CR2, #%00001100    ; [35 0C 52 35]    UART1_CR2.TEN <- 1  UART1_CR2.REN <- 1  разрешаем передачу/прием
+    call    UART_init
     
     ld      A, #'\n'
     call    UART_transmit
@@ -135,24 +101,9 @@ continue:
 ; ================================================
 
 
-; ; ================================================
-; ; подпрограмма передача байта по UART
-; UART_transmit:
-;     ; mov    UART1_DR, #97
-;     ld    UART1_DR, A
-; wait_UART_transmit:
-; 	btjf   UART1_SR, #7, wait_UART_transmit  ; skip if UART1_SR.TXE = 0 Transmit data register empty
-;     ret
-; ; ================================================
-
-
-; ; ================================================
-; ; подпрограмма приёма байта по UART
-; UART_receive:
-;     btjf   UART1_SR, #5, UART_receive	; skip if UART1_SR.RXNE = 0 Read data register not empty
-; 	ld     A, UART1_DR
-;     ret
-; ; ================================================
+; ================================================
+    ; подключение библиотек
+    #include "../libs/usart.asm"
 
 
 ; ================================================

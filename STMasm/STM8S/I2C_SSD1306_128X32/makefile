@@ -5,17 +5,12 @@
 
 BUILD_DIR	:= build
 
-# USART_NAME	:= usart
-# USART_ASM	:= ../libs/$(USART_NAME).asm
-# USART_LSR	:= $(BUILD_DIR)/$(USART_NAME).lsr
-# USART_OBJ	:= $(BUILD_DIR)/$(USART_NAME).obj
-
 STM8S_NAME	:= STM8S103F
 STM8S_ASM	:= ../libs/$(STM8S_NAME).asm
 STM8S_LSR	:= $(BUILD_DIR)/$(STM8S_NAME).lsr
 STM8S_OBJ	:= $(BUILD_DIR)/$(STM8S_NAME).obj
 
-FILE_NAME	:= UART1
+FILE_NAME	:= I2C_SSD1306_128X32
 ASM			:= $(FILE_NAME).asm
 LSR			:= $(BUILD_DIR)/$(FILE_NAME).lsr
 OBJ			:= $(BUILD_DIR)/$(FILE_NAME).obj
@@ -33,10 +28,8 @@ compile:
 #	@if exist $(BUILD_DIR) (rmdir /Q /S $(BUILD_DIR))
 	@if not exist $(BUILD_DIR) (mkdir $(BUILD_DIR))
 	@asm.exe -sym -li=$(STM8S_LSR) $(STM8S_ASM) -obj=$(STM8S_OBJ)
-#	@asm.exe -sym -li=$(USART_LSR) $(USART_ASM) -obj=$(USART_OBJ)
 	@asm.exe -sym -li=$(LSR) $(ASM) -obj=$(OBJ)
-	@lyn $(STM8S_OBJ)+$(OBJ), $(COD), ; 	
-#	@lyn $(STM8S_OBJ)+$(USART_OBJ)+$(OBJ), $(COD), ; 	
+	@lyn $(STM8S_OBJ)+$(OBJ), $(COD), ; 		
 	@obsend $(COD),f,$(HEX),ix
 	@obsend $(COD),f,$(S19),s	
 	@stm8flash -c stlinkv2 -p stm8s103f3 -w $(HEX)
