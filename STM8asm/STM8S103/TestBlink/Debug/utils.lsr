@@ -1,0 +1,34 @@
+STMicroelectronics assembler v4.52   (C)1987-2023   Sun Feb 26 12:49:01 2023
+Page 1  Assembler
+                                               e:\vscode\asmstudy\stmasm\stm8s003\testblink\utils.asm
+
+   1                         stm8/     
+   2                         
+   3                                   segment  'rom'
+   4                         
+   5                         .delay:   
+   6                                                          ; 0x61a80 = 400000 i.e. (2*10^6 
+                                                                ;MHz)/5cycles - 1секуда
+   7  000000   A603                          ld       a, #$03       ;  #$06 - 1000мс, #$03 - 500мс
+   8  000002   90AE1A80                      ldw      y, #$1a80     
+   9                         loop:     
+  10  000006   72A20001                      subw     y, #$01       ; decrement with set carry
+  11  00000A   A200                          sbc      a,#0          ; decrement carry flag i.e. a = 
+                                                                ;a - carry_flag
+  12  00000C R 26F8                          jrne     loop
+  13  00000E   81                            ret      
+  14                                   
+  15  00000F                                 end      
+STMicroelectronics assembler v4.52   (C)1987-2023   Sun Feb 26 12:49:01 2023
+Page 2  Assembler
+                                               e:\vscode\asmstudy\stmasm\stm8s003\testblink\utils.asm
+
+Symbol Name                       Value     Call       Type  Scope      Rel.  Line  Privacy  Segment   Size  Bytes File
+
+delay                                 0000         no  WORD  Internal   rel      5  public   text         6     0  -
+
+loop                                  0006         no  WORD  Internal   rel      9  private  text         9     0  -
+
+
+2 labels
+No errors on assembly of 'e:\vscode\asmstudy\stmasm\stm8s003\testblink\utils.asm'

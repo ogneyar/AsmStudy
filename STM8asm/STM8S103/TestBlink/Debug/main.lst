@@ -1,0 +1,864 @@
+STMicroelectronics list file postprocessor v1.01   (C)2009-2023   Sun Feb 26 14:35:19 2023
+Page 1  Assembler
+                                               e:\vscode\asmstudy\stmasm\stm8s103\testblink\main.asm
+
+   1                         stm8/     
+   0  000000                                 #include "STM8S103F.inc"
+   1                         ; STM8S103F.inc
+   2                         
+   3                         ; Copyright (c) 2003-2017 STMicroelectronics
+   4                         
+   5  000000 U                               #ifdef   __STM8S103F__
+   8  000000                                 #define  __STM8S103F__ 1
+   9                         
+  10                         ; STM8S103F
+  11                         
+  12                         
+  13                         ; Port A
+  14                         ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                               ;;;;;;
+  15                         
+  16  000000                                 EXTERN   PA_ODR.w      ; Port A data output latch 
+                                                                ;register
+  17                         
+  18  000000                                 EXTERN   PA_IDR.w      ; Port A input pin value 
+                                                                ;register
+  19                         
+  20  000000                                 EXTERN   PA_DDR.w      ; Port A data direction 
+                                                                ;register
+  21                         
+  22  000000                                 EXTERN   PA_CR1.w      ; Port A control register 1
+  23                         
+  24  000000                                 EXTERN   PA_CR2.w      ; Port A control register 2
+  25                         
+  26                         ; Port B
+  27                         ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                               ;;;;;;
+  28                         
+  29  000000                                 EXTERN   PB_ODR.w      ; Port B data output latch 
+                                                                ;register
+  30                         
+  31  000000                                 EXTERN   PB_IDR.w      ; Port B input pin value 
+                                                                ;register
+  32                         
+  33  000000                                 EXTERN   PB_DDR.w      ; Port B data direction 
+                                                                ;register
+  34                         
+  35  000000                                 EXTERN   PB_CR1.w      ; Port B control register 1
+  36                         
+  37  000000                                 EXTERN   PB_CR2.w      ; Port B control register 2
+  38                         
+  39                         ; Port C
+  40                         ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                               ;;;;;;
+  41                         
+  42  000000                                 EXTERN   PC_ODR.w      ; Port C data output latch 
+                                                                ;register
+  43                         
+  44  000000                                 EXTERN   PC_IDR.w      ; Port C input pin value 
+                                                                ;register
+  45                         
+  46  000000                                 EXTERN   PC_DDR.w      ; Port C data direction 
+STMicroelectronics list file postprocessor v1.01   (C)2009-2023   Sun Feb 26 14:35:19 2023
+Page 2  Assembler
+                                               e:\vscode\asmstudy\stmasm\stm8s103\testblink\main.asm
+
+                                                                ;register
+  47                         
+  48  000000                                 EXTERN   PC_CR1.w      ; Port C control register 1
+  49                         
+  50  000000                                 EXTERN   PC_CR2.w      ; Port C control register 2
+  51                         
+  52                         ; Port D
+  53                         ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                               ;;;;;;
+  54                         
+  55  000000                                 EXTERN   PD_ODR.w      ; Port D data output latch 
+                                                                ;register
+  56                         
+  57  000000                                 EXTERN   PD_IDR.w      ; Port D input pin value 
+                                                                ;register
+  58                         
+  59  000000                                 EXTERN   PD_DDR.w      ; Port D data direction 
+                                                                ;register
+  60                         
+  61  000000                                 EXTERN   PD_CR1.w      ; Port D control register 1
+  62                         
+  63  000000                                 EXTERN   PD_CR2.w      ; Port D control register 2
+  64                         
+  65                         ; Flash
+  66                         ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                               ;;;;;;
+  67                         
+  68  000000                                 EXTERN   FLASH_CR1.w   ; Flash control register 1
+  69                         
+  70  000000                                 EXTERN   FLASH_CR2.w   ; Flash control register 2
+  71                         
+  72  000000                                 EXTERN   FLASH_NCR2.w  ; Flash complementary control 
+                                                                ;register 2
+  73                         
+  74  000000                                 EXTERN   FLASH_FPR.w   ; Flash protection register
+  75                         
+  76  000000                                 EXTERN   FLASH_NFPR.w  ; Flash complementary protection
+                                                                ; register
+  77                         
+  78  000000                                 EXTERN   FLASH_IAPSR.w  ; Flash in-application 
+                                                                ;programming status register
+  79                         
+  80  000000                                 EXTERN   FLASH_PUKR.w  ; Flash Program memory 
+                                                                ;unprotection register
+  81                         
+  82  000000                                 EXTERN   FLASH_DUKR.w  ; Data EEPROM unprotection 
+                                                                ;register
+  83                         
+  84                         ; External Interrupt Control Register (ITC)
+  85                         ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                               ;;;;;;
+  86                         
+  87  000000                                 EXTERN   EXTI_CR1.w    ; External interrupt control 
+                                                                ;register 1
+  88                         
+  89  000000                                 EXTERN   EXTI_CR2.w    ; External interrupt control 
+                                                                ;register 2
+STMicroelectronics list file postprocessor v1.01   (C)2009-2023   Sun Feb 26 14:35:19 2023
+Page 3  Assembler
+                                               e:\vscode\asmstudy\stmasm\stm8s103\testblink\main.asm
+
+  90                         
+  91                         ; Reset (RST)
+  92                         ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                               ;;;;;;
+  93                         
+  94  000000                                 EXTERN   RST_SR.w      ; Reset status register 1
+  95                         
+  96                         ; Clock Control (CLK)
+  97                         ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                               ;;;;;;
+  98                         
+  99  000000                                 EXTERN   CLK_ICKR.w    ; Internal clock control 
+                                                                ;register
+ 100                         
+ 101  000000                                 EXTERN   CLK_ECKR.w    ; External clock control 
+                                                                ;register
+ 102                         
+ 103  000000                                 EXTERN   CLK_CMSR.w    ; Clock master status register
+ 104                         
+ 105  000000                                 EXTERN   CLK_SWR.w     ; Clock master switch register
+ 106                         
+ 107  000000                                 EXTERN   CLK_SWCR.w    ; Clock switch control register
+ 108                         
+ 109  000000                                 EXTERN   CLK_CKDIVR.w  ; Clock divider register
+ 110                         
+ 111  000000                                 EXTERN   CLK_PCKENR1.w  ; Peripheral clock gating 
+                                                                ;register 1
+ 112                         
+ 113  000000                                 EXTERN   CLK_CSSR.w    ; Clock security system 
+                                                                ;register
+ 114                         
+ 115  000000                                 EXTERN   CLK_CCOR.w    ; Configurable clock control 
+                                                                ;register
+ 116                         
+ 117  000000                                 EXTERN   CLK_PCKENR2.w  ; Peripheral clock gating 
+                                                                ;register 2
+ 118                         
+ 119  000000                                 EXTERN   CLK_CANCCR.w  ; CAN clock control register
+ 120                         
+ 121  000000                                 EXTERN   CLK_HSITRIMR.w  ; HSI clock calibration trimming
+                                                                ; register
+ 122                         
+ 123  000000                                 EXTERN   CLK_SWIMCCR.w  ; SWIM clock control register
+ 124                         
+ 125                         ; Window Watchdog (WWDG)
+ 126                         ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                               ;;;;;;
+ 127                         
+ 128  000000                                 EXTERN   WWDG_CR.w     ; WWDG Control Register
+ 129                         
+ 130  000000                                 EXTERN   WWDG_WR.w     ; WWDR Window Register
+ 131                         
+ 132                         ; Independent Watchdog (IWDG)
+ 133                         ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                               ;;;;;;
+ 134                         
+ 135  000000                                 EXTERN   IWDG_KR.w     ; IWDG Key Register
+STMicroelectronics list file postprocessor v1.01   (C)2009-2023   Sun Feb 26 14:35:19 2023
+Page 4  Assembler
+                                               e:\vscode\asmstudy\stmasm\stm8s103\testblink\main.asm
+
+ 136                         
+ 137  000000                                 EXTERN   IWDG_PR.w     ; IWDG Prescaler Register
+ 138                         
+ 139  000000                                 EXTERN   IWDG_RLR.w    ; IWDG Reload Register
+ 140                         
+ 141                         ; Auto Wake-Up (AWU)
+ 142                         ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                               ;;;;;;
+ 143                         
+ 144  000000                                 EXTERN   AWU_CSR.w     ; AWU Control/Status Register
+ 145                         
+ 146  000000                                 EXTERN   AWU_APR.w     ; AWU asynchronous prescaler 
+                                                                ;buffer register
+ 147                         
+ 148  000000                                 EXTERN   AWU_TBR.w     ; AWU Timebase selection 
+                                                                ;register
+ 149                         
+ 150                         ; Beeper (BEEP)
+ 151                         ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                               ;;;;;;
+ 152                         
+ 153  000000                                 EXTERN   BEEP_CSR.w    ; BEEP Control/Status Register
+ 154                         
+ 155                         ; Serial Peripheral Interface (SPI)
+ 156                         ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                               ;;;;;;
+ 157                         
+ 158  000000                                 EXTERN   SPI_CR1.w     ; SPI Control Register 1
+ 159                         
+ 160  000000                                 EXTERN   SPI_CR2.w     ; SPI Control Register 2
+ 161                         
+ 162  000000                                 EXTERN   SPI_ICR.w     ; SPI Interrupt Control 
+                                                                ;Register
+ 163                         
+ 164  000000                                 EXTERN   SPI_SR.w      ; SPI Status Register
+ 165                         
+ 166  000000                                 EXTERN   SPI_DR.w      ; SPI Data Register
+ 167                         
+ 168  000000                                 EXTERN   SPI_CRCPR.w   ; SPI CRC Polynomial Register
+ 169                         
+ 170  000000                                 EXTERN   SPI_RXCRCR.w  ; SPI Rx CRC Register
+ 171                         
+ 172  000000                                 EXTERN   SPI_TXCRCR.w  ; SPI Tx CRC Register
+ 173                         
+ 174                         ; I2C Bus Interface (I2C)
+ 175                         ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                               ;;;;;;
+ 176                         
+ 177  000000                                 EXTERN   I2C_CR1.w     ; I2C control register 1
+ 178                         
+ 179  000000                                 EXTERN   I2C_CR2.w     ; I2C control register 2
+ 180                         
+ 181  000000                                 EXTERN   I2C_FREQR.w   ; I2C frequency register
+ 182                         
+ 183  000000                                 EXTERN   I2C_OARL.w    ; I2C Own address register low
+ 184                         
+ 185  000000                                 EXTERN   I2C_OARH.w    ; I2C Own address register high
+STMicroelectronics list file postprocessor v1.01   (C)2009-2023   Sun Feb 26 14:35:19 2023
+Page 5  Assembler
+                                               e:\vscode\asmstudy\stmasm\stm8s103\testblink\main.asm
+
+ 186                         
+ 187  000000                                 EXTERN   I2C_DR.w      ; I2C data register
+ 188                         
+ 189  000000                                 EXTERN   I2C_SR1.w     ; I2C status register 1
+ 190                         
+ 191  000000                                 EXTERN   I2C_SR2.w     ; I2C status register 2
+ 192                         
+ 193  000000                                 EXTERN   I2C_SR3.w     ; I2C status register 3
+ 194                         
+ 195  000000                                 EXTERN   I2C_ITR.w     ; I2C interrupt control 
+                                                                ;register
+ 196                         
+ 197  000000                                 EXTERN   I2C_CCRL.w    ; I2C Clock control register 
+                                                                ;low
+ 198                         
+ 199  000000                                 EXTERN   I2C_CCRH.w    ; I2C Clock control register 
+                                                                ;high
+ 200                         
+ 201  000000                                 EXTERN   I2C_TRISER.w  ; I2C TRISE register
+ 202                         
+ 203  000000                                 EXTERN   I2C_PECR.w    ; I2C packet error checking 
+                                                                ;register
+ 204                         
+ 205                         ; Universal synch/asynch receiver transmitter (UART1)
+ 206                         ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                               ;;;;;;
+ 207                         
+ 208  000000                                 EXTERN   UART1_SR.w    ; UART1 Status Register
+ 209                         
+ 210  000000                                 EXTERN   UART1_DR.w    ; UART1 Data Register
+ 211                         
+ 212  000000                                 EXTERN   UART1_BRR1.w  ; UART1 Baud Rate Register 1
+ 213                         
+ 214  000000                                 EXTERN   UART1_BRR2.w  ; UART1 Baud Rate Register 2
+ 215                         
+ 216  000000                                 EXTERN   UART1_CR1.w   ; UART1 Control Register 1
+ 217                         
+ 218  000000                                 EXTERN   UART1_CR2.w   ; UART1 Control Register 2
+ 219                         
+ 220  000000                                 EXTERN   UART1_CR3.w   ; UART1 Control Register 3
+ 221                         
+ 222  000000                                 EXTERN   UART1_CR4.w   ; UART1 Control Register 4
+ 223                         
+ 224  000000                                 EXTERN   UART1_CR5.w   ; UART1 Control Register 5
+ 225                         
+ 226  000000                                 EXTERN   UART1_GTR.w   ; UART1 Guard time Register
+ 227                         
+ 228  000000                                 EXTERN   UART1_PSCR.w  ; UART1 Prescaler Register
+ 229                         
+ 230                         ; 16-Bit Timer 1 (TIM1)
+ 231                         ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                               ;;;;;;
+ 232                         
+ 233  000000                                 EXTERN   TIM1_CR1.w    ; TIM1 Control register 1
+ 234                         
+ 235  000000                                 EXTERN   TIM1_CR2.w    ; TIM1 Control register 2
+ 236                         
+STMicroelectronics list file postprocessor v1.01   (C)2009-2023   Sun Feb 26 14:35:19 2023
+Page 6  Assembler
+                                               e:\vscode\asmstudy\stmasm\stm8s103\testblink\main.asm
+
+ 237  000000                                 EXTERN   TIM1_SMCR.w   ; TIM1 Slave Mode Control 
+                                                                ;register
+ 238                         
+ 239  000000                                 EXTERN   TIM1_ETR.w    ; TIM1 external trigger 
+                                                                ;register
+ 240                         
+ 241  000000                                 EXTERN   TIM1_IER.w    ; TIM1 Interrupt enable 
+                                                                ;register
+ 242                         
+ 243  000000                                 EXTERN   TIM1_SR1.w    ; TIM1 Status register 1
+ 244                         
+ 245  000000                                 EXTERN   TIM1_SR2.w    ; TIM1 Status register 2
+ 246                         
+ 247  000000                                 EXTERN   TIM1_EGR.w    ; TIM1 Event Generation 
+                                                                ;register
+ 248                         
+ 249  000000                                 EXTERN   TIM1_CCMR1.w  ; TIM1 Capture/Compare mode 
+                                                                ;register 1
+ 250                         
+ 251  000000                                 EXTERN   TIM1_CCMR2.w  ; TIM1 Capture/Compare mode 
+                                                                ;register 2
+ 252                         
+ 253  000000                                 EXTERN   TIM1_CCMR3.w  ; TIM1 Capture/Compare mode 
+                                                                ;register 3
+ 254                         
+ 255  000000                                 EXTERN   TIM1_CCMR4.w  ; TIM1 Capture/Compare mode 
+                                                                ;register 4
+ 256                         
+ 257  000000                                 EXTERN   TIM1_CCER1.w  ; TIM1 Capture/Compare enable 
+                                                                ;register 1
+ 258                         
+ 259  000000                                 EXTERN   TIM1_CCER2.w  ; TIM1 Capture/Compare enable 
+                                                                ;register 2
+ 260                         
+ 261  000000                                 EXTERN   TIM1_CNTRH.w  ; Data bits High
+ 262                         
+ 263  000000                                 EXTERN   TIM1_CNTRL.w  ; Data bits Low
+ 264                         
+ 265  000000                                 EXTERN   TIM1_PSCRH.w  ; Data bits High
+ 266                         
+ 267  000000                                 EXTERN   TIM1_PSCRL.w  ; Data bits Low
+ 268                         
+ 269  000000                                 EXTERN   TIM1_ARRH.w   ; Data bits High
+ 270                         
+ 271  000000                                 EXTERN   TIM1_ARRL.w   ; Data bits Low
+ 272                         
+ 273  000000                                 EXTERN   TIM1_RCR.w    ; TIM1 Repetition counter 
+                                                                ;register
+ 274                         
+ 275  000000                                 EXTERN   TIM1_CCR1H.w  ; Data bits High
+ 276                         
+ 277  000000                                 EXTERN   TIM1_CCR1L.w  ; Data bits Low
+ 278                         
+ 279  000000                                 EXTERN   TIM1_CCR2H.w  ; Data bits High
+ 280                         
+ 281  000000                                 EXTERN   TIM1_CCR2L.w  ; Data bits Low
+ 282                         
+STMicroelectronics list file postprocessor v1.01   (C)2009-2023   Sun Feb 26 14:35:19 2023
+Page 7  Assembler
+                                               e:\vscode\asmstudy\stmasm\stm8s103\testblink\main.asm
+
+ 283  000000                                 EXTERN   TIM1_CCR3H.w  ; Data bits High
+ 284                         
+ 285  000000                                 EXTERN   TIM1_CCR3L.w  ; Data bits Low
+ 286                         
+ 287  000000                                 EXTERN   TIM1_CCR4H.w  ; Data bits High
+ 288                         
+ 289  000000                                 EXTERN   TIM1_CCR4L.w  ; Data bits Low
+ 290                         
+ 291  000000                                 EXTERN   TIM1_BKR.w    ; TIM1 Break register
+ 292                         
+ 293  000000                                 EXTERN   TIM1_DTR.w    ; TIM1 Dead-time register
+ 294                         
+ 295  000000                                 EXTERN   TIM1_OISR.w   ; TIM1 Output idle state 
+                                                                ;register
+ 296                         
+ 297                         ; 16-Bit Timer 2 (TIM2)
+ 298                         ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                               ;;;;;;
+ 299                         
+ 300  000000                                 EXTERN   TIM2_CR1.w    ; TIM2 Control register 1
+ 301                         
+ 302  000000                                 EXTERN   TIM2_IER.w    ; TIM2 Interrupt enable 
+                                                                ;register
+ 303                         
+ 304  000000                                 EXTERN   TIM2_SR1.w    ; TIM2 Status register 1
+ 305                         
+ 306  000000                                 EXTERN   TIM2_SR2.w    ; TIM2 Status register 2
+ 307                         
+ 308  000000                                 EXTERN   TIM2_EGR.w    ; TIM2 Event Generation 
+                                                                ;register
+ 309                         
+ 310  000000                                 EXTERN   TIM2_CCMR1.w  ; TIM2 Capture/Compare mode 
+                                                                ;register 1
+ 311                         
+ 312  000000                                 EXTERN   TIM2_CCMR2.w  ; TIM2 Capture/Compare mode 
+                                                                ;register 2
+ 313                         
+ 314  000000                                 EXTERN   TIM2_CCMR3.w  ; TIM2 Capture/Compare mode 
+                                                                ;register 3
+ 315                         
+ 316  000000                                 EXTERN   TIM2_CCER1.w  ; TIM2 Capture/Compare enable 
+                                                                ;register 1
+ 317                         
+ 318  000000                                 EXTERN   TIM2_CCER2.w  ; TIM2 Capture/Compare enable 
+                                                                ;register 2
+ 319                         
+ 320  000000                                 EXTERN   TIM2_CNTRH.w  ; Data bits High
+ 321                         
+ 322  000000                                 EXTERN   TIM2_CNTRL.w  ; Data bits Low
+ 323                         
+ 324  000000                                 EXTERN   TIM2_PSCR.w   ; TIM2 Prescaler register
+ 325                         
+ 326  000000                                 EXTERN   TIM2_ARRH.w   ; Data bits High
+ 327                         
+ 328  000000                                 EXTERN   TIM2_ARRL.w   ; Data bits Low
+ 329                         
+ 330  000000                                 EXTERN   TIM2_CCR1H.w  ; Data bits High
+STMicroelectronics list file postprocessor v1.01   (C)2009-2023   Sun Feb 26 14:35:19 2023
+Page 8  Assembler
+                                               e:\vscode\asmstudy\stmasm\stm8s103\testblink\main.asm
+
+ 331                         
+ 332  000000                                 EXTERN   TIM2_CCR1L.w  ; Data bits Low
+ 333                         
+ 334  000000                                 EXTERN   TIM2_CCR2H.w  ; Data bits High
+ 335                         
+ 336  000000                                 EXTERN   TIM2_CCR2L.w  ; Data bits Low
+ 337                         
+ 338  000000                                 EXTERN   TIM2_CCR3H.w  ; Data bits High
+ 339                         
+ 340  000000                                 EXTERN   TIM2_CCR3L.w  ; Data bits Low
+ 341                         
+ 342                         ; 8-Bit  Timer 4 (TIM4)
+ 343                         ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                               ;;;;;;
+ 344                         
+ 345  000000                                 EXTERN   TIM4_CR1.w    ; TIM4 Control register 1
+ 346                         
+ 347  000000                                 EXTERN   TIM4_IER.w    ; TIM4 Interrupt enable 
+                                                                ;register
+ 348                         
+ 349  000000                                 EXTERN   TIM4_SR.w     ; TIM4 Status register
+ 350                         
+ 351  000000                                 EXTERN   TIM4_EGR.w    ; TIM4 Event Generation 
+                                                                ;register
+ 352                         
+ 353  000000                                 EXTERN   TIM4_CNTR.w   ; TIM4 Counter
+ 354                         
+ 355  000000                                 EXTERN   TIM4_PSCR.w   ; TIM4 Prescaler register
+ 356                         
+ 357  000000                                 EXTERN   TIM4_ARR.w    ; TIM4 Auto-reload register
+ 358                         
+ 359                         ; 10-Bit A/D Converter (ADC1)
+ 360                         ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                               ;;;;;;
+ 361                         
+ 362  000000                                 EXTERN   ADC_DB0RH.w   ; Data Buffer register 0 High
+ 363                         
+ 364  000000                                 EXTERN   ADC_DB0RL.w   ; Data Buffer register 0 Low
+ 365                         
+ 366  000000                                 EXTERN   ADC_DB1RH.w   ; Data Buffer register 1 High
+ 367                         
+ 368  000000                                 EXTERN   ADC_DB1RL.w   ; Data Buffer register 1 Low
+ 369                         
+ 370  000000                                 EXTERN   ADC_DB2RH.w   ; Data Buffer register 2 High
+ 371                         
+ 372  000000                                 EXTERN   ADC_DB2RL.w   ; Data Buffer register 2 Low
+ 373                         
+ 374  000000                                 EXTERN   ADC_DB3RH.w   ; Data Buffer register 3 High
+ 375                         
+ 376  000000                                 EXTERN   ADC_DB3RL.w   ; Data Buffer register 3 Low
+ 377                         
+ 378  000000                                 EXTERN   ADC_DB4RH.w   ; Data Buffer register 4 High
+ 379                         
+ 380  000000                                 EXTERN   ADC_DB4RL.w   ; Data Buffer register 4 Low
+ 381                         
+ 382  000000                                 EXTERN   ADC_DB5RH.w   ; Data Buffer register 5 High
+ 383                         
+STMicroelectronics list file postprocessor v1.01   (C)2009-2023   Sun Feb 26 14:35:19 2023
+Page 9  Assembler
+                                               e:\vscode\asmstudy\stmasm\stm8s103\testblink\main.asm
+
+ 384  000000                                 EXTERN   ADC_DB5RL.w   ; Data Buffer register 5 Low
+ 385                         
+ 386  000000                                 EXTERN   ADC_DB6RH.w   ; Data Buffer register 6 High
+ 387                         
+ 388  000000                                 EXTERN   ADC_DB6RL.w   ; Data Buffer register 6 Low
+ 389                         
+ 390  000000                                 EXTERN   ADC_DB7RH.w   ; Data Buffer register 7 High
+ 391                         
+ 392  000000                                 EXTERN   ADC_DB7RL.w   ; Data Buffer register 7 Low
+ 393                         
+ 394  000000                                 EXTERN   ADC_DB8RH.w   ; Data Buffer register 8 High
+ 395                         
+ 396  000000                                 EXTERN   ADC_DB8RL.w   ; Data Buffer register 8 Low
+ 397                         
+ 398  000000                                 EXTERN   ADC_DB9RH.w   ; Data Buffer register 9 High
+ 399                         
+ 400  000000                                 EXTERN   ADC_DB9RL.w   ; Data Buffer register 9 Low
+ 401                         
+ 402  000000                                 EXTERN   ADC_CSR.w     ; ADC Control/Status Register
+ 403                         
+ 404  000000                                 EXTERN   ADC_CR1.w     ; ADC Configuration Register 1
+ 405                         
+ 406  000000                                 EXTERN   ADC_CR2.w     ; ADC Configuration Register 2
+ 407                         
+ 408  000000                                 EXTERN   ADC_CR3.w     ; ADC Configuration Register 3
+ 409                         
+ 410  000000                                 EXTERN   ADC_DRH.w     ; Data bits High
+ 411                         
+ 412  000000                                 EXTERN   ADC_DRL.w     ; Data bits Low
+ 413                         
+ 414  000000                                 EXTERN   ADC_TDRH.w    ; Schmitt trigger disable High
+ 415                         
+ 416  000000                                 EXTERN   ADC_TDRL.w    ; Schmitt trigger disable Low
+ 417                         
+ 418  000000                                 EXTERN   ADC_HTRH.w    ; High Threshold Register High
+ 419                         
+ 420  000000                                 EXTERN   ADC_HTRL.w    ; High Threshold Register Low
+ 421                         
+ 422  000000                                 EXTERN   ADC_LTRH.w    ; Low Threshold Register High
+ 423                         
+ 424  000000                                 EXTERN   ADC_LTRL.w    ; Low Threshold Register Low
+ 425                         
+ 426  000000                                 EXTERN   ADC_AWSRH.w   ; Analog Watchdog Status 
+                                                                ;register High
+ 427                         
+ 428  000000                                 EXTERN   ADC_AWSRL.w   ; Analog Watchdog Status 
+                                                                ;register Low
+ 429                         
+ 430  000000                                 EXTERN   ADC_AWCRH.w   ; Analog Watchdog Control 
+                                                                ;register High
+ 431                         
+ 432  000000                                 EXTERN   ADC_AWCRL.w   ; Analog Watchdog Control 
+                                                                ;register Low
+ 433                         
+ 434                         ;  Global configuration register (CFG)
+ 435                         ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                               ;;;;;;
+STMicroelectronics list file postprocessor v1.01   (C)2009-2023   Sun Feb 26 14:35:19 2023
+Page 10  Assembler
+                                               e:\vscode\asmstudy\stmasm\stm8s103\testblink\main.asm
+
+ 436                         
+ 437  000000                                 EXTERN   CFG_GCR.w     ; CFG Global configuration 
+                                                                ;register
+ 438                         
+ 439                         ; Interrupt Software Priority Register (ITC)
+ 440                         ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                               ;;;;;;
+ 441                         
+ 442  000000                                 EXTERN   ITC_SPR1.w    ; Interrupt Software priority 
+                                                                ;register 1
+ 443                         
+ 444  000000                                 EXTERN   ITC_SPR2.w    ; Interrupt Software priority 
+                                                                ;register 2
+ 445                         
+ 446  000000                                 EXTERN   ITC_SPR3.w    ; Interrupt Software priority 
+                                                                ;register 3
+ 447                         
+ 448  000000                                 EXTERN   ITC_SPR4.w    ; Interrupt Software priority 
+                                                                ;register 4
+ 449                         
+ 450  000000                                 EXTERN   ITC_SPR5.w    ; Interrupt Software priority 
+                                                                ;register 5
+ 451                         
+ 452  000000                                 EXTERN   ITC_SPR6.w    ; Interrupt Software priority 
+                                                                ;register 6
+ 453                         
+ 454  000000                                 EXTERN   ITC_SPR7.w    ; Interrupt Software priority 
+                                                                ;register 7
+ 455                         
+ 456  000000                                 #endif                 ; __STM8S103F__
+<END_OF_INCLUSION>
+   0  000000                                 #include "macros.inc"
+   1                         
+   2  000000                       delay_ms  MACRO    ms
+   3                                   #ifdef   2000000
+   4                                                          ; nothing
+   5                                   #else    
+   6                                   #define  2000000 2000000
+   7                                   #endif   
+   8                                   ld       a, #{{SEG {ms mult {2000000 div 1000}}} div 5}
+   9                                   ldw      y, #{{OFFSET {ms mult {2000000 div 1000}}} div 5}
+  10                                   LOCAL    loop
+  11                         loop:     
+  12                                   subw     y, #$01       ; decrement with set carry
+  13                                   sbc      a,#0          ; decrement carry flag i.e. a = 
+                                                                ;a - carry_flag
+  14                                   jrne     loop
+  15  000000                                 MEND     
+<END_OF_INCLUSION>
+   4                                   
+   5                                                          ;extern delay ; from file 
+                                                                ;utils.asm
+   6                         
+   7  000005                       LED       equ      5
+   8                         
+   9                                   segment  'rom'
+  10                         
+  11                         .main     
+  12                                                          ; Bit Set	
+STMicroelectronics list file postprocessor v1.01   (C)2009-2023   Sun Feb 26 14:35:19 2023
+Page 11  Assembler
+                                               e:\vscode\asmstudy\stmasm\stm8s103\testblink\main.asm
+
+  13  008099   721A5007                      bset     PB_DDR, #LED  ; PB_DDR|=(1<<LED)
+  14  00809D   721A5008                      bset     PB_CR1, #LED  ; PB_CR1|=(1<<LED)
+  15                         mloop:    
+  16                                                          ; Bit Complement
+  17  0080A1   901A5005                      bcpl     PB_ODR, #LED  ; PB_ODR^=(1<<LED)
+  18                                                          ;call delay
+  19                                   delay_ms 1000
+  19  0080A5                                 #ifdef   2000000
+  19                                                          ; nothing
+  19  0080A5                                 #else    
+  19  0080A5   A606                          ld       a, #{{SEG {1000 mult {2000000 div 1000}}} div 5}
+  19  0080A7   90AE1A80                      ldw      y, #{{OFFSET {1000 mult {2000000 div 1000}}} div 5}
+  19  0080AB                       LOC0:     
+  19  0080AB   72A20001                      subw     y, #$01       ; decrement with set carry
+  19  0080AF   A200                          sbc      a,#0          ; decrement carry flag i.e. a = a - carry_flag
+  19  0080B1   26F8                          jrne     LOC0
+  20  0080B3   CC80A1                        jp       mloop
+  21                         
+  22  0080B6                                 end      
+STMicroelectronics list file postprocessor v1.01   (C)2009-2023   Sun Feb 26 14:35:19 2023
+Page 12  Assembler
+                                               e:\vscode\asmstudy\stmasm\stm8s103\testblink\main.asm
+
+Symbol Name                       Value     Call       Type  Scope      Rel.  Line  Privacy  Segment   Size  Bytes File
+
+AWU_CSR                               50F0         no  WORD  Internal   ABS    144  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+AWU_APR                               50F1         no  WORD  Internal   ABS    146  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+AWU_TBR                               50F2         no  WORD  Internal   ABS    148  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+ADC_DB0RH                             53E0         no  WORD  Internal   ABS    362  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+ADC_DB0RL                             53E1         no  WORD  Internal   ABS    364  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+ADC_DB1RH                             53E2         no  WORD  Internal   ABS    366  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+ADC_DB1RL                             53E3         no  WORD  Internal   ABS    368  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+ADC_DB2RH                             53E4         no  WORD  Internal   ABS    370  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+ADC_DB2RL                             53E5         no  WORD  Internal   ABS    372  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+ADC_DB3RH                             53E6         no  WORD  Internal   ABS    374  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+ADC_DB3RL                             53E7         no  WORD  Internal   ABS    376  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+ADC_DB4RH                             53E8         no  WORD  Internal   ABS    378  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+ADC_DB4RL                             53E9         no  WORD  Internal   ABS    380  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+ADC_DB5RH                             53EA         no  WORD  Internal   ABS    382  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+ADC_DB5RL                             53EB         no  WORD  Internal   ABS    384  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+ADC_DB6RH                             53EC         no  WORD  Internal   ABS    386  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+ADC_DB6RL                             53ED         no  WORD  Internal   ABS    388  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+ADC_DB7RH                             53EE         no  WORD  Internal   ABS    390  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+ADC_DB7RL                             53EF         no  WORD  Internal   ABS    392  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+ADC_DB8RH                             53F0         no  WORD  Internal   ABS    394  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+ADC_DB8RL                             53F1         no  WORD  Internal   ABS    396  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+ADC_DB9RH                             53F2         no  WORD  Internal   ABS    398  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+ADC_DB9RL                             53F3         no  WORD  Internal   ABS    400  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+ADC_CSR                               5400         no  WORD  Internal   ABS    402  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+ADC_CR1                               5401         no  WORD  Internal   ABS    404  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+ADC_CR2                               5402         no  WORD  Internal   ABS    406  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+ADC_CR3                               5403         no  WORD  Internal   ABS    408  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+ADC_DRH                               5404         no  WORD  Internal   ABS    410  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+ADC_DRL                               5405         no  WORD  Internal   ABS    412  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+ADC_TDRH                              5406         no  WORD  Internal   ABS    414  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+ADC_TDRL                              5407         no  WORD  Internal   ABS    416  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+ADC_HTRH                              5408         no  WORD  Internal   ABS    418  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+ADC_HTRL                              5409         no  WORD  Internal   ABS    420  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+ADC_LTRH                              540A         no  WORD  Internal   ABS    422  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+ADC_LTRL                              540B         no  WORD  Internal   ABS    424  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+ADC_AWSRH                             540C         no  WORD  Internal   ABS    426  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+ADC_AWSRL                             540D         no  WORD  Internal   ABS    428  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+ADC_AWCRH                             540E         no  WORD  Internal   ABS    430  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+ADC_AWCRL                             540F         no  WORD  Internal   ABS    432  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+
+BEEP_CSR                              50F3         no  WORD  Internal   ABS    153  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+
+CLK_ICKR                              50C0         no  WORD  Internal   ABS     99  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+CLK_ECKR                              50C1         no  WORD  Internal   ABS    101  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+CLK_CMSR                              50C3         no  WORD  Internal   ABS    103  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+CLK_SWR                               50C4         no  WORD  Internal   ABS    105  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+CLK_SWCR                              50C5         no  WORD  Internal   ABS    107  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+CLK_CKDIVR                            50C6         no  WORD  Internal   ABS    109  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+CLK_PCKENR1                           50C7         no  WORD  Internal   ABS    111  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+CLK_CSSR                              50C8         no  WORD  Internal   ABS    113  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+CLK_CCOR                              50C9         no  WORD  Internal   ABS    115  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+CLK_PCKENR2                           50CA         no  WORD  Internal   ABS    117  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+CLK_CANCCR                            50CB         no  WORD  Internal   ABS    119  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+CLK_HSITRIMR                          50CC         no  WORD  Internal   ABS    121  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+CLK_SWIMCCR                           50CD         no  WORD  Internal   ABS    123  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+STMicroelectronics list file postprocessor v1.01   (C)2009-2023   Sun Feb 26 14:35:19 2023
+Page 13  Assembler
+                                               e:\vscode\asmstudy\stmasm\stm8s103\testblink\main.asm
+
+CFG_GCR                               7F60         no  WORD  Internal   ABS    437  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+
+EXTI_CR1                              50A0         no  WORD  Internal   ABS     87  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+EXTI_CR2                              50A1         no  WORD  Internal   ABS     89  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+
+FLASH_CR1                             505A         no  WORD  Internal   ABS     68  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+FLASH_CR2                             505B         no  WORD  Internal   ABS     70  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+FLASH_NCR2                            505C         no  WORD  Internal   ABS     72  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+FLASH_FPR                             505D         no  WORD  Internal   ABS     74  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+FLASH_NFPR                            505E         no  WORD  Internal   ABS     76  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+FLASH_IAPSR                           505F         no  WORD  Internal   ABS     78  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+FLASH_PUKR                            5062         no  WORD  Internal   ABS     80  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+FLASH_DUKR                            5064         no  WORD  Internal   ABS     82  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+
+IWDG_KR                               50E0         no  WORD  Internal   ABS    135  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+IWDG_PR                               50E1         no  WORD  Internal   ABS    137  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+IWDG_RLR                              50E2         no  WORD  Internal   ABS    139  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+I2C_CR1                               5210         no  WORD  Internal   ABS    177  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+I2C_CR2                               5211         no  WORD  Internal   ABS    179  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+I2C_FREQR                             5212         no  WORD  Internal   ABS    181  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+I2C_OARL                              5213         no  WORD  Internal   ABS    183  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+I2C_OARH                              5214         no  WORD  Internal   ABS    185  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+I2C_DR                                5216         no  WORD  Internal   ABS    187  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+I2C_SR1                               5217         no  WORD  Internal   ABS    189  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+I2C_SR2                               5218         no  WORD  Internal   ABS    191  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+I2C_SR3                               5219         no  WORD  Internal   ABS    193  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+I2C_ITR                               521A         no  WORD  Internal   ABS    195  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+I2C_CCRL                              521B         no  WORD  Internal   ABS    197  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+I2C_CCRH                              521C         no  WORD  Internal   ABS    199  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+I2C_TRISER                            521D         no  WORD  Internal   ABS    201  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+I2C_PECR                              521E         no  WORD  Internal   ABS    203  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+ITC_SPR1                              7F70         no  WORD  Internal   ABS    442  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+ITC_SPR2                              7F71         no  WORD  Internal   ABS    444  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+ITC_SPR3                              7F72         no  WORD  Internal   ABS    446  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+ITC_SPR4                              7F73         no  WORD  Internal   ABS    448  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+ITC_SPR5                              7F74         no  WORD  Internal   ABS    450  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+ITC_SPR6                              7F75         no  WORD  Internal   ABS    452  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+ITC_SPR7                              7F76         no  WORD  Internal   ABS    454  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+
+LED                                   0005         no  WORD  Internal   ABS      7  private  text         0     0  -
+LOC0                                  80AB         no  WORD  Internal   ABS     19  private  text        11     0  -
+
+PA_ODR                                5000         no  WORD  Internal   ABS     16  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+PA_IDR                                5001         no  WORD  Internal   ABS     18  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+PA_DDR                                5002         no  WORD  Internal   ABS     20  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+PA_CR1                                5003         no  WORD  Internal   ABS     22  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+PA_CR2                                5004         no  WORD  Internal   ABS     24  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+PB_ODR                                5005         no  WORD  Internal   ABS     29  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+PB_IDR                                5006         no  WORD  Internal   ABS     31  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+PB_DDR                                5007         no  WORD  Internal   ABS     33  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+PB_CR1                                5008         no  WORD  Internal   ABS     35  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+PB_CR2                                5009         no  WORD  Internal   ABS     37  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+PC_ODR                                500A         no  WORD  Internal   ABS     42  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+PC_IDR                                500B         no  WORD  Internal   ABS     44  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+PC_DDR                                500C         no  WORD  Internal   ABS     46  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+PC_CR1                                500D         no  WORD  Internal   ABS     48  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+PC_CR2                                500E         no  WORD  Internal   ABS     50  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+STMicroelectronics list file postprocessor v1.01   (C)2009-2023   Sun Feb 26 14:35:19 2023
+Page 14  Assembler
+                                               e:\vscode\asmstudy\stmasm\stm8s103\testblink\main.asm
+
+PD_ODR                                500F         no  WORD  Internal   ABS     55  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+PD_IDR                                5010         no  WORD  Internal   ABS     57  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+PD_DDR                                5011         no  WORD  Internal   ABS     59  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+PD_CR1                                5012         no  WORD  Internal   ABS     61  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+PD_CR2                                5013         no  WORD  Internal   ABS     63  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+
+RST_SR                                50B3         no  WORD  Internal   ABS     94  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+
+SPI_CR1                               5200         no  WORD  Internal   ABS    158  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+SPI_CR2                               5201         no  WORD  Internal   ABS    160  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+SPI_ICR                               5202         no  WORD  Internal   ABS    162  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+SPI_SR                                5203         no  WORD  Internal   ABS    164  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+SPI_DR                                5204         no  WORD  Internal   ABS    166  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+SPI_CRCPR                             5205         no  WORD  Internal   ABS    168  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+SPI_RXCRCR                            5206         no  WORD  Internal   ABS    170  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+SPI_TXCRCR                            5207         no  WORD  Internal   ABS    172  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+
+TIM1_CR1                              5250         no  WORD  Internal   ABS    233  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+TIM1_CR2                              5251         no  WORD  Internal   ABS    235  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+TIM1_SMCR                             5252         no  WORD  Internal   ABS    237  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+TIM1_ETR                              5253         no  WORD  Internal   ABS    239  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+TIM1_IER                              5254         no  WORD  Internal   ABS    241  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+TIM1_SR1                              5255         no  WORD  Internal   ABS    243  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+TIM1_SR2                              5256         no  WORD  Internal   ABS    245  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+TIM1_EGR                              5257         no  WORD  Internal   ABS    247  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+TIM1_CCMR1                            5258         no  WORD  Internal   ABS    249  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+TIM1_CCMR2                            5259         no  WORD  Internal   ABS    251  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+TIM1_CCMR3                            525A         no  WORD  Internal   ABS    253  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+TIM1_CCMR4                            525B         no  WORD  Internal   ABS    255  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+TIM1_CCER1                            525C         no  WORD  Internal   ABS    257  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+TIM1_CCER2                            525D         no  WORD  Internal   ABS    259  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+TIM1_CNTRH                            525E         no  WORD  Internal   ABS    261  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+TIM1_CNTRL                            525F         no  WORD  Internal   ABS    263  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+TIM1_PSCRH                            5260         no  WORD  Internal   ABS    265  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+TIM1_PSCRL                            5261         no  WORD  Internal   ABS    267  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+TIM1_ARRH                             5262         no  WORD  Internal   ABS    269  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+TIM1_ARRL                             5263         no  WORD  Internal   ABS    271  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+TIM1_RCR                              5264         no  WORD  Internal   ABS    273  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+TIM1_CCR1H                            5265         no  WORD  Internal   ABS    275  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+TIM1_CCR1L                            5266         no  WORD  Internal   ABS    277  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+TIM1_CCR2H                            5267         no  WORD  Internal   ABS    279  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+TIM1_CCR2L                            5268         no  WORD  Internal   ABS    281  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+TIM1_CCR3H                            5269         no  WORD  Internal   ABS    283  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+TIM1_CCR3L                            526A         no  WORD  Internal   ABS    285  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+TIM1_CCR4H                            526B         no  WORD  Internal   ABS    287  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+TIM1_CCR4L                            526C         no  WORD  Internal   ABS    289  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+TIM1_BKR                              526D         no  WORD  Internal   ABS    291  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+TIM1_DTR                              526E         no  WORD  Internal   ABS    293  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+TIM1_OISR                             526F         no  WORD  Internal   ABS    295  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+TIM2_CR1                              5300         no  WORD  Internal   ABS    300  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+TIM2_IER                              5303         no  WORD  Internal   ABS    302  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+TIM2_SR1                              5304         no  WORD  Internal   ABS    304  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+TIM2_SR2                              5305         no  WORD  Internal   ABS    306  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+TIM2_EGR                              5306         no  WORD  Internal   ABS    308  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+TIM2_CCMR1                            5307         no  WORD  Internal   ABS    310  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+TIM2_CCMR2                            5308         no  WORD  Internal   ABS    312  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+TIM2_CCMR3                            5309         no  WORD  Internal   ABS    314  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+STMicroelectronics list file postprocessor v1.01   (C)2009-2023   Sun Feb 26 14:35:19 2023
+Page 15  Assembler
+                                               e:\vscode\asmstudy\stmasm\stm8s103\testblink\main.asm
+
+TIM2_CCER1                            530A         no  WORD  Internal   ABS    316  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+TIM2_CCER2                            530B         no  WORD  Internal   ABS    318  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+TIM2_CNTRH                            530C         no  WORD  Internal   ABS    320  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+TIM2_CNTRL                            530D         no  WORD  Internal   ABS    322  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+TIM2_PSCR                             530E         no  WORD  Internal   ABS    324  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+TIM2_ARRH                             530F         no  WORD  Internal   ABS    326  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+TIM2_ARRL                             5310         no  WORD  Internal   ABS    328  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+TIM2_CCR1H                            5311         no  WORD  Internal   ABS    330  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+TIM2_CCR1L                            5312         no  WORD  Internal   ABS    332  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+TIM2_CCR2H                            5313         no  WORD  Internal   ABS    334  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+TIM2_CCR2L                            5314         no  WORD  Internal   ABS    336  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+TIM2_CCR3H                            5315         no  WORD  Internal   ABS    338  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+TIM2_CCR3L                            5316         no  WORD  Internal   ABS    340  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+TIM4_CR1                              5340         no  WORD  Internal   ABS    345  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+TIM4_IER                              5343         no  WORD  Internal   ABS    347  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+TIM4_SR                               5344         no  WORD  Internal   ABS    349  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+TIM4_EGR                              5345         no  WORD  Internal   ABS    351  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+TIM4_CNTR                             5346         no  WORD  Internal   ABS    353  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+TIM4_PSCR                             5347         no  WORD  Internal   ABS    355  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+TIM4_ARR                              5348         no  WORD  Internal   ABS    357  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+
+UART1_SR                              5230         no  WORD  Internal   ABS    208  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+UART1_DR                              5231         no  WORD  Internal   ABS    210  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+UART1_BRR1                            5232         no  WORD  Internal   ABS    212  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+UART1_BRR2                            5233         no  WORD  Internal   ABS    214  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+UART1_CR1                             5234         no  WORD  Internal   ABS    216  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+UART1_CR2                             5235         no  WORD  Internal   ABS    218  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+UART1_CR3                             5236         no  WORD  Internal   ABS    220  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+UART1_CR4                             5237         no  WORD  Internal   ABS    222  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+UART1_CR5                             5238         no  WORD  Internal   ABS    224  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+UART1_GTR                             5239         no  WORD  Internal   ABS    226  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+UART1_PSCR                            523A         no  WORD  Internal   ABS    228  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+
+WWDG_CR                               50D1         no  WORD  Internal   ABS    128  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+WWDG_WR                               50D2         no  WORD  Internal   ABS    130  private  text         0     0  e:\vscode\asmstudy\stmasm\stm8s103\testblink\stm8s103f.inc
+
+main                                  8099         no  WORD  Internal   ABS     11  public   text         8     0  -
+mloop                                 80A1         no  WORD  Internal   ABS     15  private  text        10     0  -
+
+
+194 labels
+No errors on assembly of 'e:\vscode\asmstudy\stmasm\stm8s103\testblink\main.asm'
