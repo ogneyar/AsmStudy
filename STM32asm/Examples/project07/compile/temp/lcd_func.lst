@@ -1,0 +1,206 @@
+
+D:\STM32\GNUAS\project\src\devices\LCD\lcd_func.o:     file format elf32-littlearm
+
+SYMBOL TABLE:
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .asmcode	00000000 .asmcode
+00000002 l       .asmcode	00000000 LCD_PUTSTR_loop
+00000038 l       .asmcode	00000000 LCD_PUTSTR_exit
+00000020 l       .asmcode	00000000 LCD_PUTSTR_char
+00000044 l       .asmcode	00000000 LCD_PUTHEX_loop
+0000008c l       .asmcode	00000000 LCD_LINE_dx_s1
+000000a6 l       .asmcode	00000000 LCD_LINE_dy_s2
+000000c0 l       .asmcode	00000000 LCD_LINE_LOOP
+000000c4 l       .asmcode	00000000 LCD_LINE_WHILE
+000000d6 l       .asmcode	00000000 LCD_LINE_WHILE_END
+0000011c l       .asmcode	00000000 LCD_DEC_loop
+0000015e l       .asmcode	00000000 LCD_DEC_null
+00000176 l       .asmcode	00000000 LCD_DEC_prn
+00000190 l       .asmcode	00000000 LCD_DEC_exit
+00000000 g       .asmcode	00000000 LCD_PUTSTR
+0000003a g       .asmcode	00000000 LCD_PUTHEX
+00000070 g       .asmcode	00000000 LCD_LINE
+000000ec g       .asmcode	00000000 LCD_RECT
+00000114 g       .asmcode	00000000 LCD_PUTDEC
+
+
+
+Disassembly of section .asmcode:
+
+00000000 <LCD_PUTSTR>:
+   0:	b51f      	push	{r0, r1, r2, r3, r4, lr}
+
+00000002 <LCD_PUTSTR_loop>:
+   2:	f814 3b01 	ldrb.w	r3, [r4], #1
+   6:	2b00      	cmp	r3, #0
+   8:	d016      	beq.n	38 <LCD_PUTSTR_exit>
+   a:	2b01      	cmp	r3, #1
+   c:	d108      	bne.n	20 <LCD_PUTSTR_char>
+   e:	bf02      	ittt	eq
+  10:	f834 0b02 	ldrheq.w	r0, [r4], #2
+  14:	f834 1b02 	ldrheq.w	r1, [r4], #2
+  18:	f854 2b04 	ldreq.w	r2, [r4], #4
+  1c:	f7ff fff1 	bl	2 <LCD_PUTSTR_loop>
+
+00000020 <LCD_PUTSTR_char>:
+  20:	f7ff fffe 	bl	0 <LCD_CHAR>
+  24:	f101 0107 	add.w	r1, r1, #7
+  28:	2954      	cmp	r1, #84	; 0x54
+  2a:	d4ea      	bmi.n	2 <LCD_PUTSTR_loop>
+  2c:	f04f 0100 	mov.w	r1, #0
+  30:	f100 0008 	add.w	r0, r0, #8
+  34:	2830      	cmp	r0, #48	; 0x30
+  36:	d4e4      	bmi.n	2 <LCD_PUTSTR_loop>
+
+00000038 <LCD_PUTSTR_exit>:
+  38:	bd1f      	pop	{r0, r1, r2, r3, r4, pc}
+
+0000003a <LCD_PUTHEX>:
+  3a:	b5ff      	push	{r0, r1, r2, r3, r4, r5, r6, r7, lr}
+  3c:	f105 0501 	add.w	r5, r5, #1
+  40:	f04f 0708 	mov.w	r7, #8
+
+00000044 <LCD_PUTHEX_loop>:
+  44:	4623      	mov	r3, r4
+  46:	f003 4370 	and.w	r3, r3, #4026531840	; 0xf0000000
+  4a:	ea4f 1404 	mov.w	r4, r4, lsl #4
+  4e:	ea4f 7313 	mov.w	r3, r3, lsr #28
+  52:	2b0a      	cmp	r3, #10
+  54:	bf4c      	ite	mi
+  56:	3330      	addmi	r3, #48	; 0x30
+  58:	3337      	addpl	r3, #55	; 0x37
+  5a:	f04f 0600 	mov.w	r6, #0
+  5e:	42af      	cmp	r7, r5
+  60:	bf44      	itt	mi
+  62:	3607      	addmi	r6, #7
+  64:	f7ff fffe 	blmi	0 <LCD_CHAR>
+  68:	4431      	add	r1, r6
+  6a:	3f01      	subs	r7, #1
+  6c:	d1ea      	bne.n	44 <LCD_PUTHEX_loop>
+  6e:	bdff      	pop	{r0, r1, r2, r3, r4, r5, r6, r7, pc}
+
+00000070 <LCD_LINE>:
+  70:	e92d 43ff 	stmdb	sp!, {r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, lr}
+  74:	f04f 0500 	mov.w	r5, #0
+  78:	f04f 0700 	mov.w	r7, #0
+  7c:	42a1      	cmp	r1, r4
+  7e:	d005      	beq.n	8c <LCD_LINE_dx_s1>
+  80:	bf47      	ittee	mi
+  82:	1a65      	submi	r5, r4, r1
+  84:	2701      	movmi	r7, #1
+  86:	1b0d      	subpl	r5, r1, r4
+  88:	f04f 37ff 	movpl.w	r7, #4294967295
+
+0000008c <LCD_LINE_dx_s1>:
+  8c:	f04f 0600 	mov.w	r6, #0
+  90:	f04f 0800 	mov.w	r8, #0
+  94:	4298      	cmp	r0, r3
+  96:	d006      	beq.n	a6 <LCD_LINE_dy_s2>
+  98:	bf47      	ittee	mi
+  9a:	1a1e      	submi	r6, r3, r0
+  9c:	f04f 0801 	movmi.w	r8, #1
+  a0:	1ac6      	subpl	r6, r0, r3
+  a2:	f04f 38ff 	movpl.w	r8, #4294967295
+
+000000a6 <LCD_LINE_dy_s2>:
+  a6:	f04f 0400 	mov.w	r4, #0
+  aa:	42ae      	cmp	r6, r5
+  ac:	bf5f      	itttt	pl
+  ae:	46a9      	movpl	r9, r5
+  b0:	4635      	movpl	r5, r6
+  b2:	464e      	movpl	r6, r9
+  b4:	2401      	movpl	r4, #1
+  b6:	ea4f 0346 	mov.w	r3, r6, lsl #1
+  ba:	eba3 0305 	sub.w	r3, r3, r5
+  be:	46a9      	mov	r9, r5
+
+000000c0 <LCD_LINE_LOOP>:
+  c0:	f7ff fffe 	bl	0 <LCD_PIXEL>
+
+000000c4 <LCD_LINE_WHILE>:
+  c4:	431b      	orrs	r3, r3
+  c6:	d406      	bmi.n	d6 <LCD_LINE_WHILE_END>
+  c8:	2c01      	cmp	r4, #1
+  ca:	bf0c      	ite	eq
+  cc:	19c9      	addeq	r1, r1, r7
+  ce:	4440      	addne	r0, r8
+  d0:	eba3 0345 	sub.w	r3, r3, r5, lsl #1
+  d4:	e7f6      	b.n	c4 <LCD_LINE_WHILE>
+
+000000d6 <LCD_LINE_WHILE_END>:
+  d6:	2c01      	cmp	r4, #1
+  d8:	bf0c      	ite	eq
+  da:	4440      	addeq	r0, r8
+  dc:	19c9      	addne	r1, r1, r7
+  de:	eb03 0346 	add.w	r3, r3, r6, lsl #1
+  e2:	f1b9 0901 	subs.w	r9, r9, #1
+  e6:	d1eb      	bne.n	c0 <LCD_LINE_LOOP>
+  e8:	e8bd 83ff 	ldmia.w	sp!, {r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, pc}
+
+000000ec <LCD_RECT>:
+  ec:	b53b      	push	{r0, r1, r3, r4, r5, lr}
+  ee:	461d      	mov	r5, r3
+  f0:	4603      	mov	r3, r0
+  f2:	f7ff fffe 	bl	70 <LCD_LINE>
+  f6:	462b      	mov	r3, r5
+  f8:	4605      	mov	r5, r0
+  fa:	4618      	mov	r0, r3
+  fc:	f7ff fffe 	bl	70 <LCD_LINE>
+ 100:	4628      	mov	r0, r5
+ 102:	4625      	mov	r5, r4
+ 104:	460c      	mov	r4, r1
+ 106:	f7ff fffe 	bl	70 <LCD_LINE>
+ 10a:	462c      	mov	r4, r5
+ 10c:	4621      	mov	r1, r4
+ 10e:	f7ff fffe 	bl	70 <LCD_LINE>
+ 112:	bd3b      	pop	{r0, r1, r3, r4, r5, pc}
+
+00000114 <LCD_PUTDEC>:
+ 114:	e92d 41ff 	stmdb	sp!, {r0, r1, r2, r3, r4, r5, r6, r7, r8, lr}
+ 118:	f04f 0800 	mov.w	r8, #0
+
+0000011c <LCD_DEC_loop>:
+ 11c:	4626      	mov	r6, r4
+ 11e:	2e00      	cmp	r6, #0
+ 120:	d01d      	beq.n	15e <LCD_DEC_null>
+ 122:	ea4f 0656 	mov.w	r6, r6, lsr #1
+ 126:	eb06 0656 	add.w	r6, r6, r6, lsr #1
+ 12a:	eb06 1616 	add.w	r6, r6, r6, lsr #4
+ 12e:	eb06 2616 	add.w	r6, r6, r6, lsr #8
+ 132:	eb06 4616 	add.w	r6, r6, r6, lsr #16
+ 136:	ea4f 06d6 	mov.w	r6, r6, lsr #3
+ 13a:	f04f 070a 	mov.w	r7, #10
+ 13e:	fb06 f307 	mul.w	r3, r6, r7
+ 142:	eba4 0303 	sub.w	r3, r4, r3
+ 146:	2b0a      	cmp	r3, #10
+ 148:	bf58      	it	pl
+ 14a:	3601      	addpl	r6, #1
+ 14c:	fb06 f307 	mul.w	r3, r6, r7
+ 150:	eba4 0703 	sub.w	r7, r4, r3
+ 154:	b480      	push	{r7}
+ 156:	f108 0801 	add.w	r8, r8, #1
+ 15a:	4634      	mov	r4, r6
+ 15c:	e7de      	b.n	11c <LCD_DEC_loop>
+
+0000015e <LCD_DEC_null>:
+ 15e:	4545      	cmp	r5, r8
+ 160:	d009      	beq.n	176 <LCD_DEC_prn>
+ 162:	d408      	bmi.n	176 <LCD_DEC_prn>
+ 164:	f04f 0330 	mov.w	r3, #48	; 0x30
+ 168:	f7ff fffe 	bl	0 <LCD_CHAR>
+ 16c:	f101 0107 	add.w	r1, r1, #7
+ 170:	f1a5 0501 	sub.w	r5, r5, #1
+ 174:	e7f3      	b.n	15e <LCD_DEC_null>
+
+00000176 <LCD_DEC_prn>:
+ 176:	f1b8 0f00 	cmp.w	r8, #0
+ 17a:	d009      	beq.n	190 <LCD_DEC_exit>
+ 17c:	bc08      	pop	{r3}
+ 17e:	f103 0330 	add.w	r3, r3, #48	; 0x30
+ 182:	f7ff fffe 	bl	0 <LCD_CHAR>
+ 186:	f101 0107 	add.w	r1, r1, #7
+ 18a:	f1a8 0801 	sub.w	r8, r8, #1
+ 18e:	e7f2      	b.n	176 <LCD_DEC_prn>
+
+00000190 <LCD_DEC_exit>:
+ 190:	e8bd 81ff 	ldmia.w	sp!, {r0, r1, r2, r3, r4, r5, r6, r7, r8, pc}

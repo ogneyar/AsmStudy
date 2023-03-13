@@ -1,0 +1,127 @@
+
+Y:\Œ»Õ\√Œ–¡” Œ¬\temp\gnuas\project\src\main.o:     file format elf32-littlearm
+
+SYMBOL TABLE:
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .vectors	00000000 .vectors
+00000000 l       .asmcode	00000000 Start
+00000000 l    d  .asmcode	00000000 .asmcode
+0000001c l       .asmcode	00000000 line_pix
+00000090 l       .asmcode	00000000 ADR_TEXT
+00000076 l       .asmcode	00000000 BLINK_LOOP
+00000084 l       .asmcode	00000000 DELAY
+
+
+
+Disassembly of section .vectors:
+
+00000000 <.vectors>:
+   0:	20020000 	.word	0x20020000
+   4:	00000001 	.word	0x00000001
+   8:	00000001 	.word	0x00000001
+   c:	00000001 	.word	0x00000001
+  10:	00000001 	.word	0x00000001
+  14:	00000001 	.word	0x00000001
+  18:	00000001 	.word	0x00000001
+	...
+  2c:	00000001 	.word	0x00000001
+  30:	00000001 	.word	0x00000001
+  34:	00000000 	.word	0x00000000
+  38:	00000001 	.word	0x00000001
+  3c:	00000001 	.word	0x00000001
+
+Disassembly of section .asmcode:
+
+00000000 <Start>:
+   0:	f7ff fffe 	bl	0 <SYSCLK168_START>
+   4:	f7ff fffe 	bl	0 <SYSTICK_START>
+   8:	f7ff fffe 	bl	0 <LCD_INIT>
+   c:	f7ff fffe 	bl	0 <LCD_CLEAR>
+  10:	f04f 010a 	mov.w	r1, #10
+  14:	f04f 000e 	mov.w	r0, #14
+  18:	f04f 0201 	mov.w	r2, #1
+
+0000001c <line_pix>:
+  1c:	f7ff fffe 	bl	0 <LCD_PIXEL>
+  20:	f101 0103 	add.w	r1, r1, #3
+  24:	294a      	cmp	r1, #74	; 0x4a
+  26:	d4f9      	bmi.n	1c <line_pix>
+  28:	a419      	add	r4, pc, #100	; (adr r4, 90 <ADR_TEXT>)
+  2a:	f7ff fffe 	bl	0 <LCD_PUTSTR>
+  2e:	f04f 0028 	mov.w	r0, #40	; 0x28
+  32:	f04f 0110 	mov.w	r1, #16
+  36:	4c39      	ldr	r4, [pc, #228]	; (11c <ADR_TEXT+0x8c>)
+  38:	f04f 0508 	mov.w	r5, #8
+  3c:	f7ff fffe 	bl	0 <LCD_PUTHEX>
+  40:	f04f 0000 	mov.w	r0, #0
+  44:	f04f 0100 	mov.w	r1, #0
+  48:	f04f 0201 	mov.w	r2, #1
+  4c:	f04f 032f 	mov.w	r3, #47	; 0x2f
+  50:	f04f 0453 	mov.w	r4, #83	; 0x53
+  54:	f7ff fffe 	bl	0 <LCD_RECT>
+  58:	f7ff fffe 	bl	0 <LCD_REFRESH>
+  5c:	f04f 0000 	mov.w	r0, #0
+  60:	f04f 0101 	mov.w	r1, #1
+  64:	4a2e      	ldr	r2, [pc, #184]	; (120 <ADR_TEXT+0x90>)
+  66:	6011      	str	r1, [r2, #0]
+  68:	4a2e      	ldr	r2, [pc, #184]	; (124 <ADR_TEXT+0x94>)
+  6a:	4b2f      	ldr	r3, [pc, #188]	; (128 <ADR_TEXT+0x98>)
+  6c:	6814      	ldr	r4, [r2, #0]
+  6e:	ea43 0304 	orr.w	r3, r3, r4
+  72:	6013      	str	r3, [r2, #0]
+  74:	4a2d      	ldr	r2, [pc, #180]	; (12c <ADR_TEXT+0x9c>)
+
+00000076 <BLINK_LOOP>:
+  76:	6011      	str	r1, [r2, #0]
+  78:	f000 f804 	bl	84 <DELAY>
+  7c:	6010      	str	r0, [r2, #0]
+  7e:	f000 f801 	bl	84 <DELAY>
+  82:	e7f8      	b.n	76 <BLINK_LOOP>
+
+00000084 <DELAY>:
+  84:	b501      	push	{r0, lr}
+  86:	f04f 00fa 	mov.w	r0, #250	; 0xfa
+  8a:	f7ff fffe 	bl	0 <SYSTICK_DELAY>
+  8e:	bd01      	pop	{r0, pc}
+
+00000090 <ADR_TEXT>:
+  90:	0c000201 	.word	0x0c000201
+  94:	00000100 	.word	0x00000100
+  98:	0501d500 	.word	0x0501d500
+  9c:	00001300 	.word	0x00001300
+  a0:	c0000000 	.word	0xc0000000
+  a4:	1a000201 	.word	0x1a000201
+  a8:	00000100 	.word	0x00000100
+  ac:	0501c100 	.word	0x0501c100
+  b0:	00002100 	.word	0x00002100
+  b4:	d0000000 	.word	0xd0000000
+  b8:	28000201 	.word	0x28000201
+  bc:	00000100 	.word	0x00000100
+  c0:	0501c000 	.word	0x0501c000
+  c4:	00002f00 	.word	0x00002f00
+  c8:	d5000000 	.word	0xd5000000
+  cc:	36000201 	.word	0x36000201
+  d0:	00000100 	.word	0x00000100
+  d4:	0501c000 	.word	0x0501c000
+  d8:	00003d00 	.word	0x00003d00
+  dc:	c1000000 	.word	0xc1000000
+  e0:	44000201 	.word	0x44000201
+  e4:	00000100 	.word	0x00000100
+  e8:	1001d000 	.word	0x1001d000
+  ec:	01001400 	.word	0x01001400
+  f0:	53000000 	.word	0x53000000
+  f4:	32334d54 	.word	0x32334d54
+  f8:	18013446 	.word	0x18013446
+  fc:	01002600 	.word	0x01002600
+ 100:	cd000000 	.word	0xcd000000
+ 104:	002001c0 	.word	0x002001c0
+ 108:	0001000a 	.word	0x0001000a
+ 10c:	d1c00000 	.word	0xd1c00000
+ 110:	c1ccc5d1 	.word	0xc1ccc5d1
+ 114:	c5d0c5cb 	.word	0xc5d0c5cb
+ 118:	00000000 	.word	0x00000000
+ 11c:	a0b1c2d3 	.word	0xa0b1c2d3
+ 120:	4247061c 	.word	0x4247061c
+ 124:	40021c00 	.word	0x40021c00
+ 128:	00000010 	.word	0x00000010
+ 12c:	42438288 	.word	0x42438288

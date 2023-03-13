@@ -1,0 +1,85 @@
+
+Y:\Œ»Õ\√Œ–¡” Œ¬\temp\gnuas\project\src\periph\sysclk.o:     file format elf32-littlearm
+
+SYMBOL TABLE:
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .asmcode	00000000 .asmcode
+00000082 l       .asmcode	00000000 TST_BIT
+00000092 l       .asmcode	00000000 exit
+00000086 l       .asmcode	00000000 TST_ready
+00000000 g       .asmcode	00000000 SYSCLK168_START
+
+
+
+Disassembly of section .asmcode:
+
+00000000 <SYSCLK168_START>:
+   0:	b500      	push	{lr}
+   2:	4f24      	ldr	r7, [pc, #144]	; (94 <exit+0x2>)
+   4:	6839      	ldr	r1, [r7, #0]
+   6:	f441 3180 	orr.w	r1, r1, #65536	; 0x10000
+   a:	6039      	str	r1, [r7, #0]
+   c:	f04f 0001 	mov.w	r0, #1
+  10:	f107 0600 	add.w	r6, r7, #0
+  14:	4a20      	ldr	r2, [pc, #128]	; (98 <exit+0x6>)
+  16:	f000 f834 	bl	82 <TST_BIT>
+  1a:	6c39      	ldr	r1, [r7, #64]	; 0x40
+  1c:	f041 5180 	orr.w	r1, r1, #268435456	; 0x10000000
+  20:	6439      	str	r1, [r7, #64]	; 0x40
+  22:	491e      	ldr	r1, [pc, #120]	; (9c <exit+0xa>)
+  24:	680a      	ldr	r2, [r1, #0]
+  26:	f442 4280 	orr.w	r2, r2, #16384	; 0x4000
+  2a:	600a      	str	r2, [r1, #0]
+  2c:	68b9      	ldr	r1, [r7, #8]
+  2e:	f041 0100 	orr.w	r1, r1, #0
+  32:	60b9      	str	r1, [r7, #8]
+  34:	68b9      	ldr	r1, [r7, #8]
+  36:	f441 4100 	orr.w	r1, r1, #32768	; 0x8000
+  3a:	60b9      	str	r1, [r7, #8]
+  3c:	68b9      	ldr	r1, [r7, #8]
+  3e:	f441 51a0 	orr.w	r1, r1, #5120	; 0x1400
+  42:	60b9      	str	r1, [r7, #8]
+  44:	4916      	ldr	r1, [pc, #88]	; (a0 <exit+0xe>)
+  46:	6079      	str	r1, [r7, #4]
+  48:	6839      	ldr	r1, [r7, #0]
+  4a:	f041 7180 	orr.w	r1, r1, #16777216	; 0x1000000
+  4e:	6039      	str	r1, [r7, #0]
+  50:	f100 0001 	add.w	r0, r0, #1
+  54:	4a13      	ldr	r2, [pc, #76]	; (a4 <exit+0x12>)
+  56:	f000 f814 	bl	82 <TST_BIT>
+  5a:	4a13      	ldr	r2, [pc, #76]	; (a8 <PLL_N>)
+  5c:	6811      	ldr	r1, [r2, #0]
+  5e:	4913      	ldr	r1, [pc, #76]	; (ac <PLL_N+0x4>)
+  60:	6011      	str	r1, [r2, #0]
+  62:	68b9      	ldr	r1, [r7, #8]
+  64:	f021 0103 	bic.w	r1, r1, #3
+  68:	f041 0102 	orr.w	r1, r1, #2
+  6c:	60b9      	str	r1, [r7, #8]
+  6e:	f100 0001 	add.w	r0, r0, #1
+  72:	f107 0608 	add.w	r6, r7, #8
+  76:	4a0e      	ldr	r2, [pc, #56]	; (b0 <PLL_N+0x8>)
+  78:	f000 f803 	bl	82 <TST_BIT>
+  7c:	f04f 0000 	mov.w	r0, #0
+  80:	e007      	b.n	92 <exit>
+
+00000082 <TST_BIT>:
+  82:	eb00 3300 	add.w	r3, r0, r0, lsl #12
+
+00000086 <TST_ready>:
+  86:	3b01      	subs	r3, #1
+  88:	d003      	beq.n	92 <exit>
+  8a:	6834      	ldr	r4, [r6, #0]
+  8c:	4214      	tst	r4, r2
+  8e:	d0fa      	beq.n	86 <TST_ready>
+  90:	4770      	bx	lr
+
+00000092 <exit>:
+  92:	bd00      	pop	{pc}
+  94:	40023800 	.word	0x40023800
+  98:	00020000 	.word	0x00020000
+  9c:	40007000 	.word	0x40007000
+  a0:	07402a04 	.word	0x07402a04
+  a4:	02000000 	.word	0x02000000
+  a8:	40023c00 	.word	0x40023c00
+  ac:	00000705 	.word	0x00000705
+  b0:	00000008 	.word	0x00000008

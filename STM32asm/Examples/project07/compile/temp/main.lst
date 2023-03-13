@@ -1,0 +1,217 @@
+
+D:\STM32\GNUAS\project\src\main.o:     file format elf32-littlearm
+
+SYMBOL TABLE:
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .vectors	00000000 .vectors
+0000004c l       .asmcode	00000000 Start
+00000000 l    d  .asmcode	00000000 .asmcode
+00000000 l       .asmcode	00000000 MAIN_BASE_PRN
+0000015a l       .asmcode	00000000 ADR_TEXT1
+00000030 l       .asmcode	00000000 MAIN_rect
+00000014 l       .asmcode	00000000 MAIN_line_pix
+00000022 l       .asmcode	00000000 line_pix
+0000005c l       .asmcode	00000000 MAIN_LOOP
+000001b5 l       .asmcode	00000000 ADR_TEXT2
+00000126 l       .asmcode	00000000 DELAY
+000001e4 l       .asmcode	00000000 ADR_TEXT3
+000001f8 l       .asmcode	00000000 ADR_TEXT4
+000000c2 l       .asmcode	00000000 MAIN_LINE_todown
+000000e2 l       .asmcode	00000000 MAIN_LINE_toleft
+00000134 l       .asmcode	00000000 line_pix1
+
+
+
+Disassembly of section .vectors:
+
+00000000 <.vectors>:
+   0:	20020000 	.word	0x20020000
+   4:	0000004d 	.word	0x0000004d
+   8:	00000001 	.word	0x00000001
+   c:	00000001 	.word	0x00000001
+  10:	00000001 	.word	0x00000001
+  14:	00000001 	.word	0x00000001
+  18:	00000001 	.word	0x00000001
+	...
+  2c:	00000001 	.word	0x00000001
+  30:	00000001 	.word	0x00000001
+  34:	00000000 	.word	0x00000000
+  38:	00000001 	.word	0x00000001
+  3c:	00000001 	.word	0x00000001
+
+Disassembly of section .asmcode:
+
+00000000 <MAIN_BASE_PRN>:
+   0:	b500      	push	{lr}
+   2:	f7ff fffe 	bl	0 <LCD_CLEAR>
+   6:	f20f 1452 	addw	r4, pc, #338	; 0x152
+   a:	f7ff fffe 	bl	0 <LCD_PUTSTR>
+   e:	f000 f80f 	bl	30 <MAIN_rect>
+  12:	bd00      	pop	{pc}
+
+00000014 <MAIN_line_pix>:
+  14:	b500      	push	{lr}
+  16:	f04f 010a 	mov.w	r1, #10
+  1a:	f04f 000e 	mov.w	r0, #14
+  1e:	f04f 0201 	mov.w	r2, #1
+
+00000022 <line_pix>:
+  22:	f7ff fffe 	bl	0 <LCD_PIXEL>
+  26:	f101 0103 	add.w	r1, r1, #3
+  2a:	294a      	cmp	r1, #74	; 0x4a
+  2c:	d4f9      	bmi.n	22 <line_pix>
+  2e:	bd00      	pop	{pc}
+
+00000030 <MAIN_rect>:
+  30:	b500      	push	{lr}
+  32:	f04f 0000 	mov.w	r0, #0
+  36:	f04f 0100 	mov.w	r1, #0
+  3a:	f04f 0201 	mov.w	r2, #1
+  3e:	f04f 032f 	mov.w	r3, #47	; 0x2f
+  42:	f04f 0453 	mov.w	r4, #83	; 0x53
+  46:	f7ff fffe 	bl	0 <LCD_RECT>
+  4a:	bd00      	pop	{pc}
+
+0000004c <Start>:
+  4c:	f7ff fffe 	bl	0 <SYSCLK168_START>
+  50:	f7ff fffe 	bl	0 <SYSTICK_START>
+  54:	f7ff fffe 	bl	0 <LCD_INIT>
+  58:	f7ff fffe 	bl	0 <DWT_START>
+
+0000005c <MAIN_LOOP>:
+  5c:	f7ff ffd0 	bl	0 <MAIN_BASE_PRN>
+  60:	f20f 1451 	addw	r4, pc, #337	; 0x151
+  64:	f7ff fffe 	bl	0 <LCD_PUTSTR>
+  68:	f7ff fffe 	bl	0 <LCD_REFRESH>
+  6c:	f000 f85b 	bl	126 <DELAY>
+  70:	f7ff ffc6 	bl	0 <MAIN_BASE_PRN>
+  74:	a45b      	add	r4, pc, #364	; (adr r4, 170 <LCD_PUTSTR+0x170>)
+  76:	f7ff fffe 	bl	0 <LCD_PUTSTR>
+  7a:	f04f 0201 	mov.w	r2, #1
+  7e:	f04f 0018 	mov.w	r0, #24
+  82:	f04f 0118 	mov.w	r1, #24
+  86:	4c61      	ldr	r4, [pc, #388]	; (20c <ADR_TEXT4+0x14>)
+  88:	f04f 050a 	mov.w	r5, #10
+  8c:	f7ff fffe 	bl	0 <LCD_PUTHEX>
+  90:	a459      	add	r4, pc, #356	; (adr r4, 168 <LCD_PUTSTR+0x168>)
+  92:	f7ff fffe 	bl	0 <LCD_PUTSTR>
+  96:	f04f 0201 	mov.w	r2, #1
+  9a:	f04f 0028 	mov.w	r0, #40	; 0x28
+  9e:	f04f 010a 	mov.w	r1, #10
+  a2:	4c5b      	ldr	r4, [pc, #364]	; (210 <ADR_TEXT4+0x18>)
+  a4:	f04f 050a 	mov.w	r5, #10
+  a8:	f7ff fffe 	bl	0 <LCD_PUTDEC>
+  ac:	f7ff fffe 	bl	0 <LCD_REFRESH>
+  b0:	f000 f839 	bl	126 <DELAY>
+  b4:	f7ff fffe 	bl	0 <DWT_GETCOUNTER>
+  b8:	4682      	mov	sl, r0
+  ba:	f7ff ffa1 	bl	0 <MAIN_BASE_PRN>
+  be:	f04f 0310 	mov.w	r3, #16
+
+000000c2 <MAIN_LINE_todown>:
+  c2:	f04f 0010 	mov.w	r0, #16
+  c6:	f04f 010a 	mov.w	r1, #10
+  ca:	f04f 0201 	mov.w	r2, #1
+  ce:	f04f 044a 	mov.w	r4, #74	; 0x4a
+  d2:	f7ff fffe 	bl	0 <LCD_LINE>
+  d6:	f103 0308 	add.w	r3, r3, #8
+  da:	2b28      	cmp	r3, #40	; 0x28
+  dc:	d1f1      	bne.n	c2 <MAIN_LINE_todown>
+  de:	f04f 0440 	mov.w	r4, #64	; 0x40
+
+000000e2 <MAIN_LINE_toleft>:
+  e2:	f04f 0010 	mov.w	r0, #16
+  e6:	f04f 010a 	mov.w	r1, #10
+  ea:	f04f 0201 	mov.w	r2, #1
+  ee:	f04f 0324 	mov.w	r3, #36	; 0x24
+  f2:	f7ff fffe 	bl	0 <LCD_LINE>
+  f6:	f1a4 040a 	sub.w	r4, r4, #10
+  fa:	2c04      	cmp	r4, #4
+  fc:	d1f1      	bne.n	e2 <MAIN_LINE_toleft>
+  fe:	f7ff fffe 	bl	0 <DWT_GETCOUNTER>
+ 102:	eba0 040a 	sub.w	r4, r0, sl
+ 106:	f04f 0201 	mov.w	r2, #1
+ 10a:	f04f 0028 	mov.w	r0, #40	; 0x28
+ 10e:	f04f 011e 	mov.w	r1, #30
+ 112:	f04f 0505 	mov.w	r5, #5
+ 116:	f7ff fffe 	bl	0 <LCD_PUTDEC>
+ 11a:	f7ff fffe 	bl	0 <LCD_REFRESH>
+ 11e:	f000 f802 	bl	126 <DELAY>
+ 122:	f7ff ff9b 	bl	5c <MAIN_LOOP>
+
+00000126 <DELAY>:
+ 126:	b507      	push	{r0, r1, r2, lr}
+ 128:	f04f 010a 	mov.w	r1, #10
+ 12c:	f04f 000e 	mov.w	r0, #14
+ 130:	f04f 0201 	mov.w	r2, #1
+
+00000134 <line_pix1>:
+ 134:	f7ff fffe 	bl	0 <LCD_PIXEL>
+ 138:	b401      	push	{r0}
+ 13a:	f04f 0096 	mov.w	r0, #150	; 0x96
+ 13e:	f7ff fffe 	bl	0 <SYSTICK_DELAY>
+ 142:	f7ff fffe 	bl	0 <LCD_REFRESH>
+ 146:	bc01      	pop	{r0}
+ 148:	f101 0103 	add.w	r1, r1, #3
+ 14c:	294a      	cmp	r1, #74	; 0x4a
+ 14e:	d4f1      	bmi.n	134 <line_pix1>
+ 150:	f44f 70fa 	mov.w	r0, #500	; 0x1f4
+ 154:	f7ff fffe 	bl	0 <SYSTICK_DELAY>
+ 158:	bd07      	pop	{r0, r1, r2, pc}
+
+0000015a <ADR_TEXT1>:
+ 15a:	0201      	.short	0x0201
+ 15c:	01000c00 	.word	0x01000c00
+ 160:	d5000000 	.word	0xd5000000
+ 164:	13000501 	.word	0x13000501
+ 168:	00000000 	.word	0x00000000
+ 16c:	0201c000 	.word	0x0201c000
+ 170:	01001a00 	.word	0x01001a00
+ 174:	c1000000 	.word	0xc1000000
+ 178:	21000501 	.word	0x21000501
+ 17c:	00000000 	.word	0x00000000
+ 180:	0201d000 	.word	0x0201d000
+ 184:	01002800 	.word	0x01002800
+ 188:	c0000000 	.word	0xc0000000
+ 18c:	2f000501 	.word	0x2f000501
+ 190:	00000000 	.word	0x00000000
+ 194:	0201d500 	.word	0x0201d500
+ 198:	01003600 	.word	0x01003600
+ 19c:	c0000000 	.word	0xc0000000
+ 1a0:	3d000501 	.word	0x3d000501
+ 1a4:	00000000 	.word	0x00000000
+ 1a8:	0201c100 	.word	0x0201c100
+ 1ac:	01004400 	.word	0x01004400
+ 1b0:	d0000000 	.word	0xd0000000
+	...
+
+000001b5 <ADR_TEXT2>:
+ 1b5:	01          	.byte	0x01
+ 1b6:	0012      	.short	0x0012
+ 1b8:	00010014 	.word	0x00010014
+ 1bc:	54530000 	.word	0x54530000
+ 1c0:	4632334d 	.word	0x4632334d
+ 1c4:	001c0134 	.word	0x001c0134
+ 1c8:	00010026 	.word	0x00010026
+ 1cc:	c0cd0000 	.word	0xc0cd0000
+ 1d0:	08002601 	.word	0x08002601
+ 1d4:	00000100 	.word	0x00000100
+ 1d8:	d1d1c000 	.word	0xd1d1c000
+ 1dc:	cbc1ccc5 	.word	0xcbc1ccc5
+ 1e0:	00c5d0c5 	.word	0x00c5d0c5
+
+000001e4 <ADR_TEXT3>:
+ 1e4:	02001001 	.word	0x02001001
+ 1e8:	00000100 	.word	0x00000100
+ 1ec:	58454800 	.word	0x58454800
+ 1f0:	d1c8d720 	.word	0xd1c8d720
+ 1f4:	003acecb 	.word	0x003acecb
+
+000001f8 <ADR_TEXT4>:
+ 1f8:	02002001 	.word	0x02002001
+ 1fc:	00000100 	.word	0x00000100
+ 200:	43454400 	.word	0x43454400
+ 204:	d1c8d720 	.word	0xd1c8d720
+ 208:	003acecb 	.word	0x003acecb
+ 20c:	a1b2c3d4 	.word	0xa1b2c3d4
+ 210:	075bcd15 	.word	0x075bcd15

@@ -1,0 +1,72 @@
+
+D:\STM32\GNUAS\project\src\periph\systick.o:     file format elf32-littlearm
+
+SYMBOL TABLE:
+00000000 l    d  .bss	00000000 .bss
+00000000 l       .bss	00000000 SYSTICK_COUNTER
+00000000 l    d  .asmcode	00000000 .asmcode
+00000014 l       .asmcode	00000000 ADR_SYSTICK_COUNTER
+00000030 l       .asmcode	00000000 ADR_SYSTICK_BASE
+00000034 l       .asmcode	00000000 ADR_STK_CTRL_CLKSOURSE_TICKINT_ENABLE
+00000038 l       .asmcode	00000000 ADR_SCB_BASE
+00000044 l       .asmcode	00000000 DELAY_LOOP
+00000000 g       .asmcode	00000000 ISR_SYSTICK
+00000018 g       .asmcode	00000000 SYSTICK_START
+0000003c g       .asmcode	00000000 SYSTICK_DELAY
+
+
+
+Disassembly of section .bss:
+
+00000000 <SYSTICK_COUNTER>:
+   0:	00000000 	.word	0x00000000
+
+Disassembly of section .asmcode:
+
+00000000 <ISR_SYSTICK>:
+   0:	b503      	push	{r0, r1, lr}
+   2:	f8df 1010 	ldr.w	r1, [pc, #16]	; 14 <ADR_SYSTICK_COUNTER>
+   6:	6808      	ldr	r0, [r1, #0]
+   8:	f050 0000 	orrs.w	r0, r0, #0
+   c:	bf1c      	itt	ne
+   e:	3801      	subne	r0, #1
+  10:	6008      	strne	r0, [r1, #0]
+  12:	bd03      	pop	{r0, r1, pc}
+
+00000014 <ADR_SYSTICK_COUNTER>:
+  14:	00000000 	.word	0x00000000
+
+00000018 <SYSTICK_START>:
+  18:	b503      	push	{r0, r1, lr}
+  1a:	4805      	ldr	r0, [pc, #20]	; (30 <ADR_SYSTICK_BASE>)
+  1c:	490c      	ldr	r1, [pc, #48]	; (50 <DELAY_LOOP+0xc>)
+  1e:	6041      	str	r1, [r0, #4]
+  20:	4904      	ldr	r1, [pc, #16]	; (34 <ADR_STK_CTRL_CLKSOURSE_TICKINT_ENABLE>)
+  22:	6001      	str	r1, [r0, #0]
+  24:	4804      	ldr	r0, [pc, #16]	; (38 <ADR_SCB_BASE>)
+  26:	6a01      	ldr	r1, [r0, #32]
+  28:	f441 4170 	orr.w	r1, r1, #61440	; 0xf000
+  2c:	6201      	str	r1, [r0, #32]
+  2e:	bd03      	pop	{r0, r1, pc}
+
+00000030 <ADR_SYSTICK_BASE>:
+  30:	e000e010 	.word	0xe000e010
+
+00000034 <ADR_STK_CTRL_CLKSOURSE_TICKINT_ENABLE>:
+  34:	00000007 	.word	0x00000007
+
+00000038 <ADR_SCB_BASE>:
+  38:	e000ed00 	.word	0xe000ed00
+
+0000003c <SYSTICK_DELAY>:
+  3c:	b502      	push	{r1, lr}
+  3e:	f85f 102c 	ldr.w	r1, [pc, #-44]	; 14 <ADR_SYSTICK_COUNTER>
+  42:	6008      	str	r0, [r1, #0]
+
+00000044 <DELAY_LOOP>:
+  44:	6808      	ldr	r0, [r1, #0]
+  46:	f050 0000 	orrs.w	r0, r0, #0
+  4a:	d1fb      	bne.n	44 <DELAY_LOOP>
+  4c:	bd02      	pop	{r1, pc}
+  4e:	0000      	.short	0x0000
+  50:	0002903f 	.word	0x0002903f

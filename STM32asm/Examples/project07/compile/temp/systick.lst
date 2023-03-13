@@ -1,0 +1,62 @@
+
+D:\STM32\GNUAS\project\src\periph\systick.o:     file format elf32-littlearm
+
+SYMBOL TABLE:
+00000000 l    d  .bss	00000000 .bss
+00000000 l       .bss	00000000 SYSTICK_COUNTER
+00000000 l    d  .asmcode	00000000 .asmcode
+00000034 l       .asmcode	00000000 DELAY_LOOP
+00000000 g       .asmcode	00000000 ISR_SYSTICK
+00000012 g       .asmcode	00000000 SYSTICK_START
+0000002a g       .asmcode	00000000 SYSTICK_DELAY
+
+
+
+Disassembly of section .bss:
+
+00000000 <SYSTICK_COUNTER>:
+   0:	00000000 	.word	0x00000000
+
+Disassembly of section .asmcode:
+
+00000000 <ISR_SYSTICK>:
+   0:	b503      	push	{r0, r1, lr}
+   2:	490f      	ldr	r1, [pc, #60]	; (40 <DELAY_LOOP+0xc>)
+   4:	6808      	ldr	r0, [r1, #0]
+   6:	f050 0000 	orrs.w	r0, r0, #0
+   a:	bf1c      	itt	ne
+   c:	3801      	subne	r0, #1
+   e:	6008      	strne	r0, [r1, #0]
+  10:	bd03      	pop	{r0, r1, pc}
+
+00000012 <SYSTICK_START>:
+  12:	b503      	push	{r0, r1, lr}
+  14:	480b      	ldr	r0, [pc, #44]	; (44 <DELAY_LOOP+0x10>)
+  16:	490c      	ldr	r1, [pc, #48]	; (48 <DELAY_LOOP+0x14>)
+  18:	6041      	str	r1, [r0, #4]
+  1a:	490c      	ldr	r1, [pc, #48]	; (4c <DELAY_LOOP+0x18>)
+  1c:	6001      	str	r1, [r0, #0]
+  1e:	480c      	ldr	r0, [pc, #48]	; (50 <DELAY_LOOP+0x1c>)
+  20:	6a01      	ldr	r1, [r0, #32]
+  22:	f441 4170 	orr.w	r1, r1, #61440	; 0xf000
+  26:	6201      	str	r1, [r0, #32]
+  28:	bd03      	pop	{r0, r1, pc}
+
+0000002a <SYSTICK_DELAY>:
+  2a:	b506      	push	{r1, r2, lr}
+  2c:	4a05      	ldr	r2, [pc, #20]	; (44 <DELAY_LOOP+0x10>)
+  2e:	6090      	str	r0, [r2, #8]
+  30:	4903      	ldr	r1, [pc, #12]	; (40 <DELAY_LOOP+0xc>)
+  32:	6008      	str	r0, [r1, #0]
+
+00000034 <DELAY_LOOP>:
+  34:	6808      	ldr	r0, [r1, #0]
+  36:	f050 0000 	orrs.w	r0, r0, #0
+  3a:	d1fb      	bne.n	34 <DELAY_LOOP>
+  3c:	bd06      	pop	{r1, r2, pc}
+  3e:	0000      	.short	0x0000
+  40:	00000000 	.word	0x00000000
+  44:	e000e010 	.word	0xe000e010
+  48:	0002903f 	.word	0x0002903f
+  4c:	00000007 	.word	0x00000007
+  50:	e000ed00 	.word	0xe000ed00

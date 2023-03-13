@@ -1,0 +1,62 @@
+
+D:\STM32\GNUAS\project\src\main.o:     file format elf32-littlearm
+
+SYMBOL TABLE:
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .vectors	00000000 .vectors
+00000000 l       .asmcode	00000000 Start
+00000000 l    d  .asmcode	00000000 .asmcode
+00000022 l       .asmcode	00000000 BLINK_LOOP
+00000030 l       .asmcode	00000000 DELAY
+
+
+
+Disassembly of section .vectors:
+
+00000000 <.vectors>:
+   0:	20020000 	.word	0x20020000
+   4:	00000001 	.word	0x00000001
+   8:	00000001 	.word	0x00000001
+   c:	00000001 	.word	0x00000001
+  10:	00000001 	.word	0x00000001
+  14:	00000001 	.word	0x00000001
+  18:	00000001 	.word	0x00000001
+	...
+  2c:	00000001 	.word	0x00000001
+  30:	00000001 	.word	0x00000001
+  34:	00000000 	.word	0x00000000
+  38:	00000001 	.word	0x00000001
+  3c:	00000001 	.word	0x00000001
+
+Disassembly of section .asmcode:
+
+00000000 <Start>:
+   0:	f7ff fffe 	bl	0 <SYSCLK168_START>
+   4:	f7ff fffe 	bl	0 <SYSTICK_START>
+   8:	f04f 0000 	mov.w	r0, #0
+   c:	f04f 0101 	mov.w	r1, #1
+  10:	4a0a      	ldr	r2, [pc, #40]	; (3c <DELAY+0xc>)
+  12:	6011      	str	r1, [r2, #0]
+  14:	4a0a      	ldr	r2, [pc, #40]	; (40 <DELAY+0x10>)
+  16:	4b0b      	ldr	r3, [pc, #44]	; (44 <DELAY+0x14>)
+  18:	6814      	ldr	r4, [r2, #0]
+  1a:	ea43 0304 	orr.w	r3, r3, r4
+  1e:	6013      	str	r3, [r2, #0]
+  20:	4a09      	ldr	r2, [pc, #36]	; (48 <DELAY+0x18>)
+
+00000022 <BLINK_LOOP>:
+  22:	6011      	str	r1, [r2, #0]
+  24:	f000 f804 	bl	30 <DELAY>
+  28:	6010      	str	r0, [r2, #0]
+  2a:	f000 f801 	bl	30 <DELAY>
+  2e:	e7f8      	b.n	22 <BLINK_LOOP>
+
+00000030 <DELAY>:
+  30:	b501      	push	{r0, lr}
+  32:	f04f 00fa 	mov.w	r0, #250	; 0xfa
+  36:	f7ff fffe 	bl	0 <SYSTICK_DELAY>
+  3a:	bd01      	pop	{r0, pc}
+  3c:	4247061c 	.word	0x4247061c
+  40:	40021c00 	.word	0x40021c00
+  44:	00000010 	.word	0x00000010
+  48:	42438288 	.word	0x42438288

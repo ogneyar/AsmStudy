@@ -1,0 +1,33 @@
+
+D:\STM32\GNUAS\project\src\periph\dwt.o:     file format elf32-littlearm
+
+SYMBOL TABLE:
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .asmcode	00000000 .asmcode
+00000000 g       .asmcode	00000000 DWT_START
+0000001a g       .asmcode	00000000 DWT_GETCOUNTER
+
+
+
+Disassembly of section .asmcode:
+
+00000000 <DWT_START>:
+   0:	b403      	push	{r0, r1}
+   2:	4807      	ldr	r0, [pc, #28]	; (20 <DWT_GETCOUNTER+0x6>)
+   4:	6801      	ldr	r1, [r0, #0]
+   6:	f041 7180 	orr.w	r1, r1, #16777216	; 0x1000000
+   a:	6001      	str	r1, [r0, #0]
+   c:	4805      	ldr	r0, [pc, #20]	; (24 <DWT_GETCOUNTER+0xa>)
+   e:	6801      	ldr	r1, [r0, #0]
+  10:	f041 0101 	orr.w	r1, r1, #1
+  14:	6001      	str	r1, [r0, #0]
+  16:	bc03      	pop	{r0, r1}
+  18:	4770      	bx	lr
+
+0000001a <DWT_GETCOUNTER>:
+  1a:	4803      	ldr	r0, [pc, #12]	; (28 <DWT_GETCOUNTER+0xe>)
+  1c:	6800      	ldr	r0, [r0, #0]
+  1e:	4770      	bx	lr
+  20:	e000edfc 	.word	0xe000edfc
+  24:	e0001000 	.word	0xe0001000
+  28:	e0001004 	.word	0xe0001004
