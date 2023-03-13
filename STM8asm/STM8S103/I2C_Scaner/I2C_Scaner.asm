@@ -57,12 +57,38 @@ main_loop:
 
 
 ; ================================================
+; текстовые строки
+msg_start:
+    DC.B $0a ; '\n'
+    STRING "Поиск I2C устройств начался!"
+    DC.B $0a
+    DC.B $0a
+    DC.B $00
+; ================================================
+msg_address:
+    STRING "Адрес устройства: 0b"
+    DC.B $00
+; ================================================
+msg_no_ack:
+    STRING "Нет найденных устройств!"
+    DC.B '\n'
+    DC.B $00
+; ================================================
+
+
+; ================================================
 ; подпрограмма передача байта по I2C
 I2C_Scan:
     ld      A, #$00
+
+    ; вывод строки
+    ldw     x, #msg_start
+    call    UART_print_str
+    
 loop_I2C_Scan:
-    call    I2C_Wait_Busy
-    call    I2C_Start
+    ; call    I2C_Wait_Busy
+    ; call    I2C_Start
+    bset    I2C_CR2, #0 ; START: Start generation
 
     ; call    I2C_Write_Address
     push    A
@@ -72,7 +98,8 @@ loop_I2C_Scan:
 
     btjt    I2C_SR1, #1, I2C_ACK ; ADDR = #1 -> if ( ( I2C_SR1 & (1 << ADDR) ) = 1 ) jmp I2C_ACK
     
-    call    I2C_Stop
+    ; call    I2C_Stop
+    bset    I2C_CR2, #1 ; STOP: Stop generation
 
     inc     A
     CP      A, #$80 ; $7f - maximum
@@ -81,62 +108,45 @@ loop_I2C_Scan:
     jp      I2C_NO_ACK
 
 I2C_ACK:
-    call    I2C_Stop
+    ; call    I2C_Stop
+    bset    I2C_CR2, #1 ; STOP: Stop generation
     
     dec     A
-    ld      XL, A ; save address
+    ld      YL, A ; save address
 
     ; Очистка бита ADDR чтением регистра SR3
     ld      A, I2C_SR3
 
-    ld      A, #'\n'
-    call    UART_transmit
-    ld      A, #'F'
-    call    UART_transmit
-    ld      A, #'o'
-    call    UART_transmit
-    ld      A, #'u'
-    call    UART_transmit
-    ld      A, #'n'
-    call    UART_transmit
-    ld      A, #'d'
-    call    UART_transmit
-    ld      A, #':'
-    call    UART_transmit
-    ld      A, #' '
-    call    UART_transmit
-
-    ld      A, #'0'
-    call    UART_transmit
-    ld      A, #'b'
-    call    UART_transmit
+    ; вывод строки
+    ldw     x, #msg_address
+    call    UART_print_str
         
     ld      A, #0
-    ld      XH, A
+    ld      YH, A
 send_address:
-    ld      A, XH
+    ld      A, YH
     cp      A, #8
     JREQ    end_send_address
 
-    ld      A, XL
+    ld      A, YL
     RLC     A ; Rotate Left Logical through Carry
     JRC     send_1
     jp      send_0
     
 send_0:
-    ld      XL, A
-    ld      A, XH
+    ld      YL, A
+    ld      A, YH
     inc     A
-    ld      XH, A
+    ld      YH, A
     ld      A, #'0'
     call    UART_transmit
     jp      send_address
     
 send_1:
-    ld      XL, A
-    ld      A, XH
+    ld      YL, A
+    ld      A, YH
     inc     A
-    ld      XH, A
+    ld      YH, A
     ld      A, #'1'
     call    UART_transmit
     jp      send_address
@@ -148,25 +158,9 @@ end_send_address:
     jp      end_I2C_Scan
 
 I2C_NO_ACK:
-    call    I2C_Stop
-    
-    ld      A, #'\n'
-    call    UART_transmit
-
-    ld      A, #'N'
-    call    UART_transmit
-    ld      A, #'o'
-    call    UART_transmit
-    ld      A, #' '
-    call    UART_transmit
-    ld      A, #'A'
-    call    UART_transmit
-    ld      A, #'c'
-    call    UART_transmit
-    ld      A, #'k'
-    call    UART_transmit
-    ld      A, #'\n'
-    call    UART_transmit
+    ; вывод строки
+    ldw     x, #msg_no_ack
+    call    UART_print_str
 
     jp      end_I2C_Scan
 

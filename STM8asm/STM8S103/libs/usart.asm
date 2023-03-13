@@ -55,4 +55,47 @@ UART_receive:
 ; ================================================
 
 
+; ================================================
+; подпрограмма передачи числа по UART
+UART_print_num: ; input parameter: X
+    push    a
+    ldw     y, sp
+    push    #0
+loop_UART_print_num:
+    ld      a, #10
+    div     x, a
+    add     a, #$30
+    push    a
+    tnzw    x
+    jrne    loop_UART_print_num
+    ldw     x, sp
+    incw    x
+    call    UART_print_str
+    ldw     sp, y
+    pop     a
+
+    ret
+; ================================================
+
+
+; ================================================
+; подпрограмма передачи строки по UART
+UART_print_str: ;  input parameter:  X 
+    push    a
+repeat_UART_print_str:
+    ld      a,(x)
+    jreq    exit_UART_print_str
+wait_UART_print_str:
+    btjf    UART1_SR, #7, wait_UART_print_str     ;wait if UART_DR is full yet (TXE == 0)
+    ld      UART1_DR, a
+    incw    x
+    jra     repeat_UART_print_str
+exit_UART_print_str:
+    pop     a
+
+    ret
+; ================================================
+
+    
+
     #endif ; _USART_ASM_

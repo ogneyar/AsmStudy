@@ -28,6 +28,7 @@ SCL equ 4 ; PB4
 ; подпрограмма инициализации I2C
 I2C_Init:
     mov     CLK_CKDIVR, #0      ; делитель 1 - 16MHz (по умолчанию делитель 8 - 2MHz)
+    ; пины SDA и SCL на выход
     bres    PB_DDR, #SDA ; PB_DDR |= (1 << SDA)
     bset    PB_ODR, #SDA ; PB_CR1 |= (1 << SDA)
     bres    PB_DDR, #SCL ; PB_DDR |= (1 << SCL)

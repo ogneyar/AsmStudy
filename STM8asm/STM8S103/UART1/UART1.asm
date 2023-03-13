@@ -20,44 +20,30 @@ LED_C equ 3 ; PC3 for BLACK BOARD STM8S
 ; начало программы
 .main
     mov     CLK_CKDIVR, #0      ; делитель 1 - 16MHz (по умолчанию делитель 8 - 2MHz)
+    ; пины PB5 и PC3 на выход
     bset    PB_DDR, #LED_B       ; PB_DDR|=(1<<LED_B)
     bset    PB_CR1, #LED_B       ; PB_CR1|=(1<<LED_B)
     bset    PC_DDR, #LED_C
     bset    PC_CR1, #LED_C
+    
+    ; выключаем светодиоды
+    bset    PB_ODR, #LED_B       ; PB_ODR |= (1<<LED_B)	
+    bset    PC_ODR, #LED_C
 
-    ; инициализация UART1
+    ; инициализация UART1 
     call    UART_init
     
-    ld      A, #'\n'
-    call    UART_transmit
+    ; вывод строки
+    ldw     x, #msg_hello
+    call    UART_print_str
+    
+    ; вывод символа
+    ; ld      A, #'\n'
+    ; call    UART_transmit
 
-    ld      A, #'H'
-    call    UART_transmit
-    ld      A, #'e'
-    call    UART_transmit
-    ld      A, #'l'
-    call    UART_transmit
-    ld      A, #'l'
-    call    UART_transmit
-    ld      A, #'o'
-    call    UART_transmit
-    ld      A, #' '
-    call    UART_transmit
-    ld      A, #'W'
-    call    UART_transmit
-    ld      A, #'o'
-    call    UART_transmit
-    ld      A, #'r'
-    call    UART_transmit
-    ld      A, #'l'
-    call    UART_transmit
-    ld      A, #'d'
-    call    UART_transmit
-    ld      A, #'!'
-    call    UART_transmit
-
-    ld      A, #'\n'
-    call    UART_transmit
+    ; вывод числа
+    ; ldw     x,  #42
+    ; call    UART_print_num
 
 
 ; ------------------------------------------------
@@ -81,14 +67,17 @@ main_loop:
     jp      send_nothing
 
 send_0:
+    call    UART_transmit
     call    LED_OFF
     jp      continue
     
 send_1:
+    call    UART_transmit
     call    LED_ON
     jp      continue
 
 send_nothing:
+    call    UART_transmit
     call    LED_Nothing
     jp      continue
 
@@ -107,32 +96,47 @@ continue:
 
 
 ; ================================================
+; текстовые строки
+msg_hello:
+    DC.B $0a ; '\n'
+    STRING "Здравствуй дорогой!"
+    DC.B $0a
+    DC.B $0a
+    STRING "Жми 1 для включения LED"
+    DC.B $0a
+    STRING "Жми 0 для выключения LED"
+    DC.B $0a
+    DC.B $0a
+    DC.B $00
+; ================================================
+msg_led_on:
+    STRING " - LED включен!"
+    DC.B '\n'
+    DC.B $00
+; ================================================
+msg_led_off:
+    STRING " - LED вЫключен!"
+    DC.B '\n'
+    DC.B $00
+; ================================================
+msg_nothing:
+    STRING " - нет знакомой команды..."
+    DC.B '\n'
+    DC.B $00
+; ================================================
+
+
+
+; ================================================
 ; подпрограмма включения светодиодов
 LED_ON:
-    call    UART_transmit
-    ld      A, #' '
-    call    UART_transmit
-    ld      A, #'-'
-    call    UART_transmit
-    ld      A, #' '
-    call    UART_transmit
-    ld      A, #'L'
-    call    UART_transmit
-    ld      A, #'e'
-    call    UART_transmit
-    ld      A, #'d'
-    call    UART_transmit
-    ld      A, #' '
-    call    UART_transmit
-    ld      A, #'O'
-    call    UART_transmit
-    ld      A, #'n'
-    call    UART_transmit
-    ld      A, #'\n'
-    call    UART_transmit
+    ; вывод строки
+    ldw     x, #msg_led_on
+    call    UART_print_str
     ; включаем светодиоды
-    bres    PB_ODR, #LED_B       ; PB_ODR^=(1<<LED_B)	
-    bres    PC_ODR, #LED_C    
+    bres    PB_ODR, #LED_B       ; PB_ODR  &= ~(1<<LED_B)	
+    bres    PC_ODR, #LED_C  
+
     ret
 ; ================================================
 
@@ -140,32 +144,13 @@ LED_ON:
 ; ================================================
 ; подпрограмма выключения светодиодов
 LED_OFF:
-    call    UART_transmit
-    ld      A, #' '
-    call    UART_transmit
-    ld      A, #'-'
-    call    UART_transmit
-    ld      A, #' '
-    call    UART_transmit
-    ld      A, #'L'
-    call    UART_transmit
-    ld      A, #'e'
-    call    UART_transmit
-    ld      A, #'d'
-    call    UART_transmit
-    ld      A, #' '
-    call    UART_transmit
-    ld      A, #'O'
-    call    UART_transmit
-    ld      A, #'f'
-    call    UART_transmit
-    ld      A, #'f'
-    call    UART_transmit
-    ld      A, #'\n'
-    call    UART_transmit
+    ; вывод строки
+    ldw     x, #msg_led_off
+    call    UART_print_str
     ; выключаем светодиоды
-    bset    PB_ODR, #LED_B       ; PB_ODR^=(1<<LED_B)	
+    bset    PB_ODR, #LED_B       ; PB_ODR |= (1<<LED_B)	
     bset    PC_ODR, #LED_C
+
     ret
 ; ================================================
 
@@ -173,29 +158,10 @@ LED_OFF:
 ; ================================================
 ; подпрограмма вывода информации
 LED_Nothing:
-    call    UART_transmit
-    ld      A, #' '
-    call    UART_transmit
-    ld      A, #'-'
-    call    UART_transmit
-    ld      A, #' '
-    call    UART_transmit
-    ld      A, #'N'
-    call    UART_transmit
-    ld      A, #'o'
-    call    UART_transmit
-    ld      A, #'t'
-    call    UART_transmit
-    ld      A, #'h'
-    call    UART_transmit
-    ld      A, #'i'
-    call    UART_transmit
-    ld      A, #'n'
-    call    UART_transmit
-    ld      A, #'g'
-    call    UART_transmit
-    ld      A, #'\n'
-    call    UART_transmit
+    ; вывод строки
+    ldw     x, #msg_nothing
+    call    UART_print_str
+
     ret
 ; ================================================
 

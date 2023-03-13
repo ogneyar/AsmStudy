@@ -32,7 +32,7 @@ compile:
 	@lyn $(STM8S_OBJ)+$(OBJ), $(COD), ; 		
 	@obsend $(COD),f,$(HEX),ix
 	@obsend $(COD),f,$(S19),s	
-	@stm8flash -c stlinkv2 -p stm8s103f3 -w $(HEX)
+	@E:\VSCode\AsmStudy\STM8asm\program\stm8flash\stm8flash -c stlinkv2 -p stm8s103f3 -w $(HEX)
 #	pause
 	
 clear: compile
