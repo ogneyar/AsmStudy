@@ -10,8 +10,8 @@
 ; Имена регистров, а также различные константы
 	.equ 	F_CPU 					= 16000000		; Частота МК
 	.equ 	DIVIDER					= 8				; делитель
-	.equ 	BAUD 					= 115200			; Скорость обмена по UART
-	.equ 	UBRR 					= F_CPU/DIVIDER/BAUD-1
+	.equ 	BAUD 					= 9600			; Скорость обмена по UART
+	.equ 	UBRR 					= F_CPU/DIVIDER/BAUD-1 ; 110 - для 115200 (DIVIDER=1) ; 207 - для 9600 (DIVIDER=8)
 
 ;=================================================
 	.def 	Data					= R16			; регистр данных USART
@@ -86,11 +86,8 @@ Reg_Flush:
 ;=================================================
 ; Основная программа (цикл)
 Main:	
-	; mSetStr Hello_String
-	; RCALL 	USART_Print_String
-
-	LDI 	R16, 0x02
-	RCALL 	USART_Send_Byte
+	mSetStr Hello_String
+	RCALL 	USART_Print_String
 
 	RCALL 	Delay_500ms
 	SBI 	PORTA, PA3
