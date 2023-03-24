@@ -30,4 +30,7 @@ lgt8f:
 
 nano: all
 	@echo Finish nano
+	
+fuse_get:
+	@avrdude.exe -p $(TARGET_MCU) -b $(BAUD_NANO) -c $(PROGRAMMER) -P $(PORT_NANO) 	-U hfuse:r:fuse/hfuse.hex:r 	-U lfuse:r:fuse/lfuse.hex:r 	-U lock:r:fuse/lock.hex:r 	-U efuse:r:fuse/efuse.hex:r
 
