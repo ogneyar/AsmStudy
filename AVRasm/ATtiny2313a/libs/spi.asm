@@ -1,23 +1,23 @@
 
-; ATtiny13
+; ATtiny2313A
 
 #ifndef _SPI_ASM_
 #define _SPI_ASM_
 
-#ifndef SPI_MOSI
-#define	SPI_MOSI	PB0	
-#endif 
 #ifndef SPI_SCK
-#define	SPI_SCK		PB2	
+#define	SPI_SCK		PB4
+#endif
+#ifndef SPI_MOSI
+#define	SPI_MOSI	PB3
 #endif 
 #ifndef SPI_CS
-#define	SPI_CS		PB3	
+#define	SPI_CS		PB2
 #endif 
 #ifndef SPI_DC
-#define SPI_DC   	PB4
+#define SPI_DC   	PB1
 #endif 
 #ifndef SPI_RES
-#define SPI_RES  	PB1
+#define SPI_RES  	PB0
 #endif 
 
 #ifndef SPI_PORT
@@ -40,7 +40,7 @@
 ; Инициализация SPI
 SPI_Master_Init:
     push    R16
-	SBI     SPI_PORT, SPI_CS ; deselect_chip();
+	; SBI     SPI_PORT, SPI_CS ; deselect_chip();
     LDI     R16, MOSI_PIN | SCK_PIN | CS_PIN | RES_PIN | DC_PIN
 	OUT     SPI_DDR, R16
 	SBI     SPI_PORT, SPI_SCK ; SPI_SCK_HIGH();
@@ -70,6 +70,7 @@ send_null_SPI_Transfer:
 
 continue__SPI_Transfer:
 	CBI     SPI_PORT, SPI_SCK ; SPI_SCK_LOW();
+	; NOP
         
 	SBI     SPI_PORT, SPI_SCK ; SPI_SCK_HIGH();
 
