@@ -51,6 +51,9 @@ LDFLAGS=-mthumb -mcpu=cortex-m0plus -Wall -Wl,--cref -Wl,--check-sections -Wl,--
 LDFLAGS+=-Wl,--warn-common -Wl,--warn-section-align -Wl,--warn-unresolved-symbols --specs=nano.specs --specs=nosys.specs
 
 
+# -----------------------------------------------------------------------------
+# Source files and objects
+SOURCES= \
 
 
 
