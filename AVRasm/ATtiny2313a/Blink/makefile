@@ -23,6 +23,7 @@ upload: compile
 
 fuse_get:
 	@avrdude.exe -p $(TARGET_MCU) -b $(BAUD) -c $(PROGRAMMER) -P $(PORT) 	-U hfuse:r:hfuse.hex:r 	-U lfuse:r:lfuse.hex:r 	-U lock:r:lock.hex:r 	-U efuse:r:efuse.hex:r
+#	avrdude.exe -p ATtiny2313A -b 115200 -c usbasp -P usb 	-U hfuse:r:hfuse.hex:r 	-U lfuse:r:lfuse.hex:r 	-U lock:r:lock.hex:r 	-U efuse:r:efuse.hex:r
 
 fuse_set:
 # значения фьюзов в десятичном формате
