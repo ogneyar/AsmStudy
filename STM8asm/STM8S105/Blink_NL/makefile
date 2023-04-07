@@ -3,6 +3,8 @@
 #STM8_FLASH_DIR	:= E:\VSCode\AsmStudy\STMasm\program\stm8flash\
 #INCLUDE_DIR 	:= E:\VSCode\AsmStudy\STMasm\STM8S105\Blink
 
+MK			:= stm8s105k4
+
 BUILD_DIR	:= build
 
 FILE_NAME	:= Blink_NL
@@ -15,7 +17,7 @@ COD			:= $(FILE_NAME).cod
 HEX			:= $(FILE_NAME)_stm8s.hex
 S19			:= $(FILE_NAME)_stm8s.s19
 
-all: clear
+all: compile
 	@echo Finish All
 
 dir:
@@ -26,7 +28,7 @@ compile: dir
 	@lyn $(BUILD_DIR)\$(OBJ), $(BUILD_DIR)\$(COD), ; 	
 	@obsend $(BUILD_DIR)\$(COD),f,$(BUILD_DIR)\$(HEX),ix
 	@obsend $(BUILD_DIR)\$(COD),f,$(BUILD_DIR)\$(S19),s	
-	@stm8flash -c stlinkv2 -p stm8s105k4 -w $(BUILD_DIR)\$(HEX)
+	@stm8flash -c stlinkv2 -p $(MK) -w $(BUILD_DIR)\$(HEX)
 #	pause
 
 clear: compile

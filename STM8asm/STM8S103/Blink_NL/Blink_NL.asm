@@ -2,7 +2,7 @@ stm8/
     MOTOROLA	
 	WORDS		; following addresses are 16-bit length
 
-	segment byte at 8080-9FFF 'rom'	
+	segment byte at 8080-9FFF 'rom'	; 8Kb
 
 ; PB5 for BLUE  BOARD STM8S
 ; PC3 for BLACK BOARD STM8S

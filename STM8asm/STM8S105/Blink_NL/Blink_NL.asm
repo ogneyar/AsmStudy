@@ -2,7 +2,7 @@ stm8/
     MOTOROLA	
 	WORDS		; following addresses are 16-bit length
 
-	segment byte at 8080-BFFF 'rom' ; 16Kb
+	segment word at 8080-BFFF 'rom' ; 16Kb
 
 ; LED = PE5 
 
