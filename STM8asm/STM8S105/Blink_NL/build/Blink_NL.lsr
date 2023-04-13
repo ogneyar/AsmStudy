@@ -1,4 +1,4 @@
-STMicroelectronics assembler v4.52   (C)1987-2023   Fri Apr 07 09:50:36 2023
+STMicroelectronics assembler v4.52   (C)1987-2023   Wed Apr 12 15:40:45 2023
 Page 1  Assembler
                                                e:\vscode\asmstudy\stm8asm\stm8s105\blink_nl\blink_nl.asm
 
@@ -59,12 +59,12 @@ Page 1  Assembler
   33                                   
   34  0080B0   81                            ret      
   35                         
-STMicroelectronics assembler v4.52   (C)1987-2023   Fri Apr 07 09:50:36 2023
+STMicroelectronics assembler v4.52   (C)1987-2023   Wed Apr 12 15:40:45 2023
 Page 2  Assembler
                                                e:\vscode\asmstudy\stm8asm\stm8s105\blink_nl\blink_nl.asm
 
   36  0080B1                                 end      
-STMicroelectronics assembler v4.52   (C)1987-2023   Fri Apr 07 09:50:36 2023
+STMicroelectronics assembler v4.52   (C)1987-2023   Wed Apr 12 15:40:45 2023
 Page 3  Assembler
                                                e:\vscode\asmstudy\stm8asm\stm8s105\blink_nl\blink_nl.asm
 

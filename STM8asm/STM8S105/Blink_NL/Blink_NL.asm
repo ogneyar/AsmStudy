@@ -14,7 +14,7 @@ stm8/
     BSET    $5008, #5 ; PB_CR1 = $5008 ; PB_CR1|=(1<<PB5)
 main_loop:
     bcpl    $5014, #5 ; PE_ODR = $5014 ; PE_ODR^=(1<<PE5)	
-    bcpl    $5005, #5 ; PB_ODR = $5014 ; PB_ODR^=(1<<PB5)	
+    bcpl    $5005, #5 ; PB_ODR = $5005 ; PB_ODR^=(1<<PB5)	
 	call    delay
 
     jp      main_loop

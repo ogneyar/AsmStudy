@@ -4,7 +4,7 @@ PROGRAMMER	:= arduino
 TARGET_MCU	:= atmega328p
 
 PORT_NANO	:= com8
-PORT_LGT	:= com12
+PORT_LGT	:= com15
 
 BAUD_NANO	:= 115200
 BAUD_LGT	:= 57600 

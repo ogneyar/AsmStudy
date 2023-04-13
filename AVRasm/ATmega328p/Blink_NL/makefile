@@ -6,7 +6,7 @@ TARGET_MCU	:= atmega328p
 
 PORT_NANO	:= com8
 # PORT_NANO	:= usb
-PORT_LGT	:= com12
+PORT_LGT	:= com15
 PORT_328PB	:= usb
 
 BAUD_NANO	:= 115200
@@ -31,6 +31,7 @@ upload: compile
 lgt8f:
 	@avrasm2.exe -fI $(ASM) -o $(HEX_LGT)
 	@avrdude -p $(TARGET_MCU) -c $(PROGRAMMER) -P $(PORT_LGT)  -b $(BAUD_LGT) -U flash:w:$(HEX_LGT):a
+#	@avrdude -p lgt8f328p -c $(PROGRAMMER) -P $(PORT_LGT)  -b $(BAUD_LGT) -U flash:w:$(HEX_LGT):a
 
 nano: all
 	@echo Finish nano
