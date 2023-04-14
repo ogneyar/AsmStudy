@@ -5,7 +5,7 @@ PROGRAMMER	:= usbasp
 # PROGRAMMER	:= arduino
 
 PORT		:= usb
-# PORT		:= com15
+# PORT		:= com7
 
 BAUD		:= 57600 
 
@@ -21,11 +21,11 @@ pb:
 	@avrdude.exe -p $(TARGET_MCU) -c $(PROGRAMMER) -b $(BAUD) -P $(PORT) -U flash:w:$(HEX):a
 
 fuse_get:
-	@avrdude.exe -p $(TARGET_MCU) -B 125kHz -c $(PROGRAMMER) -P $(PORT) 	-U lock:r:lock.hex:r 	-U hfuse:r:hfuse.hex:r 	-U lfuse:r:lfuse.hex:r 	-U efuse:r:efuse.hex:r
+	@avrdude.exe -p $(TARGET_MCU) -c $(PROGRAMMER) -b $(BAUD) -P $(PORT) 	-U lock:r:lock.hex:r 	-U hfuse:r:hfuse.hex:r 	-U lfuse:r:lfuse.hex:r 	-U efuse:r:efuse.hex:r
 
 fuse_set:
 # значения фьюзов в десятичном формате
 # original
-#	@avrdude.exe -p $(TARGET_MCU) -B 125kHz -c $(PROGRAMMER) -P $(PORT) 	-U lock:w:255:m 		-U hfuse:w:217:m		-U lfuse:w:98:m 		-U efuse:w:247:m
+#	@avrdude.exe -p $(TARGET_MCU) -c $(PROGRAMMER) -b $(BAUD) -P $(PORT) 	-U lock:w:255:m 		-U hfuse:w:217:m		-U lfuse:w:98:m 		-U efuse:w:247:m
 # new
-	@avrdude.exe -p $(TARGET_MCU) -B 125kHz -c $(PROGRAMMER) -P $(PORT) 	-U lock:w:255:m 		-U hfuse:w:217:m		-U lfuse:w:226:m 		-U efuse:w:247:m
+	@avrdude.exe -p $(TARGET_MCU) -c $(PROGRAMMER) -b $(BAUD) -P $(PORT) 	-U lock:w:255:m 		-U hfuse:w:217:m		-U lfuse:w:226:m 		-U efuse:w:247:m
