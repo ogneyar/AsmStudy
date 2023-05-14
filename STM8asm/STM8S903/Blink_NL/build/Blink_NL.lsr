@@ -1,0 +1,73 @@
+STMicroelectronics assembler v4.52   (C)1987-2023   Sun May 14 10:02:48 2023
+Page 1  Assembler
+                                               e:\vscode\asmstudy\stm8asm\stm8s903\blink_nl\blink_nl.asm
+
+   1                         stm8/     
+   2  000000                                 MOTOROLA 
+   3                                                          ; WORDS		; following addresses 
+                                                                ;are 16-bit length
+   4                         
+   5                                   segment  word at 8080-9FFF 'rom'   ; 8Kb
+   6                         
+   7                         ; LED = PE5 
+   8                         
+   9                         .main     
+  10                                                          ; MOV     $50c6, #0 ; CLK_CKDIVR
+                                                                ; = $50c6 -> делитель 1 
+                                                                ;- 16MHz (по 
+                                                                ;умолчанию 
+                                                                ;делитель 8 - 2MHz)
+  11  008080   721C5007                      BSET     $5007, #6     ; PB_DDR = $5007 ; 
+                                                                ;PB_DDR|=(1<<PB5)
+  12  008084   721C5008                      BSET     $5008, #6     ; PB_CR1 = $5008 ; 
+                                                                ;PB_CR1|=(1<<PB5)
+  13                         main_loop:  
+  14  008088   901C5005                      bcpl     $5005, #6     ; PB_ODR = $5005 ; 
+                                                                ;PB_ODR^=(1<<PB5)	
+  15  00808C   CD8092                        call     delay
+  16                         
+  17  00808F   CC8088                        jp       main_loop
+  18                                   
+  19                         delay:    
+  20                                                          ; 0x30d400 = 3200000 i.e. (16 
+                                                                ;MHz)/5 cycles - 1 секуда
+  21                                                          ; 0x186a00 = 1600000 i.e. (16 
+                                                                ;MHz)/5 cycles / 2 - 0.5 
+                                                                ;секуды
+  22                                                          ; 0x09c400 = 640000 i.e. (16 
+                                                                ;MHz)/5 cycles / 5 - 0.2 
+                                                                ;секуды
+  23                                                          ; 0x04e200 = 320000 i.e. (16 
+                                                                ;MHz)/5 cycles / 10 - 0.1 
+                                                                ;секуды
+  24  008092   A630                          ld       a, #$30       ; #$30 - 1000мс,   #$18 - 
+                                                                ;500мс,   #$09 - 200мс,   
+                                                                ;#$04 - 100мс
+  25  008094   90AED400                      ldw      y, #$d400     ; #$d400 - 1000мс, #$6a00 - 
+                                                                ;500мс, #$c400 - 200мс, 
+                                                                ;#$e200 - 100мс
+  26                         loop:     
+  27  008098   72A20001                      subw     y, #$01       ; decrement with set carry
+  28  00809C   A200                          sbc      a, #0         ; decrement carry flag i.e. a = 
+                                                                ;a - carry_flag
+  29  00809E   26F8                          jrne     loop
+  30                                   
+  31  0080A0   81                            ret      
+  32                         
+  33  0080A1                                 end      
+STMicroelectronics assembler v4.52   (C)1987-2023   Sun May 14 10:02:48 2023
+Page 2  Assembler
+                                               e:\vscode\asmstudy\stm8asm\stm8s903\blink_nl\blink_nl.asm
+
+Symbol Name                       Value     Call       Type  Scope      Rel.  Line  Privacy  Segment   Size  Bytes File
+
+delay                                 8092         no  WORD  Internal   ABS     19  private  text         6     0  -
+
+loop                                  8098         no  WORD  Internal   ABS     26  private  text         9     0  -
+
+main                                  8080         no  WORD  Internal   ABS      9  public   text         8     0  -
+main_loop                             8088         no  WORD  Internal   ABS     13  private  text        10     0  -
+
+
+4 labels
+No errors on assembly of 'e:\vscode\asmstudy\stm8asm\stm8s903\blink_nl\blink_nl.asm'

@@ -1,0 +1,23 @@
+
+Segment List
+------------
+
+e:\vscode\asmstudy\stm8asm\stm8s903\blink_nl\blink_nl.asm[1]    5-   32      8080 -     80A0                 'rom'  [text]
+
+
+Class List
+----------
+
+0 '         rom'   word from     8080 to     80A0 (lim     9FFF) =  0% C
+
+
+
+External Label list
+-------------------
+
+Symbol Name                       Value     Scope  Def(line)
+
+main                                  8080  WORD  e:\vscode\asmstudy\stm8asm\stm8s903\blink_nl\blink_nl.asm(9)
+
+
+1 labels

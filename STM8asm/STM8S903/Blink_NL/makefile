@@ -3,8 +3,7 @@
 #STM8_FLASH_DIR	:= E:\VSCode\AsmStudy\STMasm\program\stm8flash\
 #INCLUDE_DIR 	:= E:\VSCode\AsmStudy\STMasm\STM8S105\Blink
 
-MK			:= stm8s105k4t6c
-# MK			:= stm8s105?4
+MK			:= stm8s903k3t6c
 
 BUILD_DIR	:= build
 

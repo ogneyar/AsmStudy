@@ -1,0 +1,83 @@
+STMicroelectronics assembler v4.52   (C)1987-2023   Sun May 14 10:16:59 2023
+Page 1  Assembler
+                                               e:\vscode\asmstudy\stm8asm\stm8s103\blink_nl\blink_nl.asm
+
+   1                         stm8/     
+   2  000000                                 MOTOROLA 
+   3  000000                                 WORDS                  ; following addresses are 16-bit
+                                                                ; length
+   4                         
+   5                                   segment  byte at 8080-9FFF 'rom'  ; 8Kb
+   6                         
+   7                         ; PB5 for BLUE  BOARD STM8S
+   8                         ; PC3 for BLACK BOARD STM8S
+   9                         
+  10                         .main     
+  11  008080   350050C6                      MOV      $50c6, #0     ; CLK_CKDIVR = $50c6 -> 
+                                                                ;делитель 1 - 16MHz 
+                                                                ;(по умолчанию 
+                                                                ;делитель 8 - 2MHz)
+  12  008084   721A5007                      BSET     $5007, #5     ; PB_DDR = $5007 ; 
+                                                                ;PB_DDR|=(1<<PB5)
+  13  008088   721A5008                      BSET     $5008, #5     ; PB_CR1 = $5008 ; 
+                                                                ;PB_CR1|=(1<<PB5)
+  14  00808C   7216500C                      BSET     $500c, #3     ; PC_DDR = $500c ; 
+                                                                ;PC_DDR|=(1<<PC3)
+  15  008090   7216500D                      BSET     $500d, #3     ; PC_CR1 = $500d ; 
+                                                                ;PC_CR1|=(1<<PC3)
+  16                         main_loop:  
+  17  008094   901A5005                      bcpl     $5005, #5     ; PB_ODR = $5005 ; 
+                                                                ;PB_ODR^=(1<<PB5)	
+  18  008098   9016500A                      bcpl     $500a, #3     ; PC_ODR = $500a ; 
+                                                                ;PC_ODR^=(1<<PC3)
+  19  00809C   CD80A2                        call     delay
+  20                         
+  21  00809F   CC8094                        jp       main_loop
+  22                                   
+  23                         delay:    
+  24                                                          ; 0x30d400 = 3200000 i.e. (16 
+                                                                ;MHz)/5 cycles - 1 секуда
+  25                                                          ; 0x186a00 = 1600000 i.e. (16 
+                                                                ;MHz)/5 cycles / 2 - 0.5 
+                                                                ;секуды
+  26                                                          ; 0x09c400 = 640000 i.e. (16 
+                                                                ;MHz)/5 cycles / 5 - 0.2 
+                                                                ;секуды
+  27                                                          ; 0x04e200 = 320000 i.e. (16 
+                                                                ;MHz)/5 cycles / 10 - 0.1 
+                                                                ;секуды
+  28  0080A2   A630                          ld       a, #$30       ; #$30 - 1000мс,   #$18 - 
+                                                                ;500мс,   #$09 - 200мс,   
+                                                                ;#$04 - 100мс
+  29  0080A4   90AED400                      ldw      y, #$d400     ; #$d400 - 1000мс, #$6a00 - 
+                                                                ;500мс, #$c400 - 200мс, 
+                                                                ;#$e200 - 100мс
+  30                         loop:     
+  31  0080A8   72A20001                      subw     y, #$01       ; decrement with set carry
+  32  0080AC   A200                          sbc      a, #0         ; decrement carry flag i.e. a = 
+                                                                ;a - carry_flag
+  33  0080AE   26F8                          jrne     loop
+  34                                   
+  35  0080B0   81                            ret      
+STMicroelectronics assembler v4.52   (C)1987-2023   Sun May 14 10:16:59 2023
+Page 2  Assembler
+                                               e:\vscode\asmstudy\stm8asm\stm8s103\blink_nl\blink_nl.asm
+
+  36                         
+  37  0080B1                                 end      
+STMicroelectronics assembler v4.52   (C)1987-2023   Sun May 14 10:16:59 2023
+Page 3  Assembler
+                                               e:\vscode\asmstudy\stm8asm\stm8s103\blink_nl\blink_nl.asm
+
+Symbol Name                       Value     Call       Type  Scope      Rel.  Line  Privacy  Segment   Size  Bytes File
+
+delay                                 80A2         no  WORD  Internal   ABS     23  private  text         6     0  -
+
+loop                                  80A8         no  WORD  Internal   ABS     30  private  text         9     0  -
+
+main                                  8080         no  WORD  Internal   ABS     10  public   text        20     0  -
+main_loop                             8094         no  WORD  Internal   ABS     16  private  text        14     0  -
+
+
+4 labels
+No errors on assembly of 'e:\vscode\asmstudy\stm8asm\stm8s103\blink_nl\blink_nl.asm'
