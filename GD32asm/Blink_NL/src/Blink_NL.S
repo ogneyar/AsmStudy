@@ -19,8 +19,8 @@
 .equ RLED_, 5 // ----------------------
 .equ GLED, 1  // PA1
 .equ BLED, 2  // PA2
-.equ SBTN, 0
-.equ RBTN, 1
+.equ SBTN, 0  // PB0
+.equ RBTN, 1  // PB1
 
 .equ delay, 500000
 
@@ -73,10 +73,8 @@ MAIN_LOOP:
   sw	a4, 0(a5)
   
   //sleep1
-  la a5, delay
-sleep1:
-  addi	a5, a5, -1
-  bnez a5, sleep1
+  la a0, delay
+  call sleep
 
   //GPIOA_OCTL(GPIOA) ^= (1<<GLED)
   la a5, GPIOA_OCTL
@@ -85,22 +83,23 @@ sleep1:
   sw	a4, 0(a5)
   
   //sleep2
-  la a5, delay
-sleep2:
-  addi	a5, a5, -1
-  bnez a5, sleep2
+  la a0, delay
+  call sleep
 
   //GPIOA_OCTL(GPIOA) ^= (1<<BLED)
   la a5, GPIOA_OCTL
   lw	a4, 0(a5)
     xori	a4, a4, (1<<BLED)
   sw	a4, 0(a5)
-
+    
   //sleep3
-  la a5, delay
-sleep3:
-  addi	a5, a5, -1
-  bnez a5, sleep3
-
+  la a0, delay
+  call sleep
 
   j MAIN_LOOP
+
+
+sleep:
+  addi  a0, a0, -1
+  bnez a0, sleep
+ret
