@@ -1,2 +1,4 @@
 
-##  I'am study assemblers
+## I study assemblers, 
+
+### sometimes something even turns out (:
