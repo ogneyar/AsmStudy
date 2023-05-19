@@ -56,7 +56,7 @@ prog: $(frmname).bin
 dfu: $(frmname).bin
 	dfu-util -a 0 -d 28e9:0189 -s 0x08000000 -D $(frmname).bin
 
--include $(shell mkdir -p $(builddir)/dep) $(wildcard $(builddir)/dep/*)
+# -include $(shell mkdir -p $(builddir)/dep) $(wildcard $(builddir)/dep/*)
 
 .PHONY: all clean
 

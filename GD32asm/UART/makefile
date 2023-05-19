@@ -2,7 +2,7 @@
 TOOL_CHAIN			:= E:\Program\MounRiver/MounRiver_Studio/toolchain/RISC-V Embedded GCC/bin
 PREFIX				:= riscv-none-embed-
 
-filname := Button
+filname := UART
 
 srcdir := src
 builddir := build
@@ -18,10 +18,11 @@ SIZE=$(CROSS_COMPILE)size
 
 COMMON := -march=rv32imac -mabi=ilp32 -mcmodel=medany
 ASMFLAGS := $(COMMON)
-LDFLAGS := -march=rv32imac -mabi=ilp32 -mcmodel=medany -nostdlib
+LDFLAGS := -march=rv32imac -mabi=ilp32 -mcmodel=medany -nostdlib -T ../libs/gd32vf103cbt6.ld
 
 frmname = $(builddir)/$(filname)
-objs = $(addprefix $(builddir)/,$(addsuffix .o,$(filname)))
+# objs = $(addprefix $(builddir)/,$(addsuffix .o,$(filname)))
+objs = $(builddir)/$(filname).o
 
 all: $(frmname).bin $(frmname).hex size
 
@@ -50,10 +51,10 @@ clean:
 size: $(frmname).elf
 	$(SIZE) $(frmname).elf
 
-prog: $(frmname).bin
-	stm32flash /dev/ttyUSB0 -w $(frmname).bin
+prog: #$(frmname).bin
+	stm32flash /dev/ttyS26 -w $(frmname).bin
 
-dfu: $(frmname).bin
+dfu: #$(frmname).bin
 	dfu-util -a 0 -d 28e9:0189 -s 0x08000000 -D $(frmname).bin
 
 # -include $(shell mkdir -p $(builddir)/dep) $(wildcard $(builddir)/dep/*)
