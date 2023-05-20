@@ -18,7 +18,7 @@ SIZE=$(CROSS_COMPILE)size
 
 COMMON := -march=rv32imac -mabi=ilp32 -mcmodel=medany
 ASMFLAGS := $(COMMON)
-LDFLAGS := -march=rv32imac -mabi=ilp32 -mcmodel=medany -nostdlib
+LDFLAGS := -march=rv32imac -mabi=ilp32 -mcmodel=medany -nostdlib 
 
 frmname = $(builddir)/$(filname)
 objs = $(addprefix $(builddir)/,$(addsuffix .o,$(filname)))

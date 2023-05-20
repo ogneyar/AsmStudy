@@ -72,7 +72,7 @@ MAIN_LOOP:
     xor	a4, a4, a6
   sw	a4, 0(a5)
   
-  //sleep1
+  //sleep
   la a0, delay
   call sleep
 
@@ -82,7 +82,7 @@ MAIN_LOOP:
     xori	a4, a4, (1<<GLED)
   sw	a4, 0(a5)
   
-  //sleep2
+  //sleep
   la a0, delay
   call sleep
 
@@ -92,7 +92,7 @@ MAIN_LOOP:
     xori	a4, a4, (1<<BLED)
   sw	a4, 0(a5)
     
-  //sleep3
+  //sleep
   la a0, delay
   call sleep
 

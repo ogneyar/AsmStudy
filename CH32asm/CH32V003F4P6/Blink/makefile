@@ -8,6 +8,7 @@ BUILD_DIR	:= build
 
 CH_MAP_LD		:= ../libs/Ld/ch32v00x_map.ld
 
+
 FILE_NAME	:= Blink
 ASM			:= $(FILE_NAME).asm
 OBJ			:= $(BUILD_DIR)/$(FILE_NAME).o
@@ -23,11 +24,11 @@ flash: obj
 	@$(OCD) -f $(OPENOCD_CFG)  -c init -c halt  -c "program $(HEX)" -c wlink_reset_resume -c exit
 
 obj: link
-	@$(TOOL_CHAIN)\$(PREFIX)objcopy.exe -O binary $(ELF) $(BIN)
-	@$(TOOL_CHAIN)\$(PREFIX)objcopy.exe -O ihex $(ELF) $(HEX)
+	@$(TOOL_CHAIN)\$(PREFIX)objcopy -O binary $(ELF) $(BIN)
+	@$(TOOL_CHAIN)\$(PREFIX)objcopy -O ihex $(ELF) $(HEX)
 
 link: compile
-	@$(TOOL_CHAIN)\$(PREFIX)ld.exe -T $(CH_MAP_LD) -o $(ELF) $(OBJ)
+	@$(TOOL_CHAIN)\$(PREFIX)ld -T $(CH_MAP_LD) -o $(ELF) $(OBJ)
 
 compile:
 	@if not exist $(BUILD_DIR) (mkdir $(BUILD_DIR))
