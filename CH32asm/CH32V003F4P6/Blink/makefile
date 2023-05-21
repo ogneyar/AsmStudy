@@ -8,6 +8,7 @@ BUILD_DIR	:= build
 
 CH_MAP_LD		:= ../libs/Ld/ch32v00x_map.ld
 
+# LDFLAGS = -march=rv32imac
 
 FILE_NAME	:= Blink
 ASM			:= $(FILE_NAME).asm
