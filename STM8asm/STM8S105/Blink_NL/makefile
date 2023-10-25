@@ -8,7 +8,8 @@ MK			:= stm8s105k4t6c
 
 BUILD_DIR	:= build
 
-FILE_NAME	:= Blink_NL
+#FILE_NAME	:= Blink_NL
+FILE_NAME	:= main
 ASM			:= $(FILE_NAME).asm
 LSR			:= $(FILE_NAME).lsr
 OBJ			:= $(FILE_NAME).obj
