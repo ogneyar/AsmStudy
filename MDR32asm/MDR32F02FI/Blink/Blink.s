@@ -30,7 +30,7 @@
 .equ MDR_GPIO4_CLRTX,    MDR_GPIO4_BASE + 0x24 #    /*!< bit-clear register for output ports */
 .equ MDR_GPIO4_RDTX,     MDR_GPIO4_BASE + 0x28 #    /*!< read-back register for output ports */
 
-.equ RST_CLK_PORTD, (1 << 30)
+.equ RST_CLK_PORTD, (0x1 << 30)
 
 .equ PORT_Pin_0, 0x01
 .equ twoBitMask, 0x3
@@ -49,12 +49,14 @@ _start:
     csrr  t0, mhartid
     bnez  t0, halt
 
-    la    sp, __stack_top
+    # la    sp, __stack_top
     
     # PORT_Init
     # RST_CLK_EnablePeripheralClock(RST_CLK_PORTD, RST_CLK_Div1);
     li t0, MDR_RST_CLK_PER2_CLOCK # Load register t0 with an address PER2_CLOCK
-    li t1, RST_CLK_PORTD
+    lw t1, 0(t0)
+    li t2, RST_CLK_PORTD
+    or t1, t1, t2
     sw t1, 0(t0) # store word (32bit)  
 
     # /* write output enable state */
@@ -120,40 +122,59 @@ _start:
     # PORT_SetReset(MDR_PORTD, PORT_Pin_0, SET);
     # MDR_GPIO4_SETTX = PORT_Pin_0;    
     li t0, MDR_GPIO4_SETTX
-    li t1, PORT_Pin_0
+    lw t1, 0(t0)
+    ori t1, t1, PORT_Pin_0
     sw t1, 0(t0)
     
     # PORT_SetReset(MDR_PORTD, PORT_Pin_0, RESET);
     # MDR_GPIO4_CLRTX = PORT_Pin_0;   
-    li t0, MDR_GPIO4_CLRTX
-    li t1, PORT_Pin_0
-    sw t1, 0(t0)
+    # li t0, MDR_GPIO4_CLRTX
+    # lw t1, 0(t0)
+    # ori t1, t1, PORT_Pin_0
+    # sw t1, 0(t0)
         
 
-    jal   puts # call
+infinity_loop:
+    jal   blink # call
+
+    j infinity_loop
 
 
 halt: j halt
 
-puts:
-    # li t3, 0 ; обнуляем счётчик
-    # mv t3, zero ; обнуляем счётчик
-    andi t3, t3, 0 # Clear register t3
-#     li  t0, UART_BASE
 
-# .puts_loop: lbu t1, (a0)
-#     beqz t1, .puts_leave
+blink:
+    andi t4, t4, 0 # обнуляем счётчик t4
+    li t5, 0x00100000
 
+.blink_loop:
+    # ;if (DelayCnt++ >= 0x00010000)
+    bge t4, t5, .blink_run # Переход в случае больше или равно
+    addi t4, t4, 1
+    j .blink_loop
 
-# .puts_waits: lw t2, UART_REG_TXFIFO(t0)
-#     bltz t2, .puts_waits
+.blink_run:
+	# ;if (((MDR_GPIO4_RXTX) & PORT_Pin_0) != 0)
+    li t0, MDR_GPIO4_RXTX
+    lw t1, 0(t0)
+    andi t1, t1, PORT_Pin_0
+    # bne t1, x0, .blink_reset # Переход в случае неравенства
+    beq t1, x0, .blink_set # Переход в случае равенства
+    j .blink_set
 
-#     sw  t1, UART_REG_TXFIFO(t0)
+.blink_reset:
+        # PORT_SetReset(LED_PORT, LED_PIN_0, RESET);
+        li t0, MDR_GPIO4_CLRTX
+        lw t1, 0(t0)
+        ori t1, t1, PORT_Pin_0
+        sw t1, 0(t0)
+    # ;else
+.blink_set:
+        # PORT_SetReset(LED_PORT, LED_PIN_0, SET);
+        li t0, MDR_GPIO4_SETTX
+        lw t1, 0(t0)
+        ori t1, t1, PORT_Pin_0
+        sw t1, 0(t0)
 
-#     add a0, a0, 1
-#     j .puts_loop
-
-
-.puts_leave:
     ret
 

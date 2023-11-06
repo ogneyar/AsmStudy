@@ -22,9 +22,11 @@ LDFLAGS = -march=rv32imc -mabi=ilp32 -static -mcmodel=medany -fvisibility=hidden
 HEX = $(CP) -O ihex
 BIN = $(CP) -O binary -S 
 
+OPENOCD_CFG=../libs/Util/MLDR187-ft2232hl.cfg
+
 all: flash
 
-flash: clean make_folder
+build: clean make_folder
 	$(CC) $(LDFLAGS) $(TARGET).s -o $(BUILD_DIR)/$(TARGET).elf
 
 	$(HEX) $(BUILD_DIR)/$(TARGET).elf $(BUILD_DIR)/$(TARGET).hex
@@ -34,3 +36,10 @@ make_folder:
 
 clean:
 	@-rmdir /s /q $(BUILD_DIR)
+
+erase: build
+	$(OCD) -f $(OPENOCD_CFG) -c init -c halt -c "flash erase_sector bank0 0 last" -c exit	
+
+flash: erase 
+	$(OCD) -f $(OPENOCD_CFG) -c init -c halt -c "program $(BUILD_DIR)/$(TARGET).hex" -c reset -c exit
+	
