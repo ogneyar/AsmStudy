@@ -1,5 +1,5 @@
 
-TARGET = hello
+TARGET = Blink
 
 BUILD_DIR = build
 
@@ -16,7 +16,6 @@ CP = "$(GCC_PATH)/$(PREFIX)objcopy"
 SZ = "$(GCC_PATH)/$(PREFIX)size"
 
 LDSCRIPT = ../libs/Ld/link_Flash.ld
-# LDSCRIPT = red-v.ld
 
 LDFLAGS = -march=rv32imc -mabi=ilp32 -static -mcmodel=medany -fvisibility=hidden -nostdlib -nostartfiles -T$(LDSCRIPT)
 
