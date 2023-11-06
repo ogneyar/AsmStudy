@@ -118,21 +118,7 @@ _start:
         lw t1, 0(t0)
         ori t1, t1, (PORT_FUNC_PORT << PD0)
         sw t1, 0(t0)
-    
-    # PORT_SetReset(MDR_PORTD, PORT_Pin_0, SET);
-    # MDR_GPIO4_SETTX = PORT_Pin_0;    
-    li t0, MDR_GPIO4_SETTX
-    lw t1, 0(t0)
-    ori t1, t1, PORT_Pin_0
-    sw t1, 0(t0)
-    
-    # PORT_SetReset(MDR_PORTD, PORT_Pin_0, RESET);
-    # MDR_GPIO4_CLRTX = PORT_Pin_0;   
-    # li t0, MDR_GPIO4_CLRTX
-    # lw t1, 0(t0)
-    # ori t1, t1, PORT_Pin_0
-    # sw t1, 0(t0)
-        
+            
 
 infinity_loop:
     jal   blink # call
@@ -145,7 +131,7 @@ halt: j halt
 
 blink:
     andi t4, t4, 0 # обнуляем счётчик t4
-    li t5, 0x00100000
+    li t5, 0x00040000
 
 .blink_loop:
     # ;if (DelayCnt++ >= 0x00010000)
@@ -154,13 +140,11 @@ blink:
     j .blink_loop
 
 .blink_run:
-	# ;if (((MDR_GPIO4_RXTX) & PORT_Pin_0) != 0)
+	# ;if (((MDR_GPIO4_RXTX) & PORT_Pin_0) == 0)
     li t0, MDR_GPIO4_RXTX
     lw t1, 0(t0)
     andi t1, t1, PORT_Pin_0
-    # bne t1, x0, .blink_reset # Переход в случае неравенства
     beq t1, x0, .blink_set # Переход в случае равенства
-    j .blink_set
 
 .blink_reset:
         # PORT_SetReset(LED_PORT, LED_PIN_0, RESET);
@@ -168,6 +152,8 @@ blink:
         lw t1, 0(t0)
         ori t1, t1, PORT_Pin_0
         sw t1, 0(t0)
+        j .blink_leave
+
     # ;else
 .blink_set:
         # PORT_SetReset(LED_PORT, LED_PIN_0, SET);
@@ -176,5 +162,6 @@ blink:
         ori t1, t1, PORT_Pin_0
         sw t1, 0(t0)
 
+.blink_leave:
     ret
 
