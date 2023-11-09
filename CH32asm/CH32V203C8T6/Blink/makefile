@@ -13,6 +13,7 @@ PREFIX = riscv-none-embed-
 CC = "$(GCC_PATH)/$(PREFIX)gcc"
 AS = "$(GCC_PATH)/$(PREFIX)gcc" -x assembler-with-cpp
 CP = "$(GCC_PATH)/$(PREFIX)objcopy"
+DP = "$(GCC_PATH)/$(PREFIX)objdump"
 SZ = "$(GCC_PATH)/$(PREFIX)size"
 
 LDSCRIPT = ../libs/Ld/ch32v20x_map.ld
@@ -31,6 +32,10 @@ build: clean make_folder
 
 	$(HEX) $(BUILD_DIR)/$(TARGET).elf $(BUILD_DIR)/firmware.hex
 	$(BIN) $(BUILD_DIR)/$(TARGET).elf $(BUILD_DIR)/firmware.bin
+
+	$(DP) -S -D $(BUILD_DIR)/$(TARGET).elf > $(BUILD_DIR)/$(TARGET).lss
+
+	$(SZ) $(BUILD_DIR)/$(TARGET).elf
 
 make_folder:
 	@-mkdir $(BUILD_DIR)

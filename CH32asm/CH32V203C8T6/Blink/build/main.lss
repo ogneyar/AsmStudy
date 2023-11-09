@@ -1,0 +1,49 @@
+
+build/main.elf:     file format elf32-littleriscv
+
+
+Disassembly of section .text:
+
+00000000 <_start>:
+   0:	400212b7          	lui	t0,0x40021
+   4:	01828293          	addi	t0,t0,24 # 40021018 <RCC_APB2PCENR>
+   8:	0002a303          	lw	t1,0(t0)
+   c:	00836313          	ori	t1,t1,8
+  10:	0062a023          	sw	t1,0(t0)
+  14:	400112b7          	lui	t0,0x40011
+  18:	c0028293          	addi	t0,t0,-1024 # 40010c00 <GPIOB_BASE>
+  1c:	0002a303          	lw	t1,0(t0)
+  20:	ff0013b7          	lui	t2,0xff001
+  24:	fff38393          	addi	t2,t2,-1 # ff000fff <RCC_APB2PCENR+0xbefdffe7>
+  28:	00737333          	and	t1,t1,t2
+  2c:	003333b7          	lui	t2,0x333
+  30:	00736333          	or	t1,t1,t2
+  34:	0062a023          	sw	t1,0(t0)
+
+00000038 <loop_main>:
+  38:	400112b7          	lui	t0,0x40011
+  3c:	c0c28293          	addi	t0,t0,-1012 # 40010c0c <GPIOB_OUTDR>
+  40:	0002a303          	lw	t1,0(t0)
+  44:	02834313          	xori	t1,t1,40
+  48:	0062a023          	sw	t1,0(t0)
+  4c:	00100537          	lui	a0,0x100
+  50:	2829                	jal	6a <sleep>
+  52:	400112b7          	lui	t0,0x40011
+  56:	c0c28293          	addi	t0,t0,-1012 # 40010c0c <GPIOB_OUTDR>
+  5a:	0002a303          	lw	t1,0(t0)
+  5e:	01034313          	xori	t1,t1,16
+  62:	0062a023          	sw	t1,0(t0)
+  66:	bfc9                	j	38 <loop_main>
+
+00000068 <halt>:
+  68:	a001                	j	68 <halt>
+
+0000006a <sleep>:
+  6a:	157d                	addi	a0,a0,-1
+  6c:	fd7d                	bnez	a0,6a <sleep>
+  6e:	8082                	ret
+
+Disassembly of section .stack:
+
+20004800 <.stack>:
+	...

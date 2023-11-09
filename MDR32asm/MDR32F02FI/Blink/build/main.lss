@@ -1,0 +1,121 @@
+
+build/main.elf:     file format elf32-littleriscv
+
+
+Disassembly of section .text:
+
+10000000 <_start>:
+10000000:	f14022f3          	csrr	t0,mhartid
+10000004:	0c029963          	bnez	t0,100000d6 <halt>
+10000008:	400202b7          	lui	t0,0x40020
+1000000c:	02f1                	addi	t0,t0,28
+1000000e:	0002a303          	lw	t1,0(t0) # 40020000 <MDR_RST_CLK_BASE>
+10000012:	400003b7          	lui	t2,0x40000
+10000016:	00736333          	or	t1,t1,t2
+1000001a:	0062a023          	sw	t1,0(t0)
+1000001e:	400f02b7          	lui	t0,0x400f0
+10000022:	0291                	addi	t0,t0,4
+10000024:	0002a303          	lw	t1,0(t0) # 400f0000 <MDR_GPIO4_BASE>
+10000028:	ffe37313          	andi	t1,t1,-2
+1000002c:	0062a023          	sw	t1,0(t0)
+10000030:	400f02b7          	lui	t0,0x400f0
+10000034:	0291                	addi	t0,t0,4
+10000036:	0002a303          	lw	t1,0(t0) # 400f0000 <MDR_GPIO4_BASE>
+1000003a:	00136313          	ori	t1,t1,1
+1000003e:	0062a023          	sw	t1,0(t0)
+10000042:	400f02b7          	lui	t0,0x400f0
+10000046:	02b1                	addi	t0,t0,12
+10000048:	0002a303          	lw	t1,0(t0) # 400f0000 <MDR_GPIO4_BASE>
+1000004c:	ffe37313          	andi	t1,t1,-2
+10000050:	0062a023          	sw	t1,0(t0)
+10000054:	400f02b7          	lui	t0,0x400f0
+10000058:	02b1                	addi	t0,t0,12
+1000005a:	0002a303          	lw	t1,0(t0) # 400f0000 <MDR_GPIO4_BASE>
+1000005e:	00136313          	ori	t1,t1,1
+10000062:	0062a023          	sw	t1,0(t0)
+10000066:	400f02b7          	lui	t0,0x400f0
+1000006a:	02c1                	addi	t0,t0,16
+1000006c:	0002a303          	lw	t1,0(t0) # 400f0000 <MDR_GPIO4_BASE>
+10000070:	ffe37313          	andi	t1,t1,-2
+10000074:	0062a023          	sw	t1,0(t0)
+10000078:	400f02b7          	lui	t0,0x400f0
+1000007c:	02c1                	addi	t0,t0,16
+1000007e:	0002a303          	lw	t1,0(t0) # 400f0000 <MDR_GPIO4_BASE>
+10000082:	00036313          	ori	t1,t1,0
+10000086:	0062a023          	sw	t1,0(t0)
+1000008a:	400f02b7          	lui	t0,0x400f0
+1000008e:	02e1                	addi	t0,t0,24
+10000090:	0002a303          	lw	t1,0(t0) # 400f0000 <MDR_GPIO4_BASE>
+10000094:	ffc37313          	andi	t1,t1,-4
+10000098:	0062a023          	sw	t1,0(t0)
+1000009c:	400f02b7          	lui	t0,0x400f0
+100000a0:	02e1                	addi	t0,t0,24
+100000a2:	0002a303          	lw	t1,0(t0) # 400f0000 <MDR_GPIO4_BASE>
+100000a6:	00136313          	ori	t1,t1,1
+100000aa:	0062a023          	sw	t1,0(t0)
+100000ae:	400f02b7          	lui	t0,0x400f0
+100000b2:	02a1                	addi	t0,t0,8
+100000b4:	0002a303          	lw	t1,0(t0) # 400f0000 <MDR_GPIO4_BASE>
+100000b8:	ffc37313          	andi	t1,t1,-4
+100000bc:	0062a023          	sw	t1,0(t0)
+100000c0:	400f02b7          	lui	t0,0x400f0
+100000c4:	02a1                	addi	t0,t0,8
+100000c6:	0002a303          	lw	t1,0(t0) # 400f0000 <MDR_GPIO4_BASE>
+100000ca:	00036313          	ori	t1,t1,0
+100000ce:	0062a023          	sw	t1,0(t0)
+
+100000d2 <infinity_loop>:
+100000d2:	2019                	jal	100000d8 <blink>
+100000d4:	bffd                	j	100000d2 <infinity_loop>
+
+100000d6 <halt>:
+100000d6:	a001                	j	100000d6 <halt>
+
+100000d8 <blink>:
+100000d8:	000efe93          	andi	t4,t4,0
+100000dc:	00040f37          	lui	t5,0x40
+
+100000e0 <.blink_loop>:
+100000e0:	01eed463          	bge	t4,t5,100000e8 <.blink_run>
+100000e4:	0e85                	addi	t4,t4,1
+100000e6:	bfed                	j	100000e0 <.blink_loop>
+
+100000e8 <.blink_run>:
+100000e8:	400f02b7          	lui	t0,0x400f0
+100000ec:	0002a303          	lw	t1,0(t0) # 400f0000 <MDR_GPIO4_BASE>
+100000f0:	00137313          	andi	t1,t1,1
+100000f4:	00030d63          	beqz	t1,1000010e <.blink_set>
+
+100000f8 <.blink_reset>:
+100000f8:	400f02b7          	lui	t0,0x400f0
+100000fc:	02428293          	addi	t0,t0,36 # 400f0024 <MDR_GPIO4_CLRTX>
+10000100:	0002a303          	lw	t1,0(t0)
+10000104:	00136313          	ori	t1,t1,1
+10000108:	0062a023          	sw	t1,0(t0)
+1000010c:	a819                	j	10000122 <.blink_leave>
+
+1000010e <.blink_set>:
+1000010e:	400f02b7          	lui	t0,0x400f0
+10000112:	02028293          	addi	t0,t0,32 # 400f0020 <MDR_GPIO4_SETTX>
+10000116:	0002a303          	lw	t1,0(t0)
+1000011a:	00136313          	ori	t1,t1,1
+1000011e:	0062a023          	sw	t1,0(t0)
+
+10000122 <.blink_leave>:
+10000122:	8082                	ret
+	...
+
+Disassembly of section .rodata:
+
+10000126 <.rodata>:
+	...
+
+Disassembly of section .heap:
+
+80000000 <__heap_end-0xf000>:
+	...
+
+Disassembly of section .stack:
+
+8000f000 <__freertos_irq_stack_top-0x1000>:
+	...
