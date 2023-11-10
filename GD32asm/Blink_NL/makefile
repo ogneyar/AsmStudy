@@ -1,12 +1,14 @@
 
 TOOL_CHAIN			:= E:\Program\MounRiver/MounRiver_Studio/toolchain/RISC-V Embedded GCC/bin
 PREFIX				:= riscv-none-embed-
+OCD_PATH = E:/Program/OpenOCD/bin
+OCD = "$(OCD_PATH)/openocd"
+
 
 filname := Blink_NL
 
 srcdir := src
 builddir := build
-libdir := lib
 
 CROSS_COMPILE=$(TOOL_CHAIN)\$(PREFIX)
 CC=$(CROSS_COMPILE)gcc
@@ -16,9 +18,10 @@ OBJCOPY=$(CROSS_COMPILE)objcopy
 OBJDUMP=$(CROSS_COMPILE)objdump
 SIZE=$(CROSS_COMPILE)size
 
-COMMON := -march=rv32imac -mabi=ilp32 -mcmodel=medany
-ASMFLAGS := $(COMMON)
+ASMFLAGS := -march=rv32imac -mabi=ilp32 -mcmodel=medany
 LDFLAGS := -march=rv32imac -mabi=ilp32 -mcmodel=medany -nostdlib 
+
+OPENOCD_CFG=../libs/Util/gd32vf103.cfg
 
 frmname = $(builddir)/$(filname)
 objs = $(addprefix $(builddir)/,$(addsuffix .o,$(filname)))
@@ -50,19 +53,8 @@ clean:
 size: $(frmname).elf
 	$(SIZE) $(frmname).elf
 
-prog: $(frmname).bin
-	stm32flash /dev/ttyUSB0 -w $(frmname).bin
-
-dfu: $(frmname).bin
-	dfu-util -a 0 -d 28e9:0189 -s 0x08000000 -D $(frmname).bin
-
-# -include $(shell mkdir -p $(builddir)/dep) $(wildcard $(builddir)/dep/*)
-
-.PHONY: all clean
 
 
-# "E:\Program\MounRiver/MounRiver_Studio/toolchain/RISC-V Embedded GCC/bin\riscv-none-embed-gcc" -march=rv32imac -mabi=ilp32 -mcmodel=medany -nostdlib src/main.S -o build/main.elf
-# "E:\Program\MounRiver/MounRiver_Studio/toolchain/RISC-V Embedded GCC/bin\riscv-none-embed-objcopy" -O binary build/main.elf build/main.bin
-# "E:\Program\MounRiver/MounRiver_Studio/toolchain/RISC-V Embedded GCC/bin\riscv-none-embed-objcopy" -O ihex build/main.elf build/main.hex
-# E:\Program\dfu-util\dfu-util -a 0 -d 28e9:0189 -s 0x08000000 -D build/main.bin
-# stm32flash /dev/ttyUSB0 -w build/main.bin
+flash:
+	$(OCD) -f $(OPENOCD_CFG) -c init -c halt -c "program $(BUILD_DIR)/$(frmname).hex" -c reset -c resume -c exit
+
