@@ -28,13 +28,13 @@
 .global _start
 _start:
   //RCU_APB2EN |= RCU_APB2EN_PAEN | RCU_APB2EN_PCEN
-  la a5, RCU_APB2EN
+  li a5, RCU_APB2EN
   lw	a4, 0(a5)
     ori	a4, a4, RCU_APB2EN_PAEN | RCU_APB2EN_PCEN
   sw	a4, 0(a5)
 
   //GPIOA_CTL0 = (GPIOA_CTL0 & (0b1111<<GLED*4) & (0b1111<<BLED*4)) | 0b0011 << (GLED*4) | 0b0011 << (BLED*4)
-  la a5, GPIOA_CTL0
+  li a5, GPIOA_CTL0
   lw	a4, 0(a5)
     la  a6, ~((GPIO_MASK << (GLED*4)) | (GPIO_MASK << (BLED*4)))
     and a3, a4, a6
@@ -43,57 +43,57 @@ _start:
   sw	a4, 0(a5)
   
   //GPIOC_CTL1 = (GPIOC_CTL1 & (0b1111<<RLED_*4)) | 0b0011 << (RLED_*4)
-  la a5, GPIOC_CTL1
+  li a5, GPIOC_CTL1
   lw	a4, 0(a5)
-    la  a6, ~(GPIO_MASK << (RLED_*4))
+    li  a6, ~(GPIO_MASK << (RLED_*4))
     and a3, a4, a6
-    la  a4, (GPIO_PP_50MHz << (RLED_*4))
+    li  a4, (GPIO_PP_50MHz << (RLED_*4))
     or    a4, a4, a3
   sw	a4, 0(a5)
 
   /*
-  la a5, GPIOA_OCTL
+  li a5, GPIOA_OCTL
   lw	a4, 0(a5)
     xori	a4, a4, (1<<GLED)
   sw	a4, 0(a5)
 
-  la a5, GPIOC_OCTL
+  li a5, GPIOC_OCTL
   lw	a4, 0(a5)
-    la	a6, (1<<RLED)
+    li	a6, (1<<RLED)
     xor	a4, a4, a6
   sw	a4, 0(a5)
   */
   
 MAIN_LOOP:
   //GPIOC_OCTL(GPIOC) ^= (1<<RLED)
-  la a5, GPIOC_OCTL
+  li a5, GPIOC_OCTL
   lw	a4, 0(a5)
-    la	a6, (1<<RLED)
+    li	a6, (1<<RLED)
     xor	a4, a4, a6
   sw	a4, 0(a5)
   
   //sleep
-  la a0, delay
+  li a0, delay
   call sleep
 
   //GPIOA_OCTL(GPIOA) ^= (1<<GLED)
-  la a5, GPIOA_OCTL
+  li a5, GPIOA_OCTL
   lw	a4, 0(a5)
     xori	a4, a4, (1<<GLED)
   sw	a4, 0(a5)
   
   //sleep
-  la a0, delay
+  li a0, delay
   call sleep
 
   //GPIOA_OCTL(GPIOA) ^= (1<<BLED)
-  la a5, GPIOA_OCTL
+  li a5, GPIOA_OCTL
   lw	a4, 0(a5)
     xori	a4, a4, (1<<BLED)
   sw	a4, 0(a5)
     
   //sleep
-  la a0, delay
+  li a0, delay
   call sleep
 
   j MAIN_LOOP
