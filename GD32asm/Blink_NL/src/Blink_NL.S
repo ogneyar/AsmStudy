@@ -22,7 +22,7 @@
 .equ SBTN, 0  // PB0
 .equ RBTN, 1  // PB1
 
-.equ delay, 500000
+.equ delay, 600000
 
 .text
 .global _start

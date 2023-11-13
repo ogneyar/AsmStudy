@@ -1,8 +1,12 @@
 
 TOOL_CHAIN			:= E:\Program\MounRiver/MounRiver_Studio/toolchain/RISC-V Embedded GCC/bin
+# TOOL_CHAIN = C:/Program Files/Toolchain/xpack-riscv-none-embed-gcc-10.2.0-1.1/bin
 PREFIX				:= riscv-none-embed-
 OCD_PATH = E:/Program/OpenOCD/bin
+# OCD_PATH = C:/Program Files/Toolchain/xpack-openocd-0.10.0-15/bin
 OCD = "$(OCD_PATH)/openocd"
+
+
 
 
 filname := Blink_NL
