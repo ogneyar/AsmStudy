@@ -1,12 +1,12 @@
 OPTION DOTNAME
-option casemap:none
+; option casemap:none
 
-include E:\Program\masm64\Include\temphls.inc
-include E:\Program\masm64\Include\win64.inc
-include E:\Program\masm64\Include\kernel32.inc
-includelib E:\Program\masm64\Lib\kernel32.lib
-include E:\Program\masm64\Include\user32.inc
-includelib E:\Program\masm64\Lib\user32.lib
+include temphls.inc
+include win64.inc
+include kernel32.inc
+include user32.inc
+includelib kernel32.lib
+includelib user32.lib
 
 OPTION PROLOGUE:rbpFramePrologue
 OPTION EPILOGUE:rbpFrameEpilogue
@@ -26,11 +26,11 @@ wcex label WNDCLASSEX
     lpszClassName dq offset ClassName
     hIconSm dq 10003h
     ClassName db 'Asm64 window',0
-    AppName db 'The window',0
+    AppName db 'The NEW window',0
 
 .code
 
-WinMain proc <12> ;parmarea 12*8 bytes
+main proc <12> ;parmarea 12*8 bytes
 LOCAL msg:MSG
     invoke RegisterClassEx,&wcex ;можно написать по старому addr wcex
     mov r10d,CW_USEDEFAULT
@@ -45,7 +45,7 @@ LOCAL msg:MSG
         invoke DispatchMessage,rdi
     .endw
     invoke ExitProcess,[rdi][MSG.wParam]
-WinMain endp
+main endp
 
 WndProc proc <4> hWnd:QWORD,uMsg:QWORD,wParam:WPARAM,lParam:LPARAM
     .if edx==WM_DESTROY

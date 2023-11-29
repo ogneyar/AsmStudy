@@ -4,19 +4,20 @@
 include E:\Program\masm32\include\kernel32.inc ; ExitProcess
 includelib E:\Program\masm32\lib\kernel32.lib
 
- STD_OUTPUT_HANDLE EQU -11
+STD_OUTPUT_HANDLE EQU -11
 
 ;  GetStdHandle PROTO, nStdHandle: DWORD
 ;  WriteConsoleA PROTO, handle: DWORD, lpBuffer:PTR BYTE, nNumberOfBytesToWrite:DWORD, lpNumberOfBytesWritten:PTR DWORD, lpReserved:DWORD
 ;  ExitProcess PROTO, dwExitCode: DWORD
 
- .data
- consoleOutHandle dd ?
- bytesWritten dd ?
- message db "Hello World!!!",13,10
- lmessage dd 16
+.data
 
- .code
+consoleOutHandle dd ?
+bytesWritten dd ?
+message db "Hello World!!!",13,10
+lmessage dd 16
+
+.code
 
 main PROC
     INVOKE GetStdHandle, STD_OUTPUT_HANDLE

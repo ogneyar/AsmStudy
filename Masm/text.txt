@@ -1,2 +1,0 @@
-// исходники ассемблера
-https://www.allasm.ru/distr.php
