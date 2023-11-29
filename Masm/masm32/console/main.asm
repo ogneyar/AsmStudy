@@ -6,10 +6,6 @@ includelib E:\Program\masm32\lib\kernel32.lib
 
 STD_OUTPUT_HANDLE EQU -11
 
-;  GetStdHandle PROTO, nStdHandle: DWORD
-;  WriteConsoleA PROTO, handle: DWORD, lpBuffer:PTR BYTE, nNumberOfBytesToWrite:DWORD, lpNumberOfBytesWritten:PTR DWORD, lpReserved:DWORD
-;  ExitProcess PROTO, dwExitCode: DWORD
-
 .data
 
 consoleOutHandle dd ?
@@ -27,6 +23,7 @@ main PROC
     mov eax, lmessage
     INVOKE WriteConsoleA, consoleOutHandle, edx, eax, offset bytesWritten, 0
     popad
+    invoke Sleep, 3000
     INVOKE ExitProcess,0
 main ENDP
 
