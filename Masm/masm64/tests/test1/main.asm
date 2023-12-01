@@ -19,7 +19,7 @@ msgtw db 'Hello world!!!',10,13
 stdout dd ?
 cWritten dd ?
 hNewScreenBuffer dd ?
-; chiBuffer dd ?
+chiBuffer dd ?
 coordBufSize dd 5002h
 coordBufCoord dd 0
 srctWriteRect dd 0Ah
@@ -28,12 +28,15 @@ srctWriteRect dd 0Ah
 
 main proc 
     LOCAL msg:MSG
-    LOCAL chiBuffer[160]:dword
+    ; LOCAL chiBuffer[160]:dword
     ; LOCAL coordBufSize:dword
     ; LOCAL coordBufCoord:dword
     ; LOCAL srctWriteRect:dd
 
-    ; mov chiBuffer, 06162h
+    ; mov bx, offset chiBuffer
+    mov bx, 6162h
+    lea dx, [chiBuffer + bx]
+
     ; mov coordBufSize, 5002h
     ; mov coordBufCoord, 0
 
@@ -49,6 +52,7 @@ main proc
 ;     invoke WriteConsole, stdout, ADDR msgtw, SIZEOF msgtw, ADDR cWritten, NULL
 
     invoke Sleep, 3000
+    invoke SetConsoleActiveScreenBuffer, stdout
     invoke ExitProcess, NULL
 main endp
 
