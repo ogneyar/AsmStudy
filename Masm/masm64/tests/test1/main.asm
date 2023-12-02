@@ -20,44 +20,41 @@ stdout dd ?
 cWritten dd ?
 hNewScreenBuffer dd ?
 ; chiBuffer dd ?
-chiBuffer word 120 dup (611bh)
-coordBufSize dd 5002h
+chiBuffer dword 120 dup (001b0061h)
+coordBufSize dword 00500002h
 coordBufCoord dd 0
-srctWriteRect dd 0Ah
+; srctWriteRect dd 0Ah
+
+SMALL_RECT struct
+   dw Left
+   dw Top
+   dw Right
+   dw Bottom
+SMALL_RECT ends
  
 .code
 
-main proc 
+main proc
     LOCAL msg:MSG
-    ; LOCAL chiBuffer[160]:dword
-    ; LOCAL coordBufSize:dword
-    ; LOCAL coordBufCoord:dword
-    ; LOCAL srctWriteRect:dd
+    ; LOCAL srctWriteRect:SMALL_RECT
 
-    ; mov bx, offset chiBuffer
-    ; mov bx, 6162h
-    ; lea dx, [ chiBuffer ]
-    ; mov dx, 0611bh
-
-    ; mov [ chiBuffer ], 611bh
-
-    ; mov coordBufSize, 5002h
-    ; mov coordBufCoord, 0
-
-
+    invoke FreeConsole
+    invoke AllocConsole
     invoke GetStdHandle, STD_OUTPUT_HANDLE
     mov stdout, eax 
+    
     ; invoke CreateConsoleScreenBuffer, (GENERIC_READ | GENERIC_WRITE), (FILE_SHARE_READ | FILE_SHARE_WRITE), NULL, CONSOLE_TEXTMODE_BUFFER, NULL    
-    invoke CreateConsoleScreenBuffer, 0C0000000h, 03h, NULL, CONSOLE_TEXTMODE_BUFFER, NULL    
-    mov hNewScreenBuffer, eax 
-    invoke SetConsoleActiveScreenBuffer, eax
-    invoke WriteConsoleOutput, hNewScreenBuffer, chiBuffer, coordBufSize, coordBufCoord, [srctWriteRect]
+    ; invoke CreateConsoleScreenBuffer, 0C0000000h, 03h, NULL, CONSOLE_TEXTMODE_BUFFER, NULL    
+    ; mov hNewScreenBuffer, eax 
+    ; invoke SetConsoleActiveScreenBuffer, hNewScreenBuffer
+    ; invoke WriteConsoleOutput, hNewScreenBuffer, chiBuffer, coordBufSize, coordBufCoord, &srctWriteRect
 
-;     invoke SetConsoleMode, eax, ENABLE_PROCESSED_OUTPUT
-;     invoke WriteConsole, stdout, ADDR msgtw, SIZEOF msgtw, ADDR cWritten, NULL
+    ; invoke SetConsoleMode, eax, ENABLE_PROCESSED_OUTPUT
+    invoke WriteConsole, stdout, ADDR msgtw, SIZEOF msgtw;, ADDR cWritten, NULL
 
     invoke Sleep, 3000
     invoke SetConsoleActiveScreenBuffer, stdout
+    invoke FreeConsole
     invoke ExitProcess, NULL
 main endp
 
