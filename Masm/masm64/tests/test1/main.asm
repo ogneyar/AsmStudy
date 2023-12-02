@@ -19,7 +19,8 @@ msgtw db 'Hello world!!!',10,13
 stdout dd ?
 cWritten dd ?
 hNewScreenBuffer dd ?
-chiBuffer dd ?
+; chiBuffer dd ?
+chiBuffer word 120 dup (611bh)
 coordBufSize dd 5002h
 coordBufCoord dd 0
 srctWriteRect dd 0Ah
@@ -34,11 +35,15 @@ main proc
     ; LOCAL srctWriteRect:dd
 
     ; mov bx, offset chiBuffer
-    mov bx, 6162h
-    lea dx, [chiBuffer + bx]
+    ; mov bx, 6162h
+    ; lea dx, [ chiBuffer ]
+    ; mov dx, 0611bh
+
+    ; mov [ chiBuffer ], 611bh
 
     ; mov coordBufSize, 5002h
     ; mov coordBufCoord, 0
+
 
     invoke GetStdHandle, STD_OUTPUT_HANDLE
     mov stdout, eax 
@@ -46,7 +51,7 @@ main proc
     invoke CreateConsoleScreenBuffer, 0C0000000h, 03h, NULL, CONSOLE_TEXTMODE_BUFFER, NULL    
     mov hNewScreenBuffer, eax 
     invoke SetConsoleActiveScreenBuffer, eax
-    invoke WriteConsoleOutput, hNewScreenBuffer, chiBuffer, coordBufSize, coordBufCoord, srctWriteRect
+    invoke WriteConsoleOutput, hNewScreenBuffer, chiBuffer, coordBufSize, coordBufCoord, [srctWriteRect]
 
 ;     invoke SetConsoleMode, eax, ENABLE_PROCESSED_OUTPUT
 ;     invoke WriteConsole, stdout, ADDR msgtw, SIZEOF msgtw, ADDR cWritten, NULL

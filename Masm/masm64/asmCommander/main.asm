@@ -1,34 +1,9 @@
-OPTION DOTNAME
-; option casemap:none
-
-include temphls.inc
-include win64.inc
-include kernel32.inc
-includelib kernel32.lib
-
-BLACK   equ 0
-BLUE    equ 1
-GREEN   equ 2
-CYAN    equ 3
-RED     equ 4
-PURPLE  equ 5
-YELLOW  equ 6
-SYSTEM  equ 7
-GREY    equ 8
-BRIGHTBLUE  equ 9
-BRIGHTGREEN equ 10
-BRIGHTCYAN  equ 11
-BRIGHTRED   equ 12
-BRIGHTPURPLE equ 13
-BRIGHTYELLOW equ 14
-WHITE   equ 15
-
-X equ 3
-Y equ 10
+include src/head.asm
 
 .data
 
-msgtw db 'Hello world!!!',10,13
+; msgtw db 'Hello world!!!',10,13
+msgtw db 25 dup ('-')
 str_title db 'My title in this console',0
 stdout dd ?
 cWritten dd ?
@@ -37,6 +12,7 @@ cWritten dd ?
 
 main proc 
 LOCAL msg:MSG
+local cci:CONSOLE_CURSOR_INFO
     invoke GetStdHandle, STD_OUTPUT_HANDLE
     mov stdout, eax 
     invoke SetConsoleMode, eax, ENABLE_PROCESSED_OUTPUT
@@ -49,6 +25,13 @@ LOCAL msg:MSG
     ; вывод текста в консоль
     invoke WriteConsole, stdout, ADDR msgtw, SIZEOF msgtw, ADDR cWritten, NULL
     invoke SetConsoleTextAttribute, stdout, WHITE
+    ; прячем курсор----------------------------------------
+    ; invoke GetConsoleCursorInfo, stdout, &cci
+    ; lea edx, cci             ; lpConsoleCursorInfo
+    ; ; mov [ rdx + CONSOLE_CURSOR_INFO.bVisible ], FALSE
+    ; mov [ edx + 4 ], 0
+    ; invoke SetConsoleCursorInfo, stdout
+    ;------------------------------------------------------
     invoke Sleep, 3000
     invoke ExitProcess, NULL
 main endp
