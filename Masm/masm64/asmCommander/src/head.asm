@@ -27,6 +27,22 @@ X equ 3
 Y equ 10
 
 CONSOLE_CURSOR_INFO struct
-   dw dwSize
-   db bVisible
+   dword dwSize ; + 0
+   byte bVisible ; + 4
 CONSOLE_CURSOR_INFO ends
+
+
+CONSOLE_SCREEN_BUFFER_INFO struct
+   dword dwSize ; + 0
+   dword dwCursorPosition ; + 4
+   word  wAttributes ; + 8
+   qword srWindow ; + 10
+   dword dwMaximumWindowSize ; + 18
+CONSOLE_SCREEN_BUFFER_INFO ends
+
+SMALL_RECT struct
+   word Left ; + 0
+   word Top ; + 2
+   word Right ; + 4
+   word Bottom ; + 6
+SMALL_RECT ends

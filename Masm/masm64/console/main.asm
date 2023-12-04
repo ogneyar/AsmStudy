@@ -6,6 +6,9 @@ include win64.inc
 include kernel32.inc
 includelib kernel32.lib
 
+include print.asm
+
+
 BLACK   equ 0
 BLUE    equ 1
 GREEN   equ 2
@@ -32,6 +35,7 @@ msgtw db 'Hello world!!!',10,13
 str_title db 'My title in this console',0
 stdout dd ?
 cWritten dd ?
+hexArr byte 25 dup (0) ; массив из 25 символов
  
 .code
 
@@ -47,8 +51,11 @@ LOCAL msg:MSG
     ; задать заголовок окна консоли
     invoke SetConsoleTitle, &str_title
     ; вывод текста в консоль
-    invoke WriteConsole, stdout, ADDR msgtw, SIZEOF msgtw, ADDR cWritten, NULL
+    invoke WriteConsole, stdout, ADDR msgtw, SIZEOF msgtw;, ADDR cWritten, NULL
     invoke SetConsoleTextAttribute, stdout, WHITE
+    
+    invoke Print_Byte, stdout, 62h
+
     invoke Sleep, 3000
     invoke ExitProcess, NULL
 main endp
