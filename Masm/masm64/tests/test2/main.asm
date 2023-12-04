@@ -22,10 +22,10 @@ X equ 0
 Y equ 10
 
 SMALL_RECT struct
-   dw Left
-   dw Top
-   dw Right
-   dw Bottom
+   dw Left ; word
+   dw Top ; word
+   dw Right ; word
+   dw Bottom ; word
 SMALL_RECT ends
 
 .data
@@ -44,27 +44,27 @@ main proc
     invoke AllocConsole ;создать консоль для себя
     invoke GetStdHandle, STD_OUTPUT_HANDLE ;получить handle для вывода
     mov hOut, eax
-;     invoke GetLargestConsoleWindowSize, eax
-; ;   rax return in 31-16 bits: dwCoord.y
-; ;                 15-00 bits: dwCoord.x
-;     lea r8d, ConsoleWindow
-;     ; and dword ptr [r8+SMALL_RECT.Left],0
-;     and dword ptr [r8+0],0
-;     sub ax, MAXSCREENX
-;     sbb edx, edx
-;     and ax, dx
-;     add ax, MAXSCREENX-1
-;     ; mov [r8+SMALL_RECT.Right],ax
-;     mov [r8+8],ax
-;     shr eax, 16
-;     sub eax, MAXSCREENY
-;     sbb edx, edx
-;     and eax, edx
-;     add eax, MAXSCREENY-1
-;     ; mov [r8+SMALL_RECT.Bottom],ax
-;     mov [r8+12],ax
-;     invoke SetConsoleWindowInfo, hOut, TRUE
-;     invoke SetConsoleScreenBufferSize, hOut, MAXSCREENY*10000h+MAXSCREENX ;establish the new size of a window of the console
+    invoke GetLargestConsoleWindowSize, hOut
+;   rax return in 31-16 bits: dwCoord.y
+;                 15-00 bits: dwCoord.x
+    lea r8d, ConsoleWindow
+    ; and dword ptr [r8+SMALL_RECT.Left],0
+    and dword ptr [ r8 + 0 ], 0
+    sub ax, MAXSCREENX
+    sbb edx, edx
+    and ax, dx
+    add ax, MAXSCREENX-1
+    ; mov [r8+SMALL_RECT.Right],ax
+    mov [ r8 + 4 ], ax
+    shr eax, 16
+    sub eax, MAXSCREENY
+    sbb edx, edx
+    and eax, edx
+    add eax, MAXSCREENY-1
+    ; mov [r8+SMALL_RECT.Bottom],ax
+    mov [ r8 + 6 ], ax
+    invoke SetConsoleWindowInfo, hOut, TRUE
+    invoke SetConsoleScreenBufferSize, hOut, MAXSCREENY*10000h+MAXSCREENX ;establish the new size of a window of the console
     invoke SetConsoleTitle, &STR2 ;создать заголовок окна консоли
     invoke SetConsoleCursorPosition, hOut, Y*10000h+X;установить позицию курсора
     invoke SetConsoleTextAttribute, hOut, BRIGHTGREEN ;задать цветовые атрибуты выводимого текста
