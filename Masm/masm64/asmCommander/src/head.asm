@@ -22,9 +22,11 @@ BRIGHTRED   equ 12
 BRIGHTPURPLE equ 13
 BRIGHTYELLOW equ 14
 WHITE   equ 15
-
 X equ 3
 Y equ 10
+MAXSCREENX equ 100
+MAXSCREENY equ 30
+buffersize equ 200
 
 CONSOLE_CURSOR_INFO struct
    dword dwSize ; + 0

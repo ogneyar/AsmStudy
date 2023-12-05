@@ -1,9 +1,7 @@
 .data
 
-; msgtw db 'Hello world!!!',10,13
-msgtw db 25 dup ('-')
 str_title db 'My title in this console',0
-stdout dd ?
+stdout_handle dd ?
 cWritten dd ?
 hexArr byte 25 dup (0) ; массив из 25 символов
 ;---------------------------------------------------------------------------------------------------------------

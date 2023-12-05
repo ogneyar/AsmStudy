@@ -40,8 +40,8 @@ main proc
     local BUFF[buffersize]:byte
     local ConsoleWindow:SMALL_RECT
  
-    invoke FreeConsole ;освободить существующую консоль
-    invoke AllocConsole ;создать консоль для себя
+    ; invoke FreeConsole ;освободить существующую консоль
+    ; invoke AllocConsole ;создать консоль для себя
     invoke GetStdHandle, STD_OUTPUT_HANDLE ;получить handle для вывода
     mov hOut, eax
     invoke GetLargestConsoleWindowSize, hOut
@@ -74,7 +74,7 @@ main proc
     invoke SetConsoleTextAttribute, hOut, BRIGHTCYAN ; задать цветовые атрибуты выводимого текста
     invoke WriteConsole, hOut, &BUFF, LENS ; вывести строку
     invoke Sleep, 3000 ; небольшая задержка
-    invoke FreeConsole ; закрыть консоль
+    ; invoke FreeConsole ; закрыть консоль
     invoke ExitProcess, NULL ; завершить программу
 main endp
 
