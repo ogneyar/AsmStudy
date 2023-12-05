@@ -14,6 +14,9 @@ local cursor_info:CONSOLE_CURSOR_INFO
     invoke AllocConsole
     invoke GetStdHandle, STD_OUTPUT_HANDLE
     mov stdout_handle, eax 
+
+    ; invoke SetConsoleMode, stdout_handle, ENABLE_PROCESSED_OUTPUT
+    
     ; изменение размера консоли (MAXSCREENX, MAXSCREENY)
     invoke resizeConsole, stdout_handle
     ; изменение заголовка консоли

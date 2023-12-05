@@ -60,6 +60,8 @@ main proc
     ; invoke AllocConsole
     invoke GetStdHandle, STD_OUTPUT_HANDLE
     mov std_out_handle, eax 
+    
+    invoke SetConsoleMode, std_out_handle, ENABLE_PROCESSED_OUTPUT
 
     ; invoke CreateConsoleScreenBuffer, (GENERIC_READ | GENERIC_WRITE), (FILE_SHARE_READ | FILE_SHARE_WRITE), NULL, CONSOLE_TEXTMODE_BUFFER, NULL    
     invoke CreateConsoleScreenBuffer, GENERIC, FILE_SHARE, NULL, CONSOLE_TEXTMODE_BUFFER, NULL    
