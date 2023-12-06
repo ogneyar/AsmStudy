@@ -2,7 +2,10 @@
 .code
 ;---------------------------------------------------------------------------------------------------------------
 resizeConsole proc
+; Параметры:
 ; ECX - stdout_handle
+; Возврат: нет
+
 
 local local_stdout:dword
 local ConsoleWindow:SMALL_RECT
@@ -43,7 +46,9 @@ local ConsoleWindow:SMALL_RECT
 resizeConsole endp
 ;---------------------------------------------------------------------------------------------------------------
 getScreenBufferInfo proc
+; Параметры:
 ; ECX - stdout_handle
+; Возврат: нет
 
 local csbi:CONSOLE_SCREEN_BUFFER_INFO
 
@@ -86,112 +91,299 @@ local csbi:CONSOLE_SCREEN_BUFFER_INFO
 
 getScreenBufferInfo endp
 ;---------------------------------------------------------------------------------------------------------------
-Draw_Line proc
-; ECX - stdout_handle
-; EDX - message
-    ; вывод текста в консоль
-    ; invoke WriteConsole, stdout_handle, ADDR message, SIZEOF message;, ADDR cWritten, NULL
+_getPosAddress proc
+; Параметры:
+; RCX - pos
+; RDX - symbol
+; Возврат: RDI = screen_buffer + address_offset
 
-    ret
+	push rax
+	push rbx
 
-Draw_Line endp
+    lea rdi, screen_buffer
+
+	; 1. Вычисляем адрес вывода: address_offset = (pos.Y_Pos * pos.Screen_Width + pos.X_Pos) * 4
+	; 1.1 Вычисляем pos.Y * pos.Screen_Width
+	mov rax, rcx
+	shr rax, 16 ; AX = pos.Y_Pos
+	movzx rax, ax ; RAX = AX = pos.Y_Pos
+
+	mov rbx, rcx
+	shr rbx, 32 ; BX = pos.Screen_Width
+	movzx rbx, bx ; RBX = BX = pos.Screen_Width
+
+	imul rax, rbx ; RAX = pos.Y_Pos * pos.Screen_Width
+
+	; 1.2 Добавляем pos.X_Pos к RAX
+	movzx rbx, cx ; RBX = CX = pos.X_Pos
+	add rax, rbx ; RAX = pos.Y_Pos * pos.Screen_Width + pos.X_Pos
+
+	; ; 1.3 RAX содержит смещение начала строки в символах, а надо - в байтах.
+	; ; Т.к. каждый символ занимает 4 байта, надо умножить это смещение на 4
+	; shl rax, 2 ; RAX = RAX * 4 = address_offset
+
+	add rdi, rax ; RDI = screen_buffer + address_offset
+    add rdi, 100
+	
+	pop rbx
+	pop rax
+
+	ret
+
+_getPosAddress endp
 ;---------------------------------------------------------------------------------------------------------------
-Print_Symbol proc
-; ECX - stdout_handle
-; DL - symbol
-local symbol:byte
+drawStartSymbol proc
+; Выводим стартовый символ
+; Параметры:
+; RDI - текущий адрес в буфере окна
+; RDX - symbol
+; Возврат: нет
 
-    mov symbol, dl
+	push rax
+	push rbx
 
-    invoke WriteConsole, ecx, ADDR symbol, SIZEOF symbol
+	mov eax, edx ; RAX = EAX = { simbol.Attributes, simbol.Main_Symbol }
+	mov rbx, rdx
+	shr rbx, 32 ; RBX = EBX = { simbol.End_Symbol, simbol.Start_Symbol }
+	mov al, bl ;  RAX = EAX = { simbol.Attributes, simbol.Start_Symbol }
 
-    ret
+	stosb ; Store String Byte
 
-Print_Symbol endp
+	pop rbx
+	pop rax
+
+	ret
+
+drawStartSymbol endp
 ;---------------------------------------------------------------------------------------------------------------
-Print_Byte_Bin proc
-; ECX - stdout_handle
-; DL - hex
-local local_stdout:dword
- 
-    push ax
-    push bx
-    push cx
-    push dx
+drawEndSymbol proc
+; Выводим конечный символ
+; Параметры:
+; RDI - текущий адрес в буфере окна
+; RDX - symbol
+; Возврат: нет
 
-    mov bl, '0'
-    mov bh, '1'
+	push rax
+	push rbx
 
-    mov local_stdout, ecx
-    
-    lea rax, [hexArr]
-    xor rcx, rcx
-    mov rcx, 8
+	mov rbx, rdx
+	shr rbx, 48 ; RBX = BX = simbol.End_Symbol
+	mov al, bl ;  RAX = EAX = { simbol.Attributes, simbol.Start_Symbol }
+	
+	stosb ; Store String Byte
+	
+	pop rbx
+	pop rax
 
-_loop:
-    rol dl, 1
-    jc _1
-_0:   
-    mov [rax], bl
-    jmp _next_step
+	ret
+
+drawEndSymbol endp
+;---------------------------------------------------------------------------------------------------------------
+getScreenWidthSize proc
+; Вычисление ширины экрана в байтах
+; Параметры:
+; RDX - pos
+; Возврат: R11
+
+	mov r11, rdx ; R11 = pos
+	shr r11, 32 ; R11 = pos.Len | pos.Screen_Width
+	movzx r11, r11w ; R11 = pos.Screen_Width
+	; shl r11, 2 ; R11 = pos.Screen_Width * 4 ; ширина экрана в байтах
+
+	ret
+
+getScreenWidthSize endp
+;---------------------------------------------------------------------------------------------------------------
+drawLineVertical proc
+; extern "C" void Draw_Line_Vertical(CHAR_INFO * screen_buffer, SPos pos, ASymbol symbol);
+; Параметры:
+; RCX - screen_buffer
+; RDX - pos
+; R8 - symbol
+; Возврат: нет
+
+	push rax
+	push rbx
+	push rcx
+	push rdi
+	push r11
+
+	; 1. Вычисляем адрес вывода
+	call _getPosAddress ; RDI = screen_buffer + address_offset
+	mov rdi, rax
+
+	; 2. Вычисление коррекции позиции вывода
+	call getScreenWidthSize ; R11 = pos.Screen_Width * 4
+	sub r11, 4 ; шаг назад на один символ
+	
+	; 3. Выводим стартовый символ
+	call drawStartSymbol
+
+	; 4. Выводим символы
+	mov eax, r8d ; EAX = symbol
+
+	mov rcx, rdx
+	shr rcx, 48 ; RCX = pos.Len
 _1:
-    mov [rax], bh
-    
-_next_step:
-    inc rax
-    loop _loop
-    
-    mov bl, 'b'
-    mov [rax], bl
+	add rdi, r11
+	stosd ; mov [ rdi ], eax
 
-    invoke WriteConsole, local_stdout, &hexArr, sizeof hexArr
+	loop _1
+	
+	add rdi, r11
 
-    pop dx
-    pop cx
-    pop bx
-    pop ax
+	; 5. Выводим конечный символ
+	call drawEndSymbol
 
-    ret
+	pop r11
+	pop rdi
+	pop rcx
+	pop rbx
+	pop rax
 
-Print_Byte_Bin endp
+	ret
+
+drawLineVertical endp
 ;---------------------------------------------------------------------------------------------------------------
-Print_Byte_Hex proc
-; ECX - stdout
-; DL - hex
- 
-    mov bl, '0'
-    mov bh, '1'
-    ; mov r9w, dx
+clearBuffer proc
+; Параметры: нет
+; Возврат: нет
 
-    mov r8d, ecx
-    ; mov hexArr, dl
-    lea rax, [hexArr]
-    xor rcx, rcx
-    mov rcx, 8
+    push rax
+    push rbx
+    push rcx
 
-_loop:
-    rol dl, 1
-    jc _1
-_0:   
-    mov [rax], bl
-    jmp _next_step
-_1:
-    mov [rax], bh
-    
-_next_step:
-    inc rax
-    ; add rax, 1
-    loop _loop
-    
-    mov bl, 'b'
-    mov [rax], bl
+    lea rax, screen_buffer
+    ; mov bx, '║'
+    ; mov bx, 2551h
+    mov bl, 020h ; ' ' ; 32
+    ; mov bl, 0b6h ; '╢' ; 182
+    ; mov bl, 0bah ; '║' ; 186
+    ; mov bl, 0bbh ; '╗' ; 187
+    ; mov bl, 0bch ; '╝' ; 188
+    ; mov bl, 0c4h ; '─' ; 196
+    ; mov bl, 0c7h ; '╟' ; 199
+    ; mov bl, 0c8h ; '╚' ; 200
+    ; mov bl, 0c9h ; '╔' ; 201
+    ; mov bl, 0cbh ; '╦' ; 203
+    ; mov bl, 0cdh ; '═' ; 205
+    ; mov bl, 0d0h ; '╨' ; 208
 
-    ; mov [rax], dl
-    ; add rax, 1
-    ; mov [rax], dl
-    ; invoke WriteConsole, ecx, &hexArr, sizeof hexArr
-    invoke WriteConsole, r8d, &hexArr, sizeof hexArr
+    mov rcx, (MAXSCREENX * MAXSCREENY)
+
+_filling_the_array:
+    mov [ rax + ( rcx * sizeof byte ) - sizeof byte  ], bl
+    loop _filling_the_array
+
+    pop rcx
+    pop rbx
+    pop rax
 
     ret
 
-Print_Byte_Hex endp
+clearBuffer endp
+;---------------------------------------------------------------------------------------------------------------
+clearArea proc
+; Параметры:
+; RCX - screen_buffer
+; RDX - area_pos
+; R8 - symbol
+; Возврат: нет
+
+	push rax
+	push rbx
+	push rcx
+	push rdi
+	push r10
+	push r11
+
+	; 1. Вычисляем адрес вывода
+	call _getPosAddress ; RDI = screen_buffer + address_offset
+	
+	mov r10, rdi
+
+	; 2. Вычисление коррекции позиции вывода
+	call getScreenWidthSize ; R11 = pos.Screen_Width * 4
+
+	; 3. Выводим символы
+	mov eax, r8d ; EAX = symbol
+
+	mov rbx, rdx
+	shr rbx, 48 ; BH - area_pos.Height, BL - area_pos.Width
+
+	xor rcx, rcx
+_1:
+	mov cl, bl
+
+	; rep stosd ; mov [ rdi ], eax
+    mov [ rdi ], al
+    inc rdi
+
+	add r10, r11
+	mov rdi, r10
+
+	dec bh
+	jnz _1
+	
+	pop r11
+	pop r10
+	pop rdi
+	pop rcx
+	pop rbx
+	pop rax
+
+	ret
+
+clearArea endp
+;---------------------------------------------------------------------------------------------------------------
+drawPanel proc
+; Параметры:
+; RCX - pos
+; Возврат: нет
+
+    ; lea rax, screen_buffer
+    ; mov bl, 0cdh ; '═' ; 205
+    ; mov [ rax + 200 ], bl
+
+    ; mov dl, 'x'
+
+    ; call drawLineHorizontal
+    
+    ret
+
+drawPanel endp
+;---------------------------------------------------------------------------------------------------------------
+drawLeftPanel proc
+; Параметры: нет
+; Возврат: нет
+
+    call drawLineTopHorizontal
+    call drawLineMeddleHorizontal
+    call drawLineBottomHorizontal
+
+    ret
+
+drawLeftPanel endp
+;---------------------------------------------------------------------------------------------------------------
+drawRightPanel proc
+; Параметры: нет
+; Возврат: нет
+
+    ret
+    
+drawRightPanel endp
+;---------------------------------------------------------------------------------------------------------------
+draw proc
+; Параметры: нет
+; Возврат: нет
+
+    ; call clearBuffer
+
+    call drawLeftPanel
+    call drawRightPanel
+
+    ret
+    
+draw endp
+;---------------------------------------------------------------------------------------------------------------
+

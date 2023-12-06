@@ -1,21 +1,26 @@
 include src/head.asm
-include src/panel.asm
 include src/data.asm
+include src/panel.asm
+include src/print.asm
+include src/drawLinesHorizontal.asm
 
 .code
 
 main proc 
 local msg:MSG
-local screen_buffer[MAXSCREENX * MAXSCREENY]:byte
+; local screen_buffer[MAXSCREENX * MAXSCREENY]:byte
 local BUFF[buffersize]:byte
 local cursor_info:CONSOLE_CURSOR_INFO
+local left_panel:SAREA_POS
+; local lpNewScreenBufferDimensions:COORD
 
     ; invoke FreeConsole
-    invoke AllocConsole
+    ; invoke AllocConsole
     invoke GetStdHandle, STD_OUTPUT_HANDLE
     mov stdout_handle, eax 
 
     ; invoke SetConsoleMode, stdout_handle, ENABLE_PROCESSED_OUTPUT
+    ; invoke SetConsoleDisplayMode, stdout_handle, CONSOLE_FULLSCREEN_MODE, &lpNewScreenBufferDimensions
     
     ; изменение размера консоли (MAXSCREENX, MAXSCREENY)
     invoke resizeConsole, stdout_handle
@@ -35,25 +40,22 @@ local cursor_info:CONSOLE_CURSOR_INFO
     ; invoke SetConsoleTextAttribute, stdout_handle, WHITE
 
 
-    lea rax, screen_buffer
-    ; mov ebx, '║'
-    ; mov bx, 2551h
-    mov bl, 61h
-    mov rcx, (MAXSCREENX * MAXSCREENY)
-_filling_the_array:
-    mov [ rax + ( rcx * sizeof byte ) - sizeof byte  ], bl
-    loop _filling_the_array
+    ; lea rax, screen_buffer
+    ; mov bl, 0cdh ; '═' ; 205
+    ; mov [ rax + 256 ], bl
 
 
+    ; invoke drawPanel, &screen_buffer, left_panel
 
+    call draw
 
     ; установка курсора консоли в начало
-    invoke SetConsoleCursorPosition, stdout_handle, 0
+    ; invoke SetConsoleCursorPosition, stdout_handle, 0
 
-    ; invoke Print_Byte_Bin, stdout_handle, dwSize_X
-    ; invoke Print_Symbol, stdout_handle, 10
+    ; invoke printByteBin, stdout_handle, dwSize_X
+    ; invoke printSymbol, stdout_handle, 10
 
-    ; invoke SetConsoleOutputCP, CP_UTF8
+    ; invoke SetConsoleCP, CP_UTF8
     
     invoke WriteConsole, stdout_handle, ADDR screen_buffer, SIZEOF screen_buffer
 

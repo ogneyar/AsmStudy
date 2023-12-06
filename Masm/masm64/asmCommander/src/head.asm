@@ -27,6 +27,7 @@ Y equ 10
 MAXSCREENX equ 100
 MAXSCREENY equ 30
 buffersize equ 200
+; CONSOLE_FULLSCREEN_MODE equ 1
 
 CONSOLE_CURSOR_INFO struct
    dword dwSize ; + 0
@@ -48,3 +49,30 @@ SMALL_RECT struct
    word Right ; + 4
    word Bottom ; + 6
 SMALL_RECT ends
+
+COORD struct
+   word X ; + 0
+   word Y ; + 2
+COORD ends
+
+SSYMBOL struct
+   word Main_Symbol ; + 0
+   word Attributes ; + 2
+   word Start_Symbol ; + 4
+   word End_Symbol ; + 6
+SSYMBOL ends
+
+SPOS struct
+   word X_Pos ; + 0
+   word Y_Pos ; + 2
+   word Screen_Width ; + 4
+   word Len ; + 6
+SPOS ends
+
+SAREA_POS struct
+   word X_Pos ; + 0
+   word Y_Pos ; + 2
+   word Screen_Width ; + 4
+   byte Width ; + 6
+   byte Height ; + 7
+SAREA_POS ends

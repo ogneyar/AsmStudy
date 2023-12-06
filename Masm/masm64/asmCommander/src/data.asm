@@ -18,3 +18,4 @@ srWindow_Bottom db ?
 dwMaximumWindowSize_X db ?
 dwMaximumWindowSize_Y db ?
 ;---------------------------------------------------------------------------------------------------------------
+screen_buffer byte (MAXSCREENX * MAXSCREENY) dup (' ')
