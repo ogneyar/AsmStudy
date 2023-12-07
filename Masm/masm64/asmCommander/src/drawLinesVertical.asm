@@ -1,8 +1,8 @@
 .code
 ;---------------------------------------------------------------------------------------------------------------
-drawLineHorizontal proc
+drawLineVertical proc
 ; Параметры:
-; ECX - pos
+; RCX - pos
 ; RDX - symbol
 ; Возврат: нет
 
@@ -10,36 +10,49 @@ drawLineHorizontal proc
 	push rcx
 	push rdi
 	push r10
+	push r11
 
     mov r10, rcx ; save pos
 
 	; 1. Вычисляем адрес вывода
 	call _getPosAddress ; RDI = screen_buffer + address_offset
+
+
+	; 2. Вычисление коррекции позиции вывода
+	call _getScreenWidthSize ; R11 = pos.Screen_Width * 1 байт
+	sub r11, 1 ; шаг назад на один символ
 	
-	; 2. Выводим стартовый символ
+	; 3. Выводим стартовый символ
 	call drawStartSymbol
 
-	; 3. Выводим символы simbol.Main_Symbol
-	mov al, dl
-	shr rcx, 48 ; CX = pos.Len
+	; 4. Выводим символы
+	mov al, dl ; AL = symbol
 
-	rep stosb ; Store String Byte (rep - repeat сколько в RCX) // mov [ rdi ], al - запись данных из AL в память по адресу RDI
+	shr rcx, 48 ; RCX = pos.Len
+_1:
+	add rdi, r11
+	stosb ; mov [ rdi ], eax
+
+	loop _1
 	
+	add rdi, r11
+
     mov rcx, r10 ; save pos
 
-	; 4. Выводим конечный символ
+	; 5. Выводим конечный символ
 	call drawEndSymbol
 
-	pop r10	
-	pop rdi	
+	pop r11
+	pop rdi
 	pop rcx
+	pop rbx
 	pop rax
 
 	ret
 
-drawLineHorizontal endp
+drawLineVertical endp
 ;---------------------------------------------------------------------------------------------------------------
-drawLineTopHorizontal proc
+drawLineStartVertical proc
 ; Параметры: 
 ; ECX - pos.X, pos.Y
 ; Возврат: нет
@@ -52,10 +65,9 @@ drawLineTopHorizontal proc
 
     ; pos:SPOS
     xor rcx, rcx
-    ; Len = (dwSize_X / 2) - 2
-    mov cl, dwSize_X
-    shr cl, 1
-	sub cl, 2
+    ; Len = (dwSize_Y - 2) - 2
+    mov cl, dwSize_Y
+	sub cl, 4
     shl rcx, 16
     ; Screen_Width = dwSize_X
     mov cl, dwSize_X
@@ -71,7 +83,7 @@ drawLineTopHorizontal proc
     xor rdx, rdx
     ; symbol:SSYMBOL
     ; End_Symbol
-    mov dl, 0bbh ; '╗' ; 187
+    mov dl, 0c8h ; '╚' ; 200
     shl rdx, 16
     ; Start_Symbol
     mov dl, 0c9h ; '╔' ; 201
@@ -80,19 +92,19 @@ drawLineTopHorizontal proc
     mov dl, 01bh
     shl rdx, 16
     ; Main_Symbol
-    mov dl, 0cdh ; '═' ; 205
+    mov dl, 0bah ; '║' ; 186
 
-    call drawLineHorizontal
+    call drawLineVertical
 
     pop rdx
     pop rcx
     pop rax
 
-    ret
+	ret
 
-drawLineTopHorizontal endp
+drawLineStartVertical endp
 ;---------------------------------------------------------------------------------------------------------------
-drawLineMeddleHorizontal proc
+drawLineMiddleVertical proc
 ; Параметры: 
 ; ECX - pos.X, pos.Y
 ; Возврат: нет
@@ -105,49 +117,48 @@ drawLineMeddleHorizontal proc
 
     ; pos:SPOS
     xor rcx, rcx
-    ; Len = (dwSize_X / 2) - 2
-    mov cl, dwSize_X
-    shr cl, 1
-	sub cl, 2
+    ; Len = (dwSize_Y - 2) - 4
+    mov cl, dwSize_Y
+	sub cl, 6
     shl rcx, 16
     ; Screen_Width = dwSize_X
     mov cl, dwSize_X
     shl rcx, 16
-    ; Y_Pos = pos.Y + (dwSize_Y - 2)- 3
+    ; Y_Pos = pos.Y
     mov ebx, eax
     shr bx, 16 ; достаём pos.Y
-    mov cl, dwSize_Y
-	sub cl, 5
-    add cl, bl ; + pos.Y
+    mov cl, bl
     shl rcx, 16
-    ; X_Pos = pos.X 
-    mov cl, al
+    ; X_Pos = pos.X + ( (dwSize_X / 2) / 2 )
+    mov cl, dwSize_X
+    shr cl, 2 ; dwSize_X / 4
+    add cl, al ; + pos.X
     
     xor rdx, rdx
     ; symbol:SSYMBOL
     ; End_Symbol
-    mov dl, 0b6h ; '╢' ; 182
+    mov dl, 0d0h ; '╨' ; 208
     shl rdx, 16
     ; Start_Symbol
-    mov dl, 0c7h ; '╟' ; 199
+    mov dl, 0cbh ; '╦' ; 203
     shl rdx, 16
     ; Attributes
     mov dl, 01bh
     shl rdx, 16
     ; Main_Symbol
-    mov dl, 0c4h ; '─' ; 196
+    mov dl, 0bah ; '║' ; 186
 
-    call drawLineHorizontal
+    call drawLineVertical
 
     pop rdx
     pop rcx
     pop rax
 
-    ret
+	ret
 
-drawLineMeddleHorizontal endp
+drawLineMiddleVertical endp
 ;---------------------------------------------------------------------------------------------------------------
-drawLineBottomHorizontal proc
+drawLineEndVertical proc
 ; Параметры: 
 ; ECX - pos.X, pos.Y
 ; Возврат: нет
@@ -157,26 +168,26 @@ drawLineBottomHorizontal proc
     push rdx
 
     mov eax, ecx ; сохраняем pos.X и pos.Y
-	
+
     ; pos:SPOS
     xor rcx, rcx
-    ; Len = (dwSize_X / 2) - 2
-    mov cl, dwSize_X
-    shr cl, 1
-	sub cl, 2
+    ; Len = (dwSize_Y - 2) - 2
+    mov cl, dwSize_Y
+	sub cl, 4
     shl rcx, 16
     ; Screen_Width = dwSize_X
     mov cl, dwSize_X
     shl rcx, 16
-    ; Y_Pos = pos.Y + (dwSize_Y - 2) - 1
+    ; Y_Pos = pos.Y
     mov ebx, eax
     shr bx, 16 ; достаём pos.Y
-    mov cl, dwSize_Y
-	sub cl, 3
-    add cl, bl ; + pos.Y
+    mov cl, bl
     shl rcx, 16
-    ; X_Pos = pos.X 
-    mov cl, al
+    ; X_Pos = pos.X + (dwSize_X / 2) - 1
+    mov cl, dwSize_X
+    shr cl, 1 ; dwSize_X / 2
+	sub cl, 1
+    add cl, al ; + pos.X
     
     xor rdx, rdx
     ; symbol:SSYMBOL
@@ -184,21 +195,21 @@ drawLineBottomHorizontal proc
     mov dl, 0bch ; '╝' ; 188
     shl rdx, 16
     ; Start_Symbol
-    mov dl, 0c8h ; '╚' ; 200
+    mov dl, 0bbh ; '╗' ; 187
     shl rdx, 16
     ; Attributes
     mov dl, 01bh
     shl rdx, 16
     ; Main_Symbol
-    mov dl, 0cdh ; '═' ; 205
+    mov dl, 0bah ; '║' ; 186
 
-    call drawLineHorizontal
+    call drawLineVertical
 
     pop rdx
     pop rcx
     pop rax
 
-    ret
+	ret
 
-drawLineBottomHorizontal endp
+drawLineEndVertical endp
 ;---------------------------------------------------------------------------------------------------------------
