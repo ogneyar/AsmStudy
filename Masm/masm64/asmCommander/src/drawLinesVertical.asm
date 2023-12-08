@@ -16,7 +16,7 @@ drawLineVertical proc
 
 	; 1. Вычисляем адрес вывода
 	call _getPosAddress ; RDI = screen_buffer + address_offset
-
+    ; sub rdi, 100
 
 	; 2. Вычисление коррекции позиции вывода
 	call _getScreenWidthSize ; R11 = pos.Screen_Width * 1 байт
@@ -52,7 +52,7 @@ _1:
 
 drawLineVertical endp
 ;---------------------------------------------------------------------------------------------------------------
-drawLineStartVertical proc
+drawLineLeftVertical proc
 ; Параметры: 
 ; ECX - pos.X, pos.Y
 ; Возврат: нет
@@ -65,9 +65,9 @@ drawLineStartVertical proc
 
     ; pos:SPOS
     xor rcx, rcx
-    ; Len = (dwSize_Y - 2) - 2
+    ; Len = (dwSize_Y - 3) - 2
     mov cl, dwSize_Y
-	sub cl, 4
+	sub cl, 5
     shl rcx, 16
     ; Screen_Width = dwSize_X
     mov cl, dwSize_X
@@ -102,7 +102,7 @@ drawLineStartVertical proc
 
 	ret
 
-drawLineStartVertical endp
+drawLineLeftVertical endp
 ;---------------------------------------------------------------------------------------------------------------
 drawLineMiddleVertical proc
 ; Параметры: 
@@ -117,9 +117,9 @@ drawLineMiddleVertical proc
 
     ; pos:SPOS
     xor rcx, rcx
-    ; Len = (dwSize_Y - 2) - 4
+    ; Len = (dwSize_Y - 3) - 4
     mov cl, dwSize_Y
-	sub cl, 6
+	sub cl, 7
     shl rcx, 16
     ; Screen_Width = dwSize_X
     mov cl, dwSize_X
@@ -158,7 +158,7 @@ drawLineMiddleVertical proc
 
 drawLineMiddleVertical endp
 ;---------------------------------------------------------------------------------------------------------------
-drawLineEndVertical proc
+drawLineRightVertical proc
 ; Параметры: 
 ; ECX - pos.X, pos.Y
 ; Возврат: нет
@@ -171,9 +171,9 @@ drawLineEndVertical proc
 
     ; pos:SPOS
     xor rcx, rcx
-    ; Len = (dwSize_Y - 2) - 2
+    ; Len = (dwSize_Y - 3) - 2
     mov cl, dwSize_Y
-	sub cl, 4
+	sub cl, 5
     shl rcx, 16
     ; Screen_Width = dwSize_X
     mov cl, dwSize_X
@@ -211,5 +211,5 @@ drawLineEndVertical proc
 
 	ret
 
-drawLineEndVertical endp
+drawLineRightVertical endp
 ;---------------------------------------------------------------------------------------------------------------

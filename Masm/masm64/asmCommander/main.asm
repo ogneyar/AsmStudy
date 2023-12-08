@@ -6,6 +6,7 @@ include src/print.asm
 include src/drawSymbols.asm
 include src/drawLinesHorizontal.asm
 include src/drawLinesVertical.asm
+include src/drawTheTexts.asm
 
 .code
 
@@ -19,19 +20,13 @@ local cursor_info:CONSOLE_CURSOR_INFO
     mov stdout_handle, eax 
     
     ; изменение размера консоли (MAXSCREENX, MAXSCREENY)
-    invoke resizeConsole, stdout_handle
-    ; изменение заголовка консоли
-    invoke SetConsoleTitle, &str_title
-    ; изменение текстового атрибута (цвета фона и цвета текста)
-    invoke SetConsoleTextAttribute, stdout_handle, 1bh
-    ; установка курсора консоли
-    invoke SetConsoleCursorPosition, stdout_handle, 0    
+    invoke resizeConsole, stdout_handle       
     ; получение информации о screen_buffer_info
     invoke getScreenBufferInfo, stdout_handle
-    ; формирование буфера консоли - screen_buffer
-    call draw    
-    ; вывод в консоль
-    invoke WriteConsole, stdout_handle, ADDR screen_buffer, SIZEOF screen_buffer
+
+    ; формирование буфера консоли - screen_buffer    
+    call draw
+
     ; установка курсора консоли в начало
     invoke SetConsoleCursorPosition, stdout_handle, 0
 

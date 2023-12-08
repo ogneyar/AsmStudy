@@ -113,11 +113,11 @@ drawLineMeddleHorizontal proc
     ; Screen_Width = dwSize_X
     mov cl, dwSize_X
     shl rcx, 16
-    ; Y_Pos = pos.Y + (dwSize_Y - 2)- 3
+    ; Y_Pos = pos.Y + (dwSize_Y - 3)- 3
     mov ebx, eax
     shr bx, 16 ; достаём pos.Y
     mov cl, dwSize_Y
-	sub cl, 5
+	sub cl, 6
     add cl, bl ; + pos.Y
     shl rcx, 16
     ; X_Pos = pos.X 
@@ -168,11 +168,11 @@ drawLineBottomHorizontal proc
     ; Screen_Width = dwSize_X
     mov cl, dwSize_X
     shl rcx, 16
-    ; Y_Pos = pos.Y + (dwSize_Y - 2) - 1
+    ; Y_Pos = pos.Y + (dwSize_Y - 3) - 1
     mov ebx, eax
     shr bx, 16 ; достаём pos.Y
     mov cl, dwSize_Y
-	sub cl, 3
+	sub cl, 4
     add cl, bl ; + pos.Y
     shl rcx, 16
     ; X_Pos = pos.X 

@@ -33,7 +33,7 @@ _getPosAddress proc
 	; shl rax, 2 ; RAX = RAX * 4 = address_offset
 
 	add rdi, rax ; RDI = screen_buffer + address_offset
-    add rdi, 100
+    ; add rdi, 100
 	
 	pop rbx
 	pop rax
@@ -69,8 +69,8 @@ drawLeftPanel proc
     call drawLineTopHorizontal
     call drawLineBottomHorizontal
 
-    call drawLineStartVertical
-    call drawLineEndVertical
+    call drawLineLeftVertical
+    call drawLineRightVertical
 
     call drawLineMeddleHorizontal
     call drawLineMiddleVertical
@@ -96,8 +96,8 @@ drawRightPanel proc
     call drawLineTopHorizontal
     call drawLineBottomHorizontal
 
-    call drawLineStartVertical
-    call drawLineEndVertical
+    call drawLineLeftVertical
+    call drawLineRightVertical
 
     call drawLineMeddleHorizontal
     call drawLineMiddleVertical
@@ -108,14 +108,145 @@ drawRightPanel proc
     
 drawRightPanel endp
 ;---------------------------------------------------------------------------------------------------------------
+drawMenu proc
+; Параметры: нет
+; Возврат: нет
+local string[10]:byte
+
+    push rax
+    push rcx
+    push rdx
+        
+    xor rcx, rcx
+    ; Attributes = 07h ; чёрный фон, бежевый текст
+    mov cl, 07h
+    shl rcx, 16
+    ; Screen_Width = dwSize_X
+    mov cl, dwSize_X
+    shl rcx, 16
+    ; Y_Pos = dwSize_Y - 1 или - 2
+    mov cl, dwSize_Y 
+    sub cl, 2
+    shl rcx, 16
+    ; X_Pos = 0
+
+    lea rdx, string
+    mov al, '1'
+    mov [ rdx ], al
+    inc rdx
+    mov al, '2'
+    mov [ rdx ], al
+    inc rdx
+    mov al, '3'
+    mov [ rdx ], al
+    inc rdx
+    mov al, 0
+    mov [ rdx ], al
+
+    lea rdx, string
+
+    call drawText
+
+    pop rdx
+    pop rcx
+    pop rax
+
+    ret
+    
+drawMenu endp
+;---------------------------------------------------------------------------------------------------------------
+
+
+;---------------------------------------------------------------------------------------------------------------
+drawMenuTest proc
+; Параметры: нет
+; Возврат: нет
+local string[10]:byte
+
+    push rax
+    push rcx
+    push rdx
+    push rdi
+            
+    xor rcx, rcx
+    ; Attributes = 07h ; чёрный фон, бежевый текст
+    mov cl, 07h
+    shl rcx, 16
+    ; Screen_Width = dwSize_X
+    mov cl, dwSize_X
+    shl rcx, 16
+    ; Y_Pos = dwSize_Y - 1
+    mov cl, dwSize_Y 
+    sub cl, 1
+    shl rcx, 16
+    ; X_Pos = 0
+
+    lea rdx, string
+    mov al, '1'
+    mov [ rdx ], al
+    inc rdx
+    mov al, '2'
+    mov [ rdx ], al
+    inc rdx
+    mov al, '3'
+    mov [ rdx ], al
+    inc rdx
+    mov al, 0
+    mov [ rdx ], al
+
+    lea rdx, string
+
+    call drawTest
+    
+;     lea rdi, screen_buffer
+;     add rdi, 100
+;     ; call _getPosAddress
+; _1:
+; 	mov al, [ rdx ] ; очередной символ строки
+; 	cmp al, 0
+; 	je _exit	
+; 	stosb
+; 	inc rdx ; увеличиваем адрес
+; 	jmp _1
+; _exit:
+
+    pop rdi
+    pop rdx
+    pop rcx
+    pop rax
+
+    ret
+    
+drawMenuTest endp
+;---------------------------------------------------------------------------------------------------------------
+
+
 draw proc
 ; Параметры: нет
 ; Возврат: нет
 
-    ; call clearBuffer
-
+    ; формирование буфера консоли - screen_buffer
     call drawLeftPanel
     call drawRightPanel
+    ; call drawMenu
+    ; изменение заголовка консоли
+    invoke SetConsoleTitle, &str_title
+    ; изменение текстового атрибута (цвета фона и цвета текста)
+    invoke SetConsoleTextAttribute, stdout_handle, 1bh
+    ; установка курсора консоли
+    invoke SetConsoleCursorPosition, stdout_handle, 0 
+    ; вывод в консоль
+    invoke WriteConsole, stdout_handle, ADDR screen_buffer, SIZEOF screen_buffer
+    
+    ; формирование буфера консоли - screen_buffer
+    ; call clearBuffer
+    call drawMenuTest
+    ; изменение текстового атрибута (цвета фона и цвета текста)
+    invoke SetConsoleTextAttribute, stdout_handle, 07h    
+ 	; установка курсора консоли
+    invoke SetConsoleCursorPosition, stdout_handle, 001c0000h ; (x = 0000h, y = dwSize_Y - 1 = 001dh)
+    ; вывод в консоль
+    invoke WriteConsole, stdout_handle, ADDR string_buffer, SIZEOF string_buffer
 
     ret
     

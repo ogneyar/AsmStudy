@@ -1,6 +1,7 @@
 .data
 
 str_title db 'My title in this console',0
+; string db 'My title in this console',0
 stdout_handle dd ?
 cWritten dd ?
 hexArr byte 25 dup (0) ; массив из 25 символов
@@ -18,4 +19,5 @@ srWindow_Bottom db ?
 dwMaximumWindowSize_X db ?
 dwMaximumWindowSize_Y db ?
 ;---------------------------------------------------------------------------------------------------------------
-screen_buffer byte (MAXSCREENX * MAXSCREENY) dup (' ')
+screen_buffer byte (MAXSCREENX * MAXSCREENY - 3 * MAXSCREENX) dup ('x') ; MAXSCREENX * MAXSCREENY - 3 * MAXSCREENX => вся область без 3 нижних строк
+string_buffer byte (MAXSCREENX) dup ('x')
