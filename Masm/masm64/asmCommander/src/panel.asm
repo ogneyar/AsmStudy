@@ -108,15 +108,20 @@ drawRightPanel proc
     
 drawRightPanel endp
 ;---------------------------------------------------------------------------------------------------------------
-drawMenu proc
-; Параметры: нет
+drawKey proc
+; Параметры: 
+; RCX - x_pos
+; RDX - key
 ; Возврат: нет
-local string[10]:byte
 
     push rax
     push rcx
     push rdx
-        
+    push r8
+    push r12
+
+    mov r12, rcx   
+
     xor rcx, rcx
     ; Attributes = 07h ; чёрный фон, бежевый текст
     mov cl, 07h
@@ -128,99 +133,142 @@ local string[10]:byte
     mov cl, dwSize_Y 
     sub cl, 2
     shl rcx, 16
-    ; X_Pos = 0
+    ; X_Pos = x_pos    
+    mov rax, r12
+    mov cl, al
 
-    lea rdx, string
-    mov al, '1'
-    mov [ rdx ], al
-    inc rdx
-    mov al, '2'
-    mov [ rdx ], al
-    inc rdx
-    mov al, '3'
-    mov [ rdx ], al
-    inc rdx
-    mov al, 0
-    mov [ rdx ], al
+    ; mov r8, rdx ; limit
+    mov r8, 3 ; limit
 
-    lea rdx, string
+    ; mov rdx, r14 ; key
 
-    call drawText
+    call drawLimitedText
 
+    pop r12
+    pop r8
     pop rdx
     pop rcx
     pop rax
+
+    ret
+    
+drawKey endp
+;---------------------------------------------------------------------------------------------------------------
+drawKeyName proc
+; Параметры: 
+; RCX - x_pos
+; RDX - name
+; Возврат: нет
+
+    push rax
+    push rcx
+    push rdx
+    push r8
+    push r12
+
+    mov r12, rcx   
+ 
+    xor rcx, rcx
+    ; Attributes = 0b0h ; чёрный фон, бежевый текст
+    mov cl,  0b0h
+    shl rcx, 16
+    ; Screen_Width = dwSize_X
+    mov cl, dwSize_X
+    shl rcx, 16
+    ; Y_Pos = dwSize_Y - 1 или - 2
+    mov cl, dwSize_Y 
+    sub cl, 2
+    shl rcx, 16
+    ; X_Pos = x_pos    
+    mov rax, r12
+    add rax, 3
+    mov cl, al
+
+    ; mov r8, rdx ; limit
+    mov r8, 6 ; limit
+
+    ; mov rdx, r14 ; name
+
+    call drawLimitedText
+
+    pop r12
+    pop r8
+    pop rdx
+    pop rcx
+    pop rax
+
+    ret
+
+drawKeyName endp
+;---------------------------------------------------------------------------------------------------------------
+drawMenuItem proc
+; Параметры: 
+; RCX - x_pos
+; RDX - len
+; R8 - key
+; R9 - name
+; Возврат: нет
+
+    push rcx
+    push rdx
+    push r8
+    push r9
+    push r12
+        
+    mov r12, r9
+
+    invoke drawKey, rcx, r8
+    
+    invoke drawKeyName, rcx, r12
+
+    pop r12
+    pop r9
+    pop r8
+    pop rdx
+    pop rcx
+
+    ret
+
+drawMenuItem endp
+;---------------------------------------------------------------------------------------------------------------
+drawMenu proc
+; Параметры: нет
+; Возврат: нет
+local str_key[4]:byte
+local str_name[7]:byte
+
+    lea r8, str_key
+    mov al, '1'
+    mov [ r8 ], al
+    inc r8
+    mov al, 0
+    mov [ r8 ], al
+    lea r8, str_key
+    
+    lea r9, str_name
+    mov al, 'H'
+    mov [ r9 ], al
+    inc r9
+    mov al, 'e'
+    mov [ r9 ], al
+    inc r9
+    mov al, 'l'
+    mov [ r9 ], al
+    inc r9
+    mov al, 'p'
+    mov [ r9 ], al
+    inc r9
+    mov al, 0
+    mov [ r9 ], al
+    lea r9, str_name
+
+    ; invoke drawMenuItem, x_pos, len, key, name
+    invoke drawMenuItem, 0, 10;, r8, r9
 
     ret
     
 drawMenu endp
 ;---------------------------------------------------------------------------------------------------------------
-
-
-;---------------------------------------------------------------------------------------------------------------
-drawMenuTest proc
-; Параметры: нет
-; Возврат: нет
-local string[10]:byte
-
-    push rax
-    push rcx
-    push rdx
-    push rdi
-            
-    xor rcx, rcx
-    ; Attributes = 07h ; чёрный фон, бежевый текст
-    mov cl, 07h
-    shl rcx, 16
-    ; Screen_Width = dwSize_X
-    mov cl, dwSize_X
-    shl rcx, 16
-    ; Y_Pos = dwSize_Y - 1
-    mov cl, dwSize_Y 
-    sub cl, 1
-    shl rcx, 16
-    ; X_Pos = 0
-
-    lea rdx, string
-    mov al, '1'
-    mov [ rdx ], al
-    inc rdx
-    mov al, '2'
-    mov [ rdx ], al
-    inc rdx
-    mov al, '3'
-    mov [ rdx ], al
-    inc rdx
-    mov al, 0
-    mov [ rdx ], al
-
-    lea rdx, string
-
-    call drawTest
-    
-;     lea rdi, screen_buffer
-;     add rdi, 100
-;     ; call _getPosAddress
-; _1:
-; 	mov al, [ rdx ] ; очередной символ строки
-; 	cmp al, 0
-; 	je _exit	
-; 	stosb
-; 	inc rdx ; увеличиваем адрес
-; 	jmp _1
-; _exit:
-
-    pop rdi
-    pop rdx
-    pop rcx
-    pop rax
-
-    ret
-    
-drawMenuTest endp
-;---------------------------------------------------------------------------------------------------------------
-
-
 draw proc
 ; Параметры: нет
 ; Возврат: нет
@@ -240,13 +288,14 @@ draw proc
     
     ; формирование буфера консоли - screen_buffer
     ; call clearBuffer
-    call drawMenuTest
-    ; изменение текстового атрибута (цвета фона и цвета текста)
-    invoke SetConsoleTextAttribute, stdout_handle, 07h    
- 	; установка курсора консоли
-    invoke SetConsoleCursorPosition, stdout_handle, 001c0000h ; (x = 0000h, y = dwSize_Y - 1 = 001dh)
-    ; вывод в консоль
-    invoke WriteConsole, stdout_handle, ADDR string_buffer, SIZEOF string_buffer
+    call drawMenu
+    ; ; изменение текстового атрибута (цвета фона и цвета текста)
+    ; invoke SetConsoleTextAttribute, stdout_handle, 07h    
+ 	; ; установка курсора консоли
+    ; invoke SetConsoleCursorPosition, stdout_handle, 001c0000h ; (x = 0000h, y = dwSize_Y - 2 = 001ch)
+    ; ; вывод в консоль
+    ; ; invoke WriteConsole, stdout_handle, ADDR string_buffer, SIZEOF string_buffer
+    ; invoke WriteConsole, stdout_handle, ADDR screen_buffer, dwSize_X
 
     ret
     
